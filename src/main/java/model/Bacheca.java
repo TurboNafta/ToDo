@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Bacheca {
     private String descrizione;
@@ -10,7 +10,7 @@ public class Bacheca {
 
 
     //gestisco todo
-    private ArrayList<ToDo> todo = new ArrayList<ToDo>();
+    private List <ToDo> todo;
 
     //gestisco la relazione con utente (1)
     private Utente utente;
@@ -19,8 +19,11 @@ public class Bacheca {
     }
 
     //costruttore
-    public Bacheca(String descrizione){
+    public Bacheca(TitoloBacheca titolo, String descrizione, List<Utente> utente,ToDo todo){
+        this.titolo = titolo;
         this.descrizione = descrizione;
+        this.utente = new ArrayList<Utente>();
+        this.todo= todo;
     }
 
     public String getDescrizione() {
@@ -29,5 +32,13 @@ public class Bacheca {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public TitoloBacheca getTitolo() {
+        return titolo;
+    }
+
+    public void setTitolo(TitoloBacheca titolo) {
+        this.titolo = titolo;
     }
 }

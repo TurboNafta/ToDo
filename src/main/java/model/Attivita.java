@@ -13,8 +13,9 @@ public class Attivita {
 
 
     //costruttore
-    public Attivita(String titolo) {
+    public Attivita(String titolo, StatoAttivita stato) {
         this.titolo = titolo;
+        this.stato = stato;
     }
 
 
@@ -25,5 +26,13 @@ public class Attivita {
 
     public void setTitolo(String titolo) {
         this.titolo = titolo;
+    }
+
+    public StatoAttivita getStato() {
+        return stato;
+    }
+
+    public void setStato(StatoAttivita stato) {
+        this.stato = stato;
     }
 }
