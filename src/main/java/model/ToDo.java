@@ -19,7 +19,7 @@ public class ToDo {
 
 
     //gestisco la relazione * con condivisione
-    private ArrayList <Condivisione> condivisione = new ArrayList<Condivisione>();
+    private List <Condivisione> condivisione;
 
 
     //gestisco la checklist
@@ -32,7 +32,7 @@ public class ToDo {
     }
 
     //costruttore
-    public ToDo(String titolo, String descrizione, Date date, String url, ImageGraphicAttribute img, String posizione, String coloresfondo){
+    public ToDo(String titolo, String descrizione, Date date, String url, ImageGraphicAttribute img, String posizione, String coloresfondo, StatoToDo stato, CheckList checklist){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.datascadenza = date;
@@ -40,6 +40,10 @@ public class ToDo {
         this.image = img;
         this.posizione = posizione;
         this.coloresfondo = coloresfondo;
+        this.stato = stato;
+
+        this.condivisione = new ArrayList<Condivisione>();
+        this.checklist = checklist;
     }
 
     public String getTitolo() {
