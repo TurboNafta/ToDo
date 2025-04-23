@@ -19,7 +19,7 @@ public class Condivisione {
     }
 
     //costruttore
-    public Condivisione(String autore, ArrayList<Utente> partecipanti, Utente utente, ToDo todo) {
+    public Condivisione(String autore, List<Utente> partecipanti, Utente utente, ToDo todo) {
         this.autore = autore;
         this.partecipanti = new ArrayList<>();
         this.todo = todo;
