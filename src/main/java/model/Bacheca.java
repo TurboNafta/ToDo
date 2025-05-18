@@ -4,26 +4,24 @@ import java.util.*;
 
 public class Bacheca {
     private String descrizione;
-
     //gestisco enumerazione
     private TitoloBacheca titolo = TitoloBacheca.UNIVERSITA;
-
-
     //gestisco todo
-    private List <ToDo> todo;
-
+    private ArrayList <ToDo> todo;
     //gestisco la relazione con utente (1)
-    private Utente utente;
-    public Bacheca(Utente u) {
+    private ArrayList<Utente> utente;
+
+
+   /* public Bacheca(Utente u) {
         utente= u;
-    }
+    }*/
 
     //costruttore
-    public Bacheca(TitoloBacheca titolo, String descrizione, List<Utente> utente,ToDo todo){
+    public Bacheca(TitoloBacheca titolo, String descrizione){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.utente = new ArrayList<Utente>();
-        this.todo= todo;
+        this.todo= new ArrayList<ToDo>();
     }
 
     public String getDescrizione() {
