@@ -68,6 +68,10 @@ public class Utente {
         return login;
     }
 
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -93,4 +97,7 @@ public class Utente {
     }
 
 
+    public String getLogin() {
+        return login;
+    }
 }

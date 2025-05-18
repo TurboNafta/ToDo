@@ -19,7 +19,7 @@ public class ToDo {
 
 
     //gestisco la relazione * con condivisione
-    private List <Condivisione> condivisione;
+    private ArrayList <Condivisione> condivisione;
 
 
     //gestisco la checklist
