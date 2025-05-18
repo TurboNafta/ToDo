@@ -8,7 +8,7 @@ public class CheckList {
 
     //gestisco aggregazione con attivita
     private ArrayList<Attivita> attivita;
-    public CheckList(ArrayList<Attivita> attivita, ToDo t){
+    public CheckList( ToDo t){
         this.todo = t;
         this.attivita=new ArrayList<>();
     }
@@ -22,7 +22,7 @@ public class CheckList {
 
     }
 
-    public List<Attivita> getAttivita() {
+    public ArrayList<Attivita> getAttivita() {
         return attivita;
     }
 

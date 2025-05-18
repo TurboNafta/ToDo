@@ -64,7 +64,7 @@ public class Utente {
     public void ToDoInScadenza(ToDo todo){
 
     }
-    
+
     public String getPassword() {
         return password;
     }
