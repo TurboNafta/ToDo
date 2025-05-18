@@ -4,8 +4,9 @@ import java.util.*;
 
 public class Condivisione {
     private String autore;
-    private List<Utente> partecipanti;
+    private ArrayList<Utente> partecipanti;
 
+    /*
     //gestisco la relazione con utente
     private Utente utente;
     public Condivisione (Utente u) {
@@ -16,13 +17,12 @@ public class Condivisione {
     private ToDo todo;
     private Condivisione (ToDo t) {
         todo=t;
-    }
+    }*/
 
     //costruttore
-    public Condivisione(String autore, List<Utente> partecipanti, Utente utente, ToDo todo) {
+    public Condivisione(String autore) {
         this.autore = autore;
         this.partecipanti = new ArrayList<>();
-        this.todo = todo;
     }
 
     //funzioni future
@@ -34,11 +34,11 @@ public class Condivisione {
         this.autore = autore;
     }
 
-    public List<Utente> getPartecipanti() {
+    public ArrayList<Utente> getPartecipanti() {
         return partecipanti;
     }
 
-    public void setPartecipanti(List<Utente> partecipanti) {
+    public void setPartecipanti(ArrayList<Utente> partecipanti) {
         this.partecipanti = partecipanti;
     }
 

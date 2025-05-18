@@ -5,13 +5,9 @@ import java.util.*;
 public class CheckList {
     //gestisco relazioen con todo
     private ToDo todo;
-    public CheckList(ToDo t){
-        todo = t;
-        t.checklist = this;
-    }
 
     //gestisco aggregazione con attivita
-    private List<Attivita> attivita;
+    private ArrayList<Attivita> attivita;
     public CheckList(ArrayList<Attivita> attivita, ToDo t){
         this.todo = t;
         this.attivita=new ArrayList<>();
@@ -30,7 +26,7 @@ public class CheckList {
         return attivita;
     }
 
-    public void setAttivita(List<Attivita> attivita) {
+    public void setAttivita(ArrayList<Attivita> attivita) {
         this.attivita = attivita;
     }
 

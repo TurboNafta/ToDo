@@ -11,14 +11,14 @@ public class Utente {
 
 
     //serve a gestire la relazione 3..* con Bacheca
-    private List<Bacheca> bacheca;
+    private ArrayList<Bacheca> bacheca;
 
 
     //in questo modo gestisco la relazione * con Condivisione
-    private List<Condivisione> condivisione;
+    private ArrayList<Condivisione> condivisione;
 
     //costruttore
-    public Utente(String login, String password, List<Condivisione> condivisione, List<Bacheca> bacheca, List<ToDo> ToDo, List<ToDo> toDo){
+    public Utente(String login, String password, ArrayList<Condivisione> condivisione, ArrayList<Bacheca> bacheca){
         this.login = login;
         this.password = password;
         this.condivisione = new ArrayList<>();
@@ -83,7 +83,7 @@ public class Utente {
         return condivisione;
     }
 
-    public void setCondivisione(List<Condivisione> condivisione) {
+    public void setCondivisione(ArrayList<Condivisione> condivisione) {
         this.condivisione = condivisione;
     }
 
@@ -91,12 +91,7 @@ public class Utente {
         return bacheca;
     }
 
-    public void setBacheca(List<Bacheca> bacheca) {
+    public void setBacheca(ArrayList<Bacheca> bacheca) {
         this.bacheca = bacheca;
-    }
-
-
-    public String getLogin() {
-        return login;
     }
 }
