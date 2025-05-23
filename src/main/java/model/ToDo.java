@@ -3,13 +3,17 @@ package model;
 import java.awt.font.ImageGraphicAttribute;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class ToDo {
     private String titolo;
     private String descrizione;
-    private Date datascadenza;
     private String url;
-    private ImageGraphicAttribute image;
+
+    //GESTISCO DATA E IMMAGINE COME STRINGHE, NON SO COME FARE AL MOMENTO
+    private GregorianCalendar datascadenza;
+    private String image;
+
     private String posizione;
     private String coloresfondo;
 
@@ -25,26 +29,31 @@ public class ToDo {
     //gestisco la checklist
     private CheckList checklist;
 
-    //gestisco la composizione con bacheca
+    /*gestisco la composizione con bacheca
     private Bacheca bacheca;
     public ToDo(Bacheca b){
         bacheca = b;
-    }
+    }*/
 
     //costruttore
-    public ToDo(String titolo, String descrizione, Date date, String url, ImageGraphicAttribute img, String posizione, String coloresfondo, StatoToDo stato, CheckList checklist){
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo){
         this.titolo = titolo;
         this.descrizione = descrizione;
-        this.datascadenza = date;
         this.url = url;
-        this.image = img;
+
+        //this.datascadenza = date;
+        //this.image = img;
+
         this.posizione = posizione;
         this.coloresfondo = coloresfondo;
         this.stato = stato;
 
+        /*
         this.condivisione = new ArrayList<Condivisione>();
         this.checklist = checklist;
+        */
     }
+
 
     public String getTitolo() {
         return titolo;
@@ -62,28 +71,12 @@ public class ToDo {
         this.descrizione = descrizione;
     }
 
-    public Date getDatascadenza() {
-        return datascadenza;
-    }
-
-    public void setDatascadenza(Date datascadenza) {
-        this.datascadenza = datascadenza;
-    }
-
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public ImageGraphicAttribute getImage() {
-        return image;
-    }
-
-    public void setImage(ImageGraphicAttribute image) {
-        this.image = image;
     }
 
     public String getPosizione() {
@@ -118,13 +111,13 @@ public class ToDo {
         this.checklist = checklist;
     }
 
-    public Bacheca getBacheca() {
+    /*public Bacheca getBacheca() {
         return bacheca;
     }
 
     public void setBacheca(Bacheca bacheca) {
         this.bacheca = bacheca;
-    }
+    }*/
 
     public StatoToDo getStato() {
         return stato;
@@ -139,6 +132,22 @@ public class ToDo {
             todo.setColoresfondo(nuovoColore);
         }
 
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public GregorianCalendar getDatascadenza() {
+        return datascadenza;
+    }
+
+    public void setDatascadenza(GregorianCalendar datascadenza) {
+        this.datascadenza = datascadenza;
     }
     /*public void AggiungiCondivisione(){
 

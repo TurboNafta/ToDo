@@ -1,9 +1,15 @@
 package gui;
 
 import controller.Controller;
+import model.ToDo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class AddToBacheca {
     private JPanel panel1;
@@ -11,7 +17,7 @@ public class AddToBacheca {
     private JRadioButton buttonTL;
     private JRadioButton buttonLavoro;
     private JPanel radioBoxPanel;
-    private JPasswordField textFieldTitolo;
+    private JTextField textFieldTitolo;
     private JTextField textFieldDescrizione;
     private JTextField textFieldData;
     private JTextField textFieldUrl;
@@ -38,5 +44,38 @@ public class AddToBacheca {
 
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(buttonUni);
+        radioButtonGroup.add(buttonTL);
+        radioButtonGroup.add(buttonLavoro);
+
+        addFrame = new JFrame("PaginaInserimento");
+        addFrame.setContentPane(panel1);
+        addFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addFrame.pack();
+        addFrame.setVisible(true);
+
+        buttonInserisci.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(buttonUni.isSelected()) {
+                    try{
+                        String data = textFieldData.getText();
+
+                        String[] dataSplit = data.split("/");
+                        int anno = Integer.parseInt(dataSplit[2]);
+                        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
+                        int mese = Integer.parseInt(dataSplit[1])-1;
+                        int gg = Integer.parseInt(dataSplit[0]);
+
+                        GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);
+
+                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), dataScadenza, textFieldUrl.getText(), );
+                        JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
+
+                    }catch(IllegalArgumentException ex){
+
+                    }
+                }
+            }
+        });
     }
 }
