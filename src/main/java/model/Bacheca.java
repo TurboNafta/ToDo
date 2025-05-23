@@ -5,7 +5,7 @@ import java.util.*;
 public class Bacheca {
     private String descrizione;
     //gestisco enumerazione
-    private TitoloBacheca titolo = TitoloBacheca.UNIVERSITA;
+    private TitoloBacheca titolo;
     //gestisco todo
     private ArrayList <ToDo> todo;
     //gestisco la relazione con utente (1)
