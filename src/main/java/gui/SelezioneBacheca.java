@@ -30,6 +30,18 @@ public class SelezioneBacheca {
         this.comboBacheca.addItem("Tempo Libero");
         this.comboBacheca.addItem("Università");
 
-
+        frameBacheca = new JFrame("Bacheca");
+        frameBacheca.setContentPane(cercaBachecaPanel);
+        frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameBacheca.pack();
+        frameBacheca.setVisible(true);
+        buttonAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddToBacheca terzaGui = new AddToBacheca(controller, frameBacheca);
+                terzaGui.addFrame.setVisible(true);
+                frameBacheca.setVisible(false);
+            }
+        });
     }
 }

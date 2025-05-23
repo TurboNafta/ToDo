@@ -28,7 +28,6 @@ public class Accesso {
 
         loginButton.addActionListener(new ActionListener() {
             @Override
-
             public void actionPerformed(ActionEvent e) {
                 SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
                 secondGui.frameBacheca.setVisible(true);
