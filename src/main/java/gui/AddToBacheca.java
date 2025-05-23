@@ -57,17 +57,16 @@ public class AddToBacheca {
             public void actionPerformed(ActionEvent e) {
                 if(buttonUni.isSelected()) {
                     try{
+                        /*
                         String data = textFieldData.getText();
-
                         String[] dataSplit = data.split("/");
                         int anno = Integer.parseInt(dataSplit[2]);
                         //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
                         int mese = Integer.parseInt(dataSplit[1])-1;
                         int gg = Integer.parseInt(dataSplit[0]);
+                        GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);*/
 
-                        GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);
-
-                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), dataScadenza, textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()));
+                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()));
                         JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
 
                     }catch(IllegalArgumentException ex){

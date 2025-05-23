@@ -34,7 +34,7 @@ public class ToDo {
     }*/
 
     //costruttore
-    public ToDo(String titolo, String descrizione, String url, GregorianCalendar date, String img, String posizione, String coloresfondo){
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.url = url;

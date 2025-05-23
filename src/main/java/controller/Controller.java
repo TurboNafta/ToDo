@@ -1,28 +1,28 @@
 package controller;
 
+import interfaces.ListBacheca;
 import model.Bacheca;
+
+import java.awt.List;
 import java.util.*;
 import model.*;
 
 
 public class Controller {
-    private ArrayList<Bacheca> bachecaList;
-    public Controller() {this.bachecaList= new ArrayList<Bacheca>();}
+    private ArrayList<ListBacheca> bachecaList;
+    public Controller() {this.bachecaList= new ArrayList<ListBacheca>();}
 
-    public void addBacheca(Bacheca b){
-        this.bachecaList.add(b);}
+    public void addBacheca(ListBacheca lb){
+        this.bachecaList.add(lb);
+    }
 
-    public ArrayList<Bacheca> getBacheca(int i) {
+    public ListBacheca getBacheca(int i) {
         return this.bachecaList.get(i);
     }
-    public ArrayList<Bacheca> removeBacheca(int i) {
+    public ListBacheca removeBacheca(int i) {
         return this.bachecaList.remove(i);
     }
-    public ArrayList<Bacheca> getFirstBacheca() {
+    public int getFirstBacheca() {
         return bachecaList.size();
     }
-    public ArrayList<Bacheca> getBachece(String type) {
-
-    }
-
 }
