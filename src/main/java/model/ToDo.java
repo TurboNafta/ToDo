@@ -1,8 +1,6 @@
 package model;
 
-import java.awt.font.ImageGraphicAttribute;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class ToDo {
@@ -36,13 +34,19 @@ public class ToDo {
     }*/
 
     //costruttore
-    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo){
+    public ToDo(String titolo, String descrizione, String url, GregorianCalendar date, String img, String posizione, String coloresfondo){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.url = url;
 
-        //this.datascadenza = date;
-        //this.image = img;
+        String[] dataSplit = date.split("/");
+        int anno = Integer.parseInt(dataSplit[2]);
+        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
+        int mese = Integer.parseInt(dataSplit[1])-1;
+        int gg = Integer.parseInt(dataSplit[0]);
+        GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);
+        this.datascadenza = dataScadenza;
+        this.image = img;
 
         this.posizione = posizione;
         this.coloresfondo = coloresfondo;

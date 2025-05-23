@@ -4,11 +4,8 @@ import controller.Controller;
 import model.ToDo;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class AddToBacheca {
@@ -28,6 +25,8 @@ public class AddToBacheca {
     private JLabel urlLabel;
     private JLabel ColoreLabel;
     private JButton buttonInserisci;
+    private JTextField textFieldImg;
+    private JTextField textFieldPosizione;
 
     public static JFrame addFrame, frameChia;
     private Controller controller;
@@ -68,11 +67,11 @@ public class AddToBacheca {
 
                         GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);
 
-                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), dataScadenza, textFieldUrl.getText(), );
+                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), dataScadenza, textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()));
                         JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
 
                     }catch(IllegalArgumentException ex){
-
+                        JOptionPane.showMessageDialog(addFrame, "Corso non aggiunto :-(, durata negativa", "Errore nella creazione del corso", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
