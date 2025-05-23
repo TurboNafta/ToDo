@@ -28,42 +28,37 @@ public class Utente {
 
 
     //funzioni future
-    public void CreaBacheca(Bacheca bacheca) {
+    public void CreaBacheca(Bacheca b) {
+        if (b != null && !this.bacheca.contains(b)) {// controllo che b non sia null, e che la lista delle bacheche non contenga già b
+            bacheca.add(b);//aggiungo b
+        }
     }
 
-    public void ModificaBacheca(Bacheca bacheca) {
+    public void ModificaBacheca(Bacheca bmod) {
+        for(int i=0; i<bacheca.size(); i++){//ciclo sulle bacheche
+            Bacheca b= bacheca.get(i);//creo una bacheca temporanea dove metto l'oggetto nella posizione i della lista
+            if (b.getTitolo().equals(bmod.getTitolo())) {// se trovo una corrispondenza
+                bacheca.set(i, bmod);//sostituisce con la nuova versione
+                return;
+            }
+
+        }
     }
 
-    public void EliminaBacheca(Bacheca bacheca) {
-
+    public void EliminaBacheca(Bacheca b) {
+        bacheca.remove(b);
     }
 
     public void LeggereUtenti(ToDo todo){
+      //
 
     }
 
-    public void ModificaSfondo(ToDo todo){
 
-    }
 
-    public void RicercaToDo(ToDo todo){
 
-    }
-    public void CreaToDo(ToDo todo){
 
-    }
-    public void ModificaToDo(ToDo todo){
 
-    }
-    public void SpostaToDo(ToDo todo){
-
-    }
-    public void OrdinaTodo(ToDo todo){
-
-    }
-    public void ToDoInScadenza(ToDo todo){
-
-    }
 
     public String getPassword() {
         return password;

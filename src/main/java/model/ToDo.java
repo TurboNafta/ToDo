@@ -101,4 +101,49 @@ public class ToDo {
     public void setColoresfondo(String coloresfondo) {
         this.coloresfondo = coloresfondo;
     }
+
+    public ArrayList<Condivisione> getCondivisione() {
+        return condivisione;
+    }
+
+    public void setCondivisione(ArrayList<Condivisione> condivisione) {
+        this.condivisione = condivisione;
+    }
+
+    public CheckList getChecklist() {
+        return checklist;
+    }
+
+    public void setChecklist(CheckList checklist) {
+        this.checklist = checklist;
+    }
+
+    public Bacheca getBacheca() {
+        return bacheca;
+    }
+
+    public void setBacheca(Bacheca bacheca) {
+        this.bacheca = bacheca;
+    }
+
+    public StatoToDo getStato() {
+        return stato;
+    }
+
+    public void setStato(StatoToDo stato) {
+        this.stato = stato;
+    }
+
+    public void ModificaSfondo(ToDo todo, String nuovoColore){
+        if(todo!=null && nuovoColore!= null){
+            todo.setColoresfondo(nuovoColore);
+        }
+
+    }
+    /*public void AggiungiCondivisione(){
+
+    }
+    public void EliminaCondivisione(){
+
+    }*/
 }

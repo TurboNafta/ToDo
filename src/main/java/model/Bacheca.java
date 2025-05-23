@@ -24,6 +24,7 @@ public class Bacheca {
         this.todo= new ArrayList<ToDo>();
     }
 
+
     public String getDescrizione() {
         return descrizione;
     }
@@ -39,4 +40,23 @@ public class Bacheca {
     public void setTitolo(TitoloBacheca titolo) {
         this.titolo = titolo;
     }
+    public void CreaToDo(ToDo todo){
+
+    }
+    public void ModificaToDo(ToDo todo){
+
+    }
+    public void SpostaToDo(ToDo todo){
+
+    }
+    public void OrdinaTodo(ToDo todo){
+
+    }
+    public void ToDoInScadenza(ToDo todo){
+
+    }
+    public void RicercaToDo(ToDo todo){
+
+    }
+
 }
