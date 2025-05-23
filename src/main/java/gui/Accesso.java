@@ -26,6 +26,23 @@ public class Accesso {
     public Accesso() {
         controller = new Controller();
 
+        loginButton.addActionListener(e -> {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+
+            if(!username.equals(username.toUpperCase()) || !password.equals(password.toLowerCase())){
+                JOptionPane.showMessageDialog(mainPanel, "Formato errato: username in MAIUSCOLO e password in minuscolo.", "Errore formato", JOptionPane.WARNING_MESSAGE);
+                return; //Blocca tutto
+            }
+
+            //controllo: username MAIUSCOLO, password minuscola
+            if(username.equals(username.toUpperCase()) && password.equals(password.toLowerCase())){
+                JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
+            }
+        });
+
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
