@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.GregorianCalendar;
 
-import static model.TitoloBacheca.UNIVERSITA;
+import static model.TitoloBacheca.*;
 
 public class AddToBacheca {
     private JPanel panel1;
@@ -54,6 +54,7 @@ public class AddToBacheca {
         buttonInserisci.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //Vede se ho selezionato Università e aggiungo quel todo alla bacheca
                 if(buttonUni.isSelected()) {
                     try{
                         /*
@@ -74,7 +75,39 @@ public class AddToBacheca {
                         JOptionPane.showMessageDialog(addFrame, "Corso non aggiunto :-(, durata negativa", "Errore nella creazione del corso", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+
+                //Controllo se invece ho selezionato LAVORO
+                else if(buttonLavoro.isSelected()) {
+                    try{
+                        TitoloBacheca tipo = LAVORO;
+
+                        controller.addABacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
+                        JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
+
+                    }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(addFrame, "Corso non aggiunto :-(, durata negativa", "Errore nella creazione del corso", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                //Controllo se invece ho selezionato TEMPO LIBERO
+                else if(buttonTL.isSelected()) {
+                    try{
+                        TitoloBacheca tipo = TEMPOLIBERO;
+
+                        controller.addABacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
+                        JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
+
+                    }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(addFrame, "Corso non aggiunto :-(, durata negativa", "Errore nella creazione del corso", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                else {
+                    JOptionPane.showMessageDialog(addFrame, "Scegli se deve essere Ski o Snowboard", "Errore nella creazione del corso", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
     }
 }

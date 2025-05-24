@@ -13,6 +13,7 @@ public class Controller{
         this.bachecaList = new ArrayList<>();
     }
 
+    //Aggiunge un Todo alla bacheca, vede il tipo della bacheca e lo cerca nell'arraylist
     public void addABacheca(ToDo t, TitoloBacheca tipo){
         for(Bacheca b : bachecaList){
             if(b.getTitolo().equals(tipo)){
@@ -21,4 +22,17 @@ public class Controller{
             }
         }
     }
+
+    //Stampo i todo di quella bacheca
+    public ArrayList<Bacheca> getBachecaList(String tipo){
+        ArrayList<Bacheca> toReturn = new ArrayList<>();
+        for(Bacheca b : bachecaList){
+            if(b.getTitolo().equals(tipo)){
+                toReturn.add(b);
+            }
+        }
+        return toReturn;
+    }
+
+
 }

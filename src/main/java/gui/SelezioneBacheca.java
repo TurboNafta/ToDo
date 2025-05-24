@@ -27,6 +27,7 @@ public class SelezioneBacheca {
 
         frameChiamante = callFrame;
 
+        // Combo con i tipi di bacheca
         this.comboBacheca.addItem("");
         this.comboBacheca.addItem("Lavoro");
         this.comboBacheca.addItem("Tempo Libero");
@@ -38,10 +39,6 @@ public class SelezioneBacheca {
         frameBacheca.pack();
         frameBacheca.setVisible(true);
 
-        // Combo con i tipi di bacheca
-        comboBacheca.addItem("Università");
-        comboBacheca.addItem("Lavoro");
-        comboBacheca.addItem("Tempo Libero");
 
         // Modello tabella
         tableModel = new DefaultTableModel(new Object[]{"Titolo", "Descrizione", "Data Scadenza"}, 0);
