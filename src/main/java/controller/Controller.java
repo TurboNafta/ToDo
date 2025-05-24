@@ -79,5 +79,34 @@ public class Controller {
 
     public boolean verificaAccesso(String username, String)
 
-}
+    // ----- GESTIONE UTENTI -----
+
+    public boolean registraUtente(String username, String password) {
+        for (Utente u : utenti) {
+            if (u.getUsername().equals(username)) {
+                return false; // Utente già esistente
+            }
+        }
+        utenti.add(new Utente(username, password));
+        return true;
+    }
+
+    public boolean verificaAccesso(String username, String password) {
+        for (Utente u : utenti) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean utenteEsiste(String username) {
+        for (Utente u : utenti) {
+            if (u.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    }
 
