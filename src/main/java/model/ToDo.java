@@ -22,6 +22,7 @@ public class ToDo {
 
     //gestisco la relazione * con condivisione
     private ArrayList <Condivisione> condivisione;
+    private Bacheca bacheca;
 
 
     //gestisco la checklist
@@ -115,13 +116,14 @@ public class ToDo {
         this.checklist = checklist;
     }
 
-    /*public Bacheca getBacheca() {
+
+    public Bacheca getBacheca() {
         return bacheca;
     }
 
     public void setBacheca(Bacheca bacheca) {
         this.bacheca = bacheca;
-    }*/
+    }
 
     public StatoToDo getStato() {
         return stato;

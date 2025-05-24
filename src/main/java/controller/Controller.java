@@ -59,11 +59,6 @@ public class Controller {
         toDoManager.updateToDo(todo, bacheca);
     }
 
-
-
-    public boolean verificaAccesso(String username, String){
-
-    }
 }
 
 
