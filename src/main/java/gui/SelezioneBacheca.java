@@ -56,7 +56,22 @@ public class SelezioneBacheca {
         buttonCerca.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                String filtro = (String) comboBox1.getSelectedItem();
+                if (filtro == null || filtro.isEmpty()) {
+                    // Nessun filtro, mostra tutte le bacheche
+                    listaBacheche = controller.getBachecaList();
+                } else {
+                    // Filtra in base al titolo della bacheca
+                    listaBacheche = new ArrayList<>();
+                    for (Bacheca b : controller.getBachecaList()) {
+                        if (b.getTitolo().toString().equalsIgnoreCase(filtro)) {
+                            listaBacheche.add(b);
+                        }
+                    }
+                }
+                ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
+                modello.settaDatiDaMostrare(listaBacheche);
+                modello.fireTableDataChanged();
             }
         });
 

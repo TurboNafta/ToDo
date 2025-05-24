@@ -9,7 +9,7 @@ public class Bacheca {
     //gestisco todo
     private ArrayList <ToDo> todo;
     //gestisco la relazione con utente (1)
-    private ArrayList<Utente> utente;
+    private Utente utente;
 
 
    /* public Bacheca(Utente u) {
@@ -20,7 +20,7 @@ public class Bacheca {
     public Bacheca(TitoloBacheca titolo, String descrizione){
         this.titolo = titolo;
         this.descrizione = descrizione;
-        this.utente = new ArrayList<Utente>();
+        this.utente = null;
         this.todo= new ArrayList<ToDo>();
     }
 
@@ -74,7 +74,7 @@ public class Bacheca {
         this.todo = todo;
     }
 
-    public ArrayList<Utente> getUtente() {
+    public Utente getUtente() {
         return utente;
     }
 

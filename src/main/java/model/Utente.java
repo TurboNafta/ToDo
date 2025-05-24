@@ -1,6 +1,5 @@
 package model;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -12,20 +11,18 @@ public class Utente {
 
 
     //serve a gestire la relazione 3..* con Bacheca
-    private ArrayList<Bacheca> bacheca;
-
+    private List<Bacheca> bacheca;
 
     //in questo modo gestisco la relazione * con Condivisione
-    private ArrayList<Condivisione> condivisione;
+    private List<Condivisione> condivisione;
 
     //costruttore
     public Utente(String username, String password){
         this.username = username;
         this.password = password;
-        //this.condivisione = new ArrayList<>();
-        //this.bacheca = new ArrayList<>();
+        this.condivisione = new ArrayList<>();
+        this.bacheca = new ArrayList<>();
     }
-
 
     //funzioni future
     public void CreaBacheca(Bacheca b) {
@@ -50,8 +47,7 @@ public class Utente {
     }
 
     public void LeggereUtenti(ToDo todo){
-      //
-
+      //da implementare
     }
 
     public String getPassword() {
@@ -62,22 +58,21 @@ public class Utente {
         this.password = password;
     }
 
-    public ArrayList<Condivisione> getCondivisione() {
+    public List<Condivisione> getCondivisione() {
         return condivisione;
     }
 
-    public void setCondivisione(ArrayList<Condivisione> condivisione) {
+    public void setCondivisione(List<Condivisione> condivisione) {
         this.condivisione = condivisione;
     }
 
-    public ArrayList<Bacheca> getBacheca() {
+    public List<Bacheca> getBacheca() {
         return bacheca;
     }
 
-    public void setBacheca(ArrayList<Bacheca> bacheca) {
+    public void setBacheca(List<Bacheca> bacheca) {
         this.bacheca = bacheca;
     }
-
 
     public String getUsername() {
         return username;
