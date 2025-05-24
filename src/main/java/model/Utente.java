@@ -7,7 +7,7 @@ import java.util.*;
  * The type Utente.
  */
 public class Utente {
-    private final String login;
+    private final String username;
     private String password;
 
 
@@ -19,8 +19,8 @@ public class Utente {
     private ArrayList<Condivisione> condivisione;
 
     //costruttore
-    public Utente(String login, String password){
-        this.login = login;
+    public Utente(String username, String password){
+        this.username = username;
         this.password = password;
         //this.condivisione = new ArrayList<>();
         //this.bacheca = new ArrayList<>();
@@ -79,7 +79,7 @@ public class Utente {
     }
 
 
-    public String getLogin() {
-        return login;
+    public String getUsername() {
+        return username;
     }
 }

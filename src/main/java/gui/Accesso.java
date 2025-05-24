@@ -44,18 +44,21 @@ public class Accesso{
             }
         });
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
-                secondGui.frameBacheca.setVisible(true);
-                frame.setVisible(false);
-            }
-        });
+        loginButton.addActionListener(e -> {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
 
-        registratiButton.addActionListener(e ->{
-                Registrazione registrazioneGUI = new Registrazione();
-                registrazioneGUI.frame.setVisible(true);
+            if(!username.equals(username.toUpperCase()) || !password.equals(password.toLowerCase())){
+                JOptionPane.showMessageDialog(mainPanel, "Formato errato: username in MAIUSCOLO e password in minuscolo.", "Errore formato", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            // se va tutto bene
+
+            JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
+
+            SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
+            secondGui.frameBacheca.setVisible(true);
+            frame.setVisible(false);
         });
     }
 }

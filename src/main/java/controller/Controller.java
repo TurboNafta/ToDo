@@ -1,31 +1,3 @@
-/*package controller;
-
-import model.Bacheca;
-import model.TitoloBacheca;
-import model.ToDo;
-
-import java.util.ArrayList;
-
-public class Controller {
-    private ArrayList<Bacheca> bachecaList;
-
-    public Controller() {
-        this.bachecaList = new ArrayList<>();
-    }
-
-    public void addABacheca(ToDo t, TitoloBacheca tipo) {
-        for (Bacheca b : bachecaList) {
-            if (b.getTitolo().equals(tipo)) {
-                b.aggiungiToDo(t);
-                return;
-            }
-        }
-    }
-
-    public ArrayList<Bacheca> getBachecaList() {
-        return bachecaList;
-    }
-}*/
 package controller;
 
 import model.Bacheca;
@@ -87,3 +59,25 @@ public class Controller {
         toDoManager.updateToDo(todo, bacheca);
     }
 }
+
+    public ArrayList<Bacheca> removeBacheca(int index) {
+        if(index >= 0 && index < bachecaList.size()) {
+            bachecaList.remove(index);
+        }
+    }
+
+    public void addToDoToBacheca(ToDo t, TitoloBacheca tipo){
+        for(Bacheca b : bachecaList){
+            if(b.getTitolo().equals(tipo)){
+                b.aggiungiToDo(t);
+                return;
+            }
+        }
+        utenti.add(new Utente(username, password));
+        return true;
+    }
+
+    public boolean verificaAccesso(String username, String)
+
+}
+
