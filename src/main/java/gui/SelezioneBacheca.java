@@ -72,7 +72,8 @@ public class SelezioneBacheca {
                 if (col == 2) { // Colonna "APRI"
                     ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
                     Bacheca bacheca = modello.getBachecaAt(row);
-                    new VistaBacheca(bacheca, controller).setVisible(true);
+                    new VistaBacheca(bacheca, controller,frameChiamante);
+                    frameBacheca.setVisible(false);
                 }
             }
         });
