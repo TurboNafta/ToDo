@@ -24,6 +24,13 @@ public class Bacheca {
         this.todo= new ArrayList<ToDo>();
     }
 
+    public void aggiungiToDo(ToDo t){
+        todo.add(t);
+    }
+
+    public ArrayList<ToDo> getListaToDo(){
+        return todo;
+    }
 
     public String getDescrizione() {
         return descrizione;

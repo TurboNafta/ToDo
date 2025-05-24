@@ -22,8 +22,8 @@ public class Utente {
     public Utente(String login, String password){
         this.login = login;
         this.password = password;
-        this.condivisione = new ArrayList<>();
-        this.bacheca = new ArrayList<>();
+        //this.condivisione = new ArrayList<>();
+        //this.bacheca = new ArrayList<>();
     }
 
 
