@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class ModelloTabellaBacheca extends AbstractTableModel {
     private ArrayList<Bacheca> bachecheDaMostrare;
-    private String[] nomiColonne = {"Nome", "Descrizione"};
+    private String[] nomiColonne = {"Nome", "Descrizione", "APRI"};
 
     public void settaDatiDaMostrare(ArrayList<Bacheca> bachecheCheVoglio) {
         this.bachecheDaMostrare = bachecheCheVoglio;
@@ -36,5 +36,9 @@ public class ModelloTabellaBacheca extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return null;
+    }
+
+    public Bacheca getBachecaAt(int rowIndex) {
+        return bachecheDaMostrare.get(rowIndex);
     }
 }

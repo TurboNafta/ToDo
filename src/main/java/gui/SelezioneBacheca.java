@@ -1,10 +1,14 @@
 package gui;
 
 import controller.Controller;
+import model.Bacheca;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class SelezioneBacheca {
     private JPanel principale;
@@ -18,6 +22,7 @@ public class SelezioneBacheca {
 
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
+    private ArrayList<Bacheca> listaBacheche;
 
     public SelezioneBacheca(Controller controller, JFrame frame) {
         comboBox1.addItem("");
@@ -52,6 +57,25 @@ public class SelezioneBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+            }
+        });
+
+        // Popola la tabella con le bacheche
+        listaBacheche = controller.getBachecaList(); // Assicurati che Controller abbia questo getter
+        for (Bacheca bacheca : listaBacheche) {
+            tableModel.addRow(new Object[]{bacheca.getTitolo(), bacheca.getDescrizione(), "Apri"});
+        }
+
+        // MouseListener per la colonna "Apri"
+        tableResult.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tableResult.rowAtPoint(evt.getPoint());
+                int col = tableResult.columnAtPoint(evt.getPoint());
+                if (col == 2) { // Colonna "APRI"
+                    ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
+                    Bacheca bacheca = modello.getBachecaAt(row);
+                    new VistaBacheca(bacheca, controller).setVisible(true);
+                }
             }
         });
     }
