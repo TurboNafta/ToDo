@@ -9,6 +9,8 @@ public class Registrazione {
     private JTextField passwordField;
     private JButton registraButton;
     private JLabel regoleLabel;
+    private JLabel Username;
+    private JLabel Password;
 
     public Registrazione() {
         frame = new JFrame();
