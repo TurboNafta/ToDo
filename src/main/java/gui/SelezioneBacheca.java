@@ -3,6 +3,7 @@ package gui;
 import controller.Controller;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class SelezioneBacheca {
     private JButton buttonCerca;
     private JTable table1;
     private JButton buttonAdd;
+    private DefaultTableModel tableModel;
 
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
@@ -35,6 +37,18 @@ public class SelezioneBacheca {
         frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameBacheca.pack();
         frameBacheca.setVisible(true);
+
+        // Combo con i tipi di bacheca
+        comboBacheca.addItem("Università");
+        comboBacheca.addItem("Lavoro");
+        comboBacheca.addItem("Tempo Libero");
+
+        // Modello tabella
+        tableModel = new DefaultTableModel(new Object[]{"Titolo", "Descrizione", "Data Scadenza"}, 0);
+        table1.setModel(tableModel);
+
+
+
         buttonAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

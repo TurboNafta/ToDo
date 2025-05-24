@@ -30,12 +30,19 @@ public class AddToBacheca {
 
     public static JFrame addFrame, frameChia;
     private Controller controller;
+    private enum TitoloBacheca {
+        UNIVERSITA,
+        TEMPO_LIBERO,
+        LAVORO
+    }
+    private TitoloBacheca bachecaScelta;
 
-    public AddToBacheca(Controller controller, JFrame chiamante) {
+    public AddToBacheca(Controller controller, JFrame chiamante,TitoloBacheca bacheca) {
         this.controller = controller;
+        this.bachecaScelta = bacheca;
         addFrame = chiamante;
 
-        addFrame = new JFrame("Bacheca");
+        addFrame = new JFrame("Aggiungi ToDo a " + (bacheca != null ? bacheca.name() : ""));
         addFrame.setContentPane(panel1);
         addFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addFrame.pack();
@@ -56,6 +63,7 @@ public class AddToBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(buttonUni.isSelected()) {
+                    bachecaScelta = TitoloBacheca.UNIVERSITA;
                     try{
                         /*
                         String data = textFieldData.getText();

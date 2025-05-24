@@ -1,28 +1,68 @@
 package controller;
 
-import interfaces.ListBacheca;
-import model.Bacheca;
-
-import java.awt.List;
-import java.util.*;
+import interfaces.interfaces;
 import model.*;
-
+import java.util.*;
 
 public class Controller {
-    private ArrayList<ListBacheca> bachecaList;
-    public Controller() {this.bachecaList= new ArrayList<ListBacheca>();}
+    private ArrayList<Bacheca> bachecaList;
+    private ArrayList<Utente> utenti;
 
-    public void addBacheca(ListBacheca lb){
-        this.bachecaList.add(lb);
+    public Controller() {
+        this.bachecaList = new ArrayList<>();
+        this.utenti = new ArrayList<>();
+        // Esempio di utenti e bacheche
+        Utente user = new Utente("USER1", "password");
+        utenti.add(user);
+
+        bachecaList.add(new Bacheca(TitoloBacheca.UNIVERSITA, "Attività universitarie"));
+        bachecaList.add(new Bacheca(TitoloBacheca.LAVORO, "Compiti di lavoro"));
+        bachecaList.add(new Bacheca(TitoloBacheca.TEMPOLIBERO, "Hobby e relax"));
+        }
+        // --------- TODO ---------
+        public void addToDo(TitoloBacheca titolo, ToDo todo) {
+            Bacheca b = getBachecaByTitolo(titolo);
+            if (b != null && todo != null)
+                b.getTodo().add(todo);
+        }
+
+    public void removeToDo(TitoloBacheca titolo, ToDo todo) {
+        Bacheca b = getBachecaByTitolo(titolo);
+        if (b != null)
+            b.getTodo().remove(todo);
     }
 
-    public ListBacheca getBacheca(int i) {
-        return this.bachecaList.get(i);
+    public void updateToDo(TitoloBacheca titolo, ToDo oldToDo, ToDo newToDo) {
+        Bacheca b = getBachecaByTitolo(titolo);
+        if (b != null) {
+            int idx = b.getTodo().indexOf(oldToDo);
+            if (idx != -1)
+                b.getTodo().set(idx, newToDo);
+        }
     }
-    public ListBacheca removeBacheca(int i) {
-        return this.bachecaList.remove(i);
+
+    public ArrayList<ToDo> getToDoByBacheca(TitoloBacheca titolo) {
+        Bacheca b = getBachecaByTitolo(titolo);
+        return b != null ? b.getTodo() : new ArrayList<>();
     }
-    public int getFirstBacheca() {
-        return bachecaList.size();
+
+    public ArrayList<ToDo> searchToDoByTitle(TitoloBacheca titolo, String search) {
+        ArrayList<ToDo> result = new ArrayList<>();
+        for (ToDo td : getToDoByBacheca(titolo)) {
+            if (td.getTitolo().toLowerCase().contains(search.toLowerCase())) {
+                result.add(td);
+            }
+        }
+        return result;
+    }
+
+    private Bacheca getBachecaByTitolo(TitoloBacheca titolo) {
+        for (Bacheca b : bachecaList) {
+            if (b.getTitolo() == titolo) {
+                return b;
+            }
+        }
+        return null;
     }
 }
+

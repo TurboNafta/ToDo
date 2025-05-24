@@ -59,4 +59,19 @@ public class Bacheca {
 
     }
 
+    public ArrayList<ToDo> getTodo() {
+        return todo;
+    }
+
+    public void setTodo(ArrayList<ToDo> todo) {
+        this.todo = todo;
+    }
+
+    public ArrayList<Utente> getUtente() {
+        return utente;
+    }
+
+    public void setUtente(ArrayList<Utente> utente) {
+        this.utente = utente;
+    }
 }
