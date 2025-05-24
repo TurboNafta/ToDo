@@ -33,11 +33,7 @@ public class AddToBacheca {
 
     public static JFrame addFrame, frameChia;
     private Controller controller;
-    private enum TitoloBacheca {
-        UNIVERSITA,
-        TEMPO_LIBERO,
-        LAVORO
-    }
+
     private TitoloBacheca bachecaScelta;
 
     public AddToBacheca(Controller controller, JFrame chiamante,TitoloBacheca bacheca) {
@@ -66,7 +62,6 @@ public class AddToBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(buttonUni.isSelected()) {
-                    bachecaScelta = TitoloBacheca.UNIVERSITA;
                     try{
                         /*
                         String data = textFieldData.getText();
@@ -79,7 +74,7 @@ public class AddToBacheca {
 
                         TitoloBacheca tipo = UNIVERSITA;
 
-                        controller.addBacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
+                        controller.addToBacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
                         JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
 
                     }catch(IllegalArgumentException ex){
