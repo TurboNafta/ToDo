@@ -3,55 +3,55 @@ package gui;
 import controller.Controller;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class SelezioneBacheca {
-    private JPanel cercaBachecaPanel;
-    private JLabel bachecaLabel;
-    private JComboBox comboBacheca;
+    private JPanel principale;
+    private JComboBox comboBox1;
     private JButton buttonCerca;
-    private JTable table1;
-    private JButton buttonAdd;
-    private DefaultTableModel tableModel;
+    private JLabel titoloLabel;
+    private JPanel ricercaPanel;
+    private JButton creaNuovaBachecaButton;
+    private JPanel creaPanel;
+    private JTable tableResult;
 
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
 
-    // NON CI SERVE IL MAIN IN QUANTO NON È LA PRIMA PAGINA AD ESSERE MOSTRATA
+    public SelezioneBacheca(Controller controller, JFrame frame) {
+        comboBox1.addItem("");
+        comboBox1.addItem("Università");
+        comboBox1.addItem("Lavoro");
+        comboBox1.addItem("Tempo Libero");
 
-    public SelezioneBacheca(Controller controller, JFrame callFrame){
         this.controller = controller;
+        frameChiamante = frame;
 
-        frameChiamante = callFrame;
-
-        // Combo con i tipi di bacheca
-        this.comboBacheca.addItem("");
-        this.comboBacheca.addItem("Lavoro");
-        this.comboBacheca.addItem("Tempo Libero");
-        this.comboBacheca.addItem("Università");
-
-        frameBacheca = new JFrame("Bacheca");
-        frameBacheca.setContentPane(cercaBachecaPanel);
+        frameBacheca = new JFrame("Seleziona Bacheca");
+        frameBacheca.setContentPane(principale);
         frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameBacheca.pack();
         frameBacheca.setVisible(true);
 
+        ModelloTabellaBacheca modello = new ModelloTabellaBacheca();
+        tableResult.setModel(modello);
 
-        // Modello tabella
-        tableModel = new DefaultTableModel(new Object[]{"Titolo", "Descrizione", "Data Scadenza"}, 0);
-        table1.setModel(tableModel);
-
-
-
-        buttonAdd.addActionListener(new ActionListener() {
+        //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
+        creaNuovaBachecaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AddToBacheca terzaGui = new AddToBacheca(controller, frameBacheca);
-                terzaGui.addFrame.setVisible(true);
+                CreaBacheca terzaGui = new CreaBacheca(controller, frameChiamante);
+                terzaGui.frameCreaBacheca.setVisible(true);
                 frameBacheca.setVisible(false);
+            }
+        });
+
+        //PERMETTE DI TROVARE LE BACHECHE CREATE
+        buttonCerca.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
             }
         });
     }
