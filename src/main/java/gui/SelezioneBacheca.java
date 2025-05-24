@@ -61,10 +61,8 @@ public class SelezioneBacheca {
         });
 
         // Popola la tabella con le bacheche
-        listaBacheche = controller.getBachecaList(); // Assicurati che Controller abbia questo getter
-        for (Bacheca bacheca : listaBacheche) {
-            tableModel.addRow(new Object[]{bacheca.getTitolo(), bacheca.getDescrizione(), "Apri"});
-        }
+        listaBacheche = controller.getBachecaList();
+        modello.settaDatiDaMostrare(listaBacheche);
 
         // MouseListener per la colonna "Apri"
         tableResult.addMouseListener(new java.awt.event.MouseAdapter() {

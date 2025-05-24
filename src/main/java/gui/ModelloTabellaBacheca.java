@@ -29,13 +29,19 @@ public class ModelloTabellaBacheca extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     //Bisogna implementare questo metodo che ci restituisce i ToDo(?)
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return null;
+        Bacheca b = bachecheDaMostrare.get(rowIndex);
+        switch (columnIndex) {
+            case 0: return b.getTitolo();
+            case 1: return b.getDescrizione();
+            case 2: return "Apri";
+            default: return null;
+        }
     }
 
     public Bacheca getBachecaAt(int rowIndex) {
