@@ -41,7 +41,7 @@ public class VistaBacheca {
         creaToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CreaToDo quartaGui = new CreaToDo(controller, frameChiamante);
+                CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca);
                 quartaGui.frameCreaToDo.setVisible(true);
                 frameVista.setVisible(false);
             }

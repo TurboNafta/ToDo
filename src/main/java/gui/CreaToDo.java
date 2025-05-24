@@ -1,5 +1,7 @@
 package gui;
 import controller.Controller;
+import model.Bacheca;
+
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -24,23 +26,26 @@ public class CreaToDo {
 
     public static JFrame frameCreaToDo, frameChiamante;
     private Controller controller;
+    private Bacheca bacheca;
 
-    public CreaToDo(Controller controller, JFrame frame) {
+    public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca) {
         this.controller = controller;
+        this.bacheca=bacheca;
         frameChiamante = frame;
 
         frameCreaToDo = new JFrame("PaginaInserimento");
         frameCreaToDo.setContentPane(panel1);
         frameCreaToDo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameCreaToDo.pack();
-        /*addToDoButton.addActionListener(new ActionListener() {
+        addToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (ActionEvent e){
                 VistaBacheca quartaGui = new VistaBacheca(bacheca,controller, frameChiamante);
-                quartaGui.frameBacheca.setVisible(true);
+                quartaGui.frameVista.setVisible(true);
                 frameCreaToDo.setVisible(false);
             }
-        });*/
+        });
+
 
     }
 
