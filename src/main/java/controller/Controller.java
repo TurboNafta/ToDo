@@ -1,25 +1,30 @@
 package controller;
 
-import interfaces.ListBacheca;
 import model.Bacheca;
+import model.TitoloBacheca;
+import model.ToDo;
 
-import java.awt.List;
 import java.util.*;
-import model.*;
 
 
 public class Controller {
-    private ArrayList<ListBacheca> bachecaList;
-    public Controller() {this.bachecaList= new ArrayList<ListBacheca>();}
+    private ArrayList<Bacheca> bachecaList;
+    public Controller() {this.bachecaList= new ArrayList<Bacheca>();}
 
-    public void addBacheca(ListBacheca lb){
-        this.bachecaList.add(lb);
+    public void addBacheca(ToDo t, TitoloBacheca tipo){
+        for(Bacheca b : bachecaList){
+            if(b.getTitolo() == tipo){
+                b.aggiungiToDo(t);
+                return;
+            }
+        }
+        System.err.println("Bacheca non trovata");
     }
 
-    public ListBacheca getBacheca(int i) {
+    public Bacheca getBacheca(int i) {
         return this.bachecaList.get(i);
     }
-    public ListBacheca removeBacheca(int i) {
+    public Bacheca removeBacheca(int i) {
         return this.bachecaList.remove(i);
     }
     public int getFirstBacheca() {
