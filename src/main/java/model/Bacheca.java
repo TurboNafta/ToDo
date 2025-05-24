@@ -78,7 +78,7 @@ public class Bacheca {
         return utente;
     }
 
-    public void setUtente(ArrayList<Utente> utente) {
+    public void setUtente(Utente utente) {
         this.utente = utente;
     }
 }
