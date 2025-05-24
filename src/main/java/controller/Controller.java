@@ -58,26 +58,12 @@ public class Controller {
     public void updateToDo(ToDo todo, Bacheca bacheca) {
         toDoManager.updateToDo(todo, bacheca);
     }
+
+
+
+    public boolean verificaAccesso(String username, String){
+
+    }
 }
 
-    public ArrayList<Bacheca> removeBacheca(int index) {
-        if(index >= 0 && index < bachecaList.size()) {
-            bachecaList.remove(index);
-        }
-    }
-
-    public void addToDoToBacheca(ToDo t, TitoloBacheca tipo){
-        for(Bacheca b : bachecaList){
-            if(b.getTitolo().equals(tipo)){
-                b.aggiungiToDo(t);
-                return;
-            }
-        }
-        utenti.add(new Utente(username, password));
-        return true;
-    }
-
-    public boolean verificaAccesso(String username, String)
-
-}
 
