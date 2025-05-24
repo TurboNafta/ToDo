@@ -52,7 +52,7 @@ public class Controller {
         this.utenteManager = new UtenteManager();
         this.utenteLoggato = null;
     }
-    
+
 
     // --- GESTIONE BACHECHE ---
 
