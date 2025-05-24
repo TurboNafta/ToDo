@@ -1,12 +1,15 @@
 package gui;
 
 import controller.Controller;
+import model.TitoloBacheca;
 import model.ToDo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.GregorianCalendar;
+
+import static model.TitoloBacheca.UNIVERSITA;
 
 public class AddToBacheca {
     private JPanel panel1;
@@ -74,7 +77,9 @@ public class AddToBacheca {
                         int gg = Integer.parseInt(dataSplit[0]);
                         GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);*/
 
-                        controller.addList(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()));
+                        TitoloBacheca tipo = UNIVERSITA;
+
+                        controller.addBacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
                         JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
 
                     }catch(IllegalArgumentException ex){

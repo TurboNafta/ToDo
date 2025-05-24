@@ -6,11 +6,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Accesso {
+public class Accesso{
     private JPanel mainPanel;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private JButton registratiButton;
     public static JFrame frame;
 
     private Controller controller;
@@ -50,6 +51,11 @@ public class Accesso {
                 secondGui.frameBacheca.setVisible(true);
                 frame.setVisible(false);
             }
+        });
+
+        registratiButton.addActionListener(e ->{
+                Registrazione registrazioneGUI = new Registrazione();
+                registrazioneGUI.frame.setVisible(true);
         });
     }
 }
