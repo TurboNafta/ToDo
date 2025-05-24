@@ -13,7 +13,7 @@ public class Controller{
         this.bachecaList = new ArrayList<>();
     }
 
-    public void addToBacheca(ToDo t, TitoloBacheca tipo){
+    public void addABacheca(ToDo t, TitoloBacheca tipo){
         for(Bacheca b : bachecaList){
             if(b.getTitolo().equals(tipo)){
                 b.aggiungiToDo(t);

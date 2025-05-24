@@ -36,16 +36,9 @@ public class AddToBacheca {
 
     private TitoloBacheca bachecaScelta;
 
-    public AddToBacheca(Controller controller, JFrame chiamante,TitoloBacheca bacheca) {
+    public AddToBacheca(Controller controller, JFrame chiamante) {
         this.controller = controller;
-        this.bachecaScelta = bacheca;
         addFrame = chiamante;
-
-        addFrame = new JFrame("Aggiungi ToDo a " + (bacheca != null ? bacheca.name() : ""));
-        addFrame.setContentPane(panel1);
-        addFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        addFrame.pack();
-        addFrame.setVisible(true);
 
         ButtonGroup radioButtonGroup = new ButtonGroup();
         radioButtonGroup.add(buttonUni);
@@ -74,7 +67,7 @@ public class AddToBacheca {
 
                         TitoloBacheca tipo = UNIVERSITA;
 
-                        controller.addToBacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
+                        controller.addABacheca(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldUrl.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldColore.getText()), tipo);
                         JOptionPane.showMessageDialog(addFrame, "Aggiunto in Università");
 
                     }catch(IllegalArgumentException ex){
