@@ -18,11 +18,8 @@ public class BachecaManager implements InterfacciaBacheca {
 
     @Override
     public ArrayList<Bacheca> getBachecheByUtente(Utente utente) {
-        if (bacheche == null || utente == null) {
-            return new ArrayList<>();
-        }
         return bacheche.stream()
-                .filter(b -> utente.equals(b.getUtente()))
+                .filter(b -> b.getUtente().equals(utente))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

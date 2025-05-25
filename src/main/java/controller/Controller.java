@@ -13,40 +13,93 @@ import manager.UtenteManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Controller {
     private InterfacciaBacheca bachecaManager;
     private InterfacciaToDo toDoManager;
     private InterfacciaUtente utenteManager;
     private Utente utenteLoggato; // Utente attualmente autenticato
+    private ArrayList<Bacheca> bachecaList;
 
     public Controller() {
         this.bachecaManager = new BachecaManager();
         this.toDoManager = new ToDoManager();
         this.utenteManager = new UtenteManager();
         this.utenteLoggato = null;
+        this.bachecaList = new ArrayList<>();
     }
 
 
     // --- GESTIONE BACHECHE ---
 
-    public ArrayList<Bacheca> getBachecaList() {
+    public ArrayList<Bacheca> getBachecaList(String titolo) {
+        /*
         if (utenteLoggato != null) {
-            return bachecaManager.getBachecheByUtente(utenteLoggato);
+            return new ArrayList<>(bachecaManager.getBachecheByUtente(utenteLoggato));
+        }*/
+        ArrayList<Bacheca> toReturn = new ArrayList<>();
+        for(Bacheca b: this.bachecaList){
+            if(b.getTitolo().equals(titolo)){
+                toReturn.add(b);
+            }
         }
-        return List.of();
+        return toReturn;
     }
 
     public void addBacheca(Bacheca bacheca) {
         if (utenteLoggato != null) {
             bachecaManager.addBacheca(bacheca, utenteLoggato);
+            this.bachecaList.add(bacheca);
         }
     }
+
+
+    //PROVA GENERAZIONE BACHECHE
+    public void buildBacheche(){
+        int bachecaIndex = 0;
+        Random r = new Random();
+        while(bachecaIndex<3){
+            String name = bachecaNames[r.nextInt(bachecaNames.length)];
+            String descr = descrNames[r.nextInt(descrNames.length)];
+
+            if(name.equals("UNIVERSITA")){
+                TitoloBacheca tipo = TitoloBacheca.UNIVERSITA;
+                Bacheca b = new Bacheca(tipo, descr);
+                addBacheca(b);
+                bachecaIndex++;
+            } else if (name.equals("LAVORO")) {
+                TitoloBacheca tipo = TitoloBacheca.LAVORO;
+                Bacheca b = new Bacheca(tipo, descr);
+                addBacheca(b);
+                bachecaIndex++;
+            } else if (name.equals("TEMPOLIBERO")) {
+                TitoloBacheca tipo = TitoloBacheca.TEMPOLIBERO;
+                Bacheca b = new Bacheca(tipo, descr);
+                addBacheca(b);
+                bachecaIndex++;
+            }
+
+        }
+    }
+
+    private static final String[] bachecaNames = {
+            "UNIVERSITA",
+            "LAVORO",
+            "TEMPOLIBERO"
+    };
+
+    private static final String[] descrNames = {
+            "SBU1",
+            "SBU2",
+            "SBU3"
+    };
+
 
     // --- GESTIONE TODO ---
 
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
-        return toDoManager.getToDoByBacheca(bacheca);
+        return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
     }
 
     public void addToDo(ToDo todo, Bacheca bacheca) {
@@ -62,7 +115,8 @@ public class Controller {
     }
 
     public void addABacheca(ToDo todo, TitoloBacheca titolo){
-        List<Bacheca> bacheca = getBachecaList();
+        String titoloBacheca = titolo.toString();
+        List<Bacheca> bacheca = getBachecaList(titoloBacheca);
         for(Bacheca b: bacheca){
             if(b.getTitolo() == titolo){
                 addToDo(todo, b);

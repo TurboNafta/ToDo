@@ -22,7 +22,6 @@ public class SelezioneBacheca {
 
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
-    private ArrayList<Bacheca> listaBacheche;
 
     public SelezioneBacheca(Controller controller, JFrame frame) {
         comboBox1.addItem("");
@@ -42,6 +41,8 @@ public class SelezioneBacheca {
         ModelloTabellaBacheca modello = new ModelloTabellaBacheca();
         tableResult.setModel(modello);
 
+        controller.buildBacheche();
+
         //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
         creaNuovaBachecaButton.addActionListener(new ActionListener() {
             @Override
@@ -56,31 +57,14 @@ public class SelezioneBacheca {
         buttonCerca.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String filtro = (String) comboBox1.getSelectedItem();
-                if (filtro == null || filtro.isEmpty()) {
-                    // Nessun filtro, mostra tutte le bacheche
-                    listaBacheche = (ArrayList<Bacheca>) controller.getBachecaList();
-                } else {
-                    // Filtra in base al titolo della bacheca
-                    /*listaBacheche = new ArrayList<>();
-                    for (Bacheca b : controller.getBachecaList()) {
-                        if (b.getTitolo().toString().equalsIgnoreCase(filtro)) {
-                            listaBacheche.add(b);
-                        }
-                    }*/
+                String bachecaDaCercare = (String) comboBox1.getSelectedItem();
+                ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare);
 
-                    String bachecaDaCercare = (String) comboBox1.getSelectedItem();
-                    ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList();
-                }
-                ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
-                modello.settaDatiDaMostrare(listaBacheche);
+                modello.settaDatiDaMostrare(bachecaDaMostrare);
                 modello.fireTableDataChanged();
             }
         });
 
-        // Popola la tabella con le bacheche
-        listaBacheche = (ArrayList<Bacheca>) controller.getBachecaList();
-        modello.settaDatiDaMostrare(listaBacheche);
 
         // MouseListener per la colonna "Apri"
         tableResult.addMouseListener(new java.awt.event.MouseAdapter() {
