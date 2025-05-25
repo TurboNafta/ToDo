@@ -10,8 +10,8 @@ public class Registrazione {
     private JTextField passwordField;
     private JButton registraButton;
     private JLabel regoleLabel;
-    private JLabel usernameLabel;
-    private JLabel passwordLabel;
+    private JLabel Username;
+    private JLabel Password;
 
     private Controller controller;
 
