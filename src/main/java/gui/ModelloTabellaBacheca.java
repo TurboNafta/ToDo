@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class ModelloTabellaBacheca extends AbstractTableModel {
 
-    private ArrayList<Bacheca> bachecheDaMostrare;
+    private ArrayList<Bacheca> bachecheDaMostrare = new ArrayList<>();
     private String[] nomiColonne = {"Nome", "Descrizione", "APRI"};
 
     public void settaDatiDaMostrare(ArrayList<Bacheca> bachecheCheVoglio) {
-        this.bachecheDaMostrare = bachecheCheVoglio;
+        this.bachecheDaMostrare = new ArrayList<>(bachecheCheVoglio);
     }
 
     @Override

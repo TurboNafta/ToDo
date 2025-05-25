@@ -38,9 +38,16 @@ public class Controller {
         if (utenteLoggato != null) {
             return new ArrayList<>(bachecaManager.getBachecheByUtente(utenteLoggato));
         }*/
+
+        TitoloBacheca filtroEnum = stringToTitoloBacheca(titolo);
+        if(filtroEnum == null) {
+            // filtro non riconosciuto, torna lista vuota o tutte le bacheche
+            return new ArrayList<>();
+        }
+
         ArrayList<Bacheca> toReturn = new ArrayList<>();
         for(Bacheca b: this.bachecaList){
-            if(b.getTitolo().equals(titolo)){
+            if(b.getTitolo() == filtroEnum){
                 toReturn.add(b);
             }
         }
@@ -95,6 +102,20 @@ public class Controller {
             "PROVA3"
     };
 
+    private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
+        if(titoloStr == null) return null;
+        switch(titoloStr.toLowerCase()) {
+            case "università":
+            case "universita":
+                return TitoloBacheca.UNIVERSITA;
+            case "lavoro":
+                return TitoloBacheca.LAVORO;
+            case "tempo libero":
+                return TitoloBacheca.TEMPOLIBERO;
+            default:
+                return null;
+        }
+    }
 
     // --- GESTIONE TODO ---
 

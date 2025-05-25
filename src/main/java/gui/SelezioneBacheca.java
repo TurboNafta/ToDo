@@ -48,6 +48,7 @@ public class SelezioneBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CreaBacheca terzaGui = new CreaBacheca(controller, frameBacheca);
+
                 terzaGui.frameCreaBacheca.setVisible(true);
                 frameBacheca.setVisible(false);
             }
@@ -83,7 +84,12 @@ public class SelezioneBacheca {
 
     public void aggiornaTabella() {
         ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
-        modello.settaDatiDaMostrare(controller.getBachecaList());
+        String filtro = (String) comboBox1.getSelectedItem();
+        if(filtro == null){
+            filtro = ""; //consideriamo "" come "tutte"
+        }
+        ArrayList<Bacheca> bachecheFiltrate = controller.getBachecaList(filtro);
+        modello.settaDatiDaMostrare(bachecheFiltrate);
         modello.fireTableDataChanged();
     }
 }

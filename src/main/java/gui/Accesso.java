@@ -17,6 +17,8 @@ public class Accesso{
     private Controller controller;
 
     public static void main(String[] args) {
+        Controller controller = new Controller();
+
         frame = new JFrame("Accesso");
         frame.setContentPane(new Accesso().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
