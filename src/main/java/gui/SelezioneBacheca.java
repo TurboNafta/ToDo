@@ -62,12 +62,15 @@ public class SelezioneBacheca {
                     listaBacheche = (ArrayList<Bacheca>) controller.getBachecaList();
                 } else {
                     // Filtra in base al titolo della bacheca
-                    listaBacheche = new ArrayList<>();
+                    /*listaBacheche = new ArrayList<>();
                     for (Bacheca b : controller.getBachecaList()) {
                         if (b.getTitolo().toString().equalsIgnoreCase(filtro)) {
                             listaBacheche.add(b);
                         }
-                    }
+                    }*/
+
+                    String bachecaDaCercare = (String) comboBox1.getSelectedItem();
+                    ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList();
                 }
                 ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
                 modello.settaDatiDaMostrare(listaBacheche);

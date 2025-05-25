@@ -9,13 +9,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ToDoManager implements InterfacciaToDo {
-    private List<ToDo> todos = new ArrayList<>();
+    private ArrayList<ToDo> todos = new ArrayList<>();
 
     @Override
-    public List<ToDo> getToDoByBacheca(Bacheca bacheca) {
+    public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
+        if (todos == null || bacheca == null) {
+            return new ArrayList<>();
+        }
         return todos.stream()
-                .filter(t -> t.getBacheca().equals(bacheca))
-                .collect(Collectors.toList());
+                .filter(t -> bacheca.equals(t.getBacheca()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

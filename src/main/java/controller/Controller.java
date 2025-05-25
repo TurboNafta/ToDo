@@ -11,6 +11,7 @@ import manager.BachecaManager;
 import manager.ToDoManager;
 import manager.UtenteManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
@@ -29,7 +30,7 @@ public class Controller {
 
     // --- GESTIONE BACHECHE ---
 
-    public List<Bacheca> getBachecaList() {
+    public ArrayList<Bacheca> getBachecaList() {
         if (utenteLoggato != null) {
             return bachecaManager.getBachecheByUtente(utenteLoggato);
         }
@@ -44,7 +45,7 @@ public class Controller {
 
     // --- GESTIONE TODO ---
 
-    public List<ToDo> getToDoByBacheca(Bacheca bacheca) {
+    public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
         return toDoManager.getToDoByBacheca(bacheca);
     }
 

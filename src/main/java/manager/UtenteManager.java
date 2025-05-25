@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UtenteManager implements InterfacciaUtente {
-    private List<Utente> utenti;
+    private ArrayList<Utente> utenti;
 
     public UtenteManager() {
         this.utenti = new ArrayList<>();

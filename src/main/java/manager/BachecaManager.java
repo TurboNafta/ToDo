@@ -9,18 +9,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BachecaManager implements InterfacciaBacheca {
-    private List<Bacheca> bacheche = new ArrayList<>();
+    private ArrayList<Bacheca> bacheche = new ArrayList<>();
 
     @Override
-    public List<Bacheca> getAllBacheche() {
+    public ArrayList<Bacheca> getAllBacheche() {
         return new ArrayList<>(bacheche);
     }
 
     @Override
-    public List<Bacheca> getBachecheByUtente(Utente utente) {
+    public ArrayList<Bacheca> getBachecheByUtente(Utente utente) {
+        if (bacheche == null || utente == null) {
+            return new ArrayList<>();
+        }
         return bacheche.stream()
-                .filter(b -> b.getUtente().equals(utente))
-                .collect(Collectors.toList());
+                .filter(b -> utente.equals(b.getUtente()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
