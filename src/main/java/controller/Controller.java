@@ -50,8 +50,8 @@ public class Controller {
     public void addBacheca(Bacheca bacheca) {
         if (utenteLoggato != null) {
             bachecaManager.addBacheca(bacheca, utenteLoggato);
-            this.bachecaList.add(bacheca);
         }
+        this.bachecaList.add(bacheca);
     }
 
 
@@ -90,9 +90,9 @@ public class Controller {
     };
 
     private static final String[] descrNames = {
-            "SBU1",
-            "SBU2",
-            "SBU3"
+            "PROVA1",
+            "PROVA2",
+            "PROVA3"
     };
 
 
