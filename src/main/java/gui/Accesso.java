@@ -37,28 +37,21 @@ public class Accesso{
             }
 
             //controllo: username MAIUSCOLO, password minuscola
-            if(username.equals(username.toUpperCase()) && password.equals(password.toLowerCase())){
+            if(controller.verificaAccesso(username, password)){
                 JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
+
+                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
+                secondGui.frameBacheca.setVisible(true);
+                frame.setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
             }
         });
 
-        loginButton.addActionListener(e -> {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-
-            if(!username.equals(username.toUpperCase()) || !password.equals(password.toLowerCase())){
-                JOptionPane.showMessageDialog(mainPanel, "Formato errato: username in MAIUSCOLO e password in minuscolo.", "Errore formato", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            // se va tutto bene
-
-            JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
-
-            SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
-            secondGui.frameBacheca.setVisible(true);
-            frame.setVisible(false);
+        registratiButton.addActionListener(e -> {
+           Registrazione registrazioneGui= new Registrazione(controller, frame);
+           registrazioneGui.frame.setVisible(true);
+           frame.setVisible(false);
         });
     }
 }
