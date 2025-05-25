@@ -41,6 +41,9 @@ public class CreaBacheca {
                     try{
                         TitoloBacheca tipo = UNIVERSITA;
                         controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        frameChiamante.setVisible(true);
+                        frameCreaBacheca.setVisible(false);
+                        frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }
@@ -48,6 +51,9 @@ public class CreaBacheca {
                     try{
                         TitoloBacheca tipo = LAVORO;
                         controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        frameChiamante.setVisible(true);
+                        frameCreaBacheca.setVisible(false);
+                        frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }
@@ -55,6 +61,9 @@ public class CreaBacheca {
                     try{
                         TitoloBacheca tipo = TEMPOLIBERO;
                         controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        frameChiamante.setVisible(true);
+                        frameCreaBacheca.setVisible(false);
+                        frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }

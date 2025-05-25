@@ -46,7 +46,7 @@ public class SelezioneBacheca {
         creaNuovaBachecaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                CreaBacheca terzaGui = new CreaBacheca(controller, frameChiamante);
+                CreaBacheca terzaGui = new CreaBacheca(controller, frameBacheca);
                 terzaGui.frameCreaBacheca.setVisible(true);
                 frameBacheca.setVisible(false);
             }
