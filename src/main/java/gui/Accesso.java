@@ -22,6 +22,7 @@ public class Accesso{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+        frame.setSize(400, 300);
     }
 
     public Accesso() {

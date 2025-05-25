@@ -26,6 +26,7 @@ public class Registrazione {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
+        frame.setSize(400, 300);
 
         regoleLabel.setText("Username in MAIUSCOLO, Password in minuscolo");
 
