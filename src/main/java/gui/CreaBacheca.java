@@ -62,6 +62,7 @@ public class CreaBacheca {
                         TitoloBacheca tipo = TEMPOLIBERO;
                         controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
                         frameChiamante.setVisible(true);
+
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){

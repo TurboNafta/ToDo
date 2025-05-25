@@ -80,4 +80,10 @@ public class SelezioneBacheca {
             }
         });
     }
+
+    public void aggiornaTabella() {
+        ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
+        modello.settaDatiDaMostrare(controller.getBachecaList());
+        modello.fireTableDataChanged();
+    }
 }
