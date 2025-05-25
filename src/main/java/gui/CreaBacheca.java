@@ -1,10 +1,14 @@
 package gui;
 
 import controller.Controller;
+import model.Bacheca;
+import model.TitoloBacheca;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static model.TitoloBacheca.*;
 
 public class CreaBacheca {
     private JPanel panel1;
@@ -33,10 +37,34 @@ public class CreaBacheca {
         buttonCreazione.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (ActionEvent e){
-                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameChiamante);
-                secondGui.frameBacheca.setVisible(true);
-                frameCreaBacheca.setVisible(false);
+                if(universitàRadioButton.isSelected()){
+                    try{
+                        TitoloBacheca tipo = UNIVERSITA;
+                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                    }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else if (lavoroRadioButton.isSelected()) {
+                    try{
+                        TitoloBacheca tipo = LAVORO;
+                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                    }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else if (tempoLiberoRadioButton.isSelected()) {
+                    try{
+                        TitoloBacheca tipo = TEMPOLIBERO;
+                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                    }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                else {
+                    JOptionPane.showMessageDialog(frameCreaBacheca, "Scegli il titolo della bacheca", "Errore nella creazione del bacheca", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
     }
 }

@@ -1,6 +1,7 @@
 package gui;
 import controller.Controller;
 import model.Bacheca;
+import model.ToDo;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -16,13 +17,13 @@ public class CreaToDo {
     private JLabel URLLabel;
     private JLabel ColoreLabel;
     private JButton addToDoButton;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JTextField textField3;
-    private JTextField textField4;
-    private JTextField textField5;
-    private JTextField textField6;
-    private JTextField textField7;
+    private JTextField textFieldTitolo;
+    private JTextField textFieldDescrizione;
+    private JTextField textFieldData;
+    private JTextField textFieldImg;
+    private JTextField textFieldPosizione;
+    private JTextField textFieldUrl;
+    private JTextField textFieldColore;
 
     public static JFrame frameCreaToDo, frameChiamante;
     private Controller controller;
@@ -40,16 +41,8 @@ public class CreaToDo {
         addToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (ActionEvent e){
-                VistaBacheca quartaGui = new VistaBacheca(bacheca,controller, frameChiamante);
-                quartaGui.frameVista.setVisible(true);
-                frameCreaToDo.setVisible(false);
+                controller.addToDo(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldUrl.getText(), textFieldColore.getText()), bacheca);
             }
         });
-
-
     }
-
-
-
-
 }
