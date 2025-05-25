@@ -39,6 +39,7 @@ public class Registrazione {
             }
 
             JOptionPane.showMessageDialog(panel, " Registrazione completata!\n Username:" + username, "Successo", JOptionPane.INFORMATION_MESSAGE);
+            frame.dispose();
 
             //Apri la nuova finestra
             SelezioneBacheca bachecaGUI = new SelezioneBacheca(controller, frame);
