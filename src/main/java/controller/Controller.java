@@ -1,6 +1,7 @@
 package controller;
 
 import model.Bacheca;
+import model.TitoloBacheca;
 import model.ToDo;
 import model.Utente;
 import interfaces.InterfacciaBacheca;
@@ -57,6 +58,19 @@ public class Controller {
 
     public void updateToDo(ToDo todo, Bacheca bacheca) {
         toDoManager.updateToDo(todo, bacheca);
+    }
+
+    public void addABacheca(ToDo todo, TitoloBacheca titolo){
+        List<Bacheca> bacheca = getBachecaList();
+        for(Bacheca b: bacheca){
+            if(b.getTitolo() == titolo){
+                addToDo(todo, b);
+                return;
+            }
+        }
+        Bacheca nuova = new Bacheca(titolo, utenteLoggato.getUsername());
+        addBacheca(nuova);
+        addToDo(todo, nuova);
     }
 
     // ----- GESTIONE UTENTI -----

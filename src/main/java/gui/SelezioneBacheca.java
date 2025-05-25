@@ -59,7 +59,7 @@ public class SelezioneBacheca {
                 String filtro = (String) comboBox1.getSelectedItem();
                 if (filtro == null || filtro.isEmpty()) {
                     // Nessun filtro, mostra tutte le bacheche
-                    listaBacheche = controller.getBachecaList();
+                    listaBacheche = (ArrayList<Bacheca>) controller.getBachecaList();
                 } else {
                     // Filtra in base al titolo della bacheca
                     listaBacheche = new ArrayList<>();
@@ -76,7 +76,7 @@ public class SelezioneBacheca {
         });
 
         // Popola la tabella con le bacheche
-        listaBacheche = controller.getBachecaList();
+        listaBacheche = (ArrayList<Bacheca>) controller.getBachecaList();
         modello.settaDatiDaMostrare(listaBacheche);
 
         // MouseListener per la colonna "Apri"

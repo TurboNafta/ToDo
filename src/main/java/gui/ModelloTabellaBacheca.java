@@ -6,6 +6,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
 public class ModelloTabellaBacheca extends AbstractTableModel {
+
     private ArrayList<Bacheca> bachecheDaMostrare;
     private String[] nomiColonne = {"Nome", "Descrizione", "APRI"};
 
