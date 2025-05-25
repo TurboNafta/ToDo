@@ -32,7 +32,7 @@ public class Controller {
 
 
     // --- GESTIONE BACHECHE ---
-
+    //Secondo me c'è il problema qua, non trova le bacheche create
     public ArrayList<Bacheca> getBachecaList(String titolo) {
         /*
         if (utenteLoggato != null) {
