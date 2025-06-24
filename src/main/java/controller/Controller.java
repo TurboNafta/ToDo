@@ -1,9 +1,6 @@
 package controller;
 
-import model.Bacheca;
-import model.TitoloBacheca;
-import model.ToDo;
-import model.Utente;
+import model.*;
 import interfaces.InterfacciaBacheca;
 import interfaces.InterfacciaToDo;
 import interfaces.InterfacciaUtente;
@@ -20,88 +17,46 @@ public class Controller {
     private InterfacciaToDo toDoManager;
     private InterfacciaUtente utenteManager;
     private Utente utenteLoggato; // Utente attualmente autenticato
-    private ArrayList<Bacheca> bachecaList;
+    private ArrayList<Utente> listaUtenti;
+
 
     public Controller() {
         this.bachecaManager = new BachecaManager();
         this.toDoManager = new ToDoManager();
         this.utenteManager = new UtenteManager();
         this.utenteLoggato = null;
-        this.bachecaList = new ArrayList<>();
     }
-
-
-    // --- GESTIONE BACHECHE ---
-    //Secondo me c'è il problema qua, non trova le bacheche create
-    public ArrayList<Bacheca> getBachecaList(String titolo) {
-        /*
-        if (utenteLoggato != null) {
-            return new ArrayList<>(bachecaManager.getBachecheByUtente(utenteLoggato));
-        }*/
-
-        TitoloBacheca filtroEnum = stringToTitoloBacheca(titolo);
-        if(filtroEnum == null) {
-            // filtro non riconosciuto, torna lista vuota o tutte le bacheche
-            return new ArrayList<>();
-        }
-
-        ArrayList<Bacheca> toReturn = new ArrayList<>();
-        for(Bacheca b: this.bachecaList){
-            if(b.getTitolo() == filtroEnum){
-                toReturn.add(b);
+    //GESTIONE UTENTE
+    // cerco utente nella lista di utenti
+    public Utente getUtente(String username) {
+        for (Utente u: listaUtenti) {
+            if (u.getUsername().equals(username)) {
+                return u;
             }
         }
-        return toReturn;
+        return null;// se non va nel if restituisce null
     }
+    // GESTIONE BACHECHE
 
-    public void addBacheca(Bacheca bacheca) {
-        if (utenteLoggato != null) {
-            bachecaManager.addBacheca(bacheca, utenteLoggato);
-        }
-        this.bachecaList.add(bacheca);
-    }
+    public ArrayList<Bacheca> getBachecaList(String username, String titolo) {
+        Utente utente = getUtente(username);
+        ArrayList<Bacheca> bachecheUtente=new ArrayList<>();
+        if (utente == null){
+          return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
+        } else{
+           TitoloBacheca titoloBacheca=stringToTitoloBacheca(titolo);
+            for (Bacheca b: utente.getBacheca()){
+                if(b.getTitolo().equals(titolo)){
+                    bachecheUtente.add(b);
+                }else if(titolo==null){
+                    return utente.getBacheca();
+                }
 
-
-    //PROVA GENERAZIONE BACHECHE
-    public void buildBacheche(){
-        int bachecaIndex = 0;
-        Random r = new Random();
-        while(bachecaIndex<3){
-            String name = bachecaNames[r.nextInt(bachecaNames.length)];
-            String descr = descrNames[r.nextInt(descrNames.length)];
-
-            if(name.equals("UNIVERSITA")){
-                TitoloBacheca tipo = TitoloBacheca.UNIVERSITA;
-                Bacheca b = new Bacheca(tipo, descr);
-                addBacheca(b);
-                bachecaIndex++;
-            } else if (name.equals("LAVORO")) {
-                TitoloBacheca tipo = TitoloBacheca.LAVORO;
-                Bacheca b = new Bacheca(tipo, descr);
-                addBacheca(b);
-                bachecaIndex++;
-            } else if (name.equals("TEMPOLIBERO")) {
-                TitoloBacheca tipo = TitoloBacheca.TEMPOLIBERO;
-                Bacheca b = new Bacheca(tipo, descr);
-                addBacheca(b);
-                bachecaIndex++;
             }
-
         }
+        return bachecheUtente;
+
     }
-
-    private static final String[] bachecaNames = {
-            "UNIVERSITA",
-            "LAVORO",
-            "TEMPOLIBERO"
-    };
-
-    private static final String[] descrNames = {
-            "PROVA1",
-            "PROVA2",
-            "PROVA3"
-    };
-
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
         if(titoloStr == null) return null;
         switch(titoloStr.toLowerCase()) {
@@ -116,6 +71,8 @@ public class Controller {
                 return null;
         }
     }
+
+
 
     // --- GESTIONE TODO ---
 

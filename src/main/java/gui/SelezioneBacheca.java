@@ -2,6 +2,7 @@ package gui;
 
 import controller.Controller;
 import model.Bacheca;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,12 +19,14 @@ public class SelezioneBacheca {
     private JPanel ricercaPanel;
     private JButton creaNuovaBachecaButton;
     private JPanel creaPanel;
+    private JPanel bachechePanel;
     private JTable tableResult;
 
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
+    private String utentelog;
 
-    public SelezioneBacheca(Controller controller, JFrame frame) {
+    public SelezioneBacheca(Controller controller, JFrame frame, String utentelog) {
         comboBox1.addItem("");
         comboBox1.addItem("Università");
         comboBox1.addItem("Lavoro");
@@ -31,6 +34,7 @@ public class SelezioneBacheca {
 
         this.controller = controller;
         frameChiamante = frame;
+        this.utentelog = utentelog;
 
         frameBacheca = new JFrame("Seleziona Bacheca");
         frameBacheca.setContentPane(principale);
@@ -59,37 +63,13 @@ public class SelezioneBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String bachecaDaCercare = (String) comboBox1.getSelectedItem();
-                ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare);
+                ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare,utentelog);
 
                 modello.settaDatiDaMostrare(bachecaDaMostrare);
                 modello.fireTableDataChanged();
             }
         });
 
-
-        // MouseListener per la colonna "Apri"
-        tableResult.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = tableResult.rowAtPoint(evt.getPoint());
-                int col = tableResult.columnAtPoint(evt.getPoint());
-                if (col == 2) { // Colonna "APRI"
-                    ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
-                    Bacheca bacheca = modello.getBachecaAt(row);
-                    new VistaBacheca(bacheca, controller,frameChiamante);
-                    frameBacheca.setVisible(false);
-                }
-            }
-        });
     }
 
-    public void aggiornaTabella() {
-        ModelloTabellaBacheca modello = (ModelloTabellaBacheca) tableResult.getModel();
-        String filtro = (String) comboBox1.getSelectedItem();
-        if(filtro == null){
-            filtro = ""; //consideriamo "" come "tutte"
-        }
-        ArrayList<Bacheca> bachecheFiltrate = controller.getBachecaList(filtro);
-        modello.settaDatiDaMostrare(bachecheFiltrate);
-        modello.fireTableDataChanged();
-    }
 }

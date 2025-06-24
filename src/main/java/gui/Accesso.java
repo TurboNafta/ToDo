@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Accesso{
+public class  Accesso{
     private JPanel mainPanel;
     private JTextField usernameField;
     private JPasswordField passwordField;
@@ -43,7 +43,7 @@ public class Accesso{
             if(controller.verificaAccesso(username, password)){
                 JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
 
-                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame);
+                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frame,username);
                 secondGui.frameBacheca.setVisible(true);
                 frame.setVisible(false);
             } else {

@@ -43,7 +43,7 @@ public class Registrazione {
             frame.dispose();
 
             //Apri la nuova finestra
-            SelezioneBacheca bachecaGUI = new SelezioneBacheca(controller, frame);
+            SelezioneBacheca bachecaGUI = new SelezioneBacheca(controller, frame,username);
             bachecaGUI.frameBacheca.setVisible(true);
             frame.setVisible(false);
         });
