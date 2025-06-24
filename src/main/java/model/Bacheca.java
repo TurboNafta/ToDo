@@ -17,10 +17,10 @@ public class Bacheca {
     }*/
 
     //costruttore
-    public Bacheca(TitoloBacheca titolo, String descrizione){
+    public Bacheca(TitoloBacheca titolo, String descrizione, Utente utente) {
         this.titolo = titolo;
         this.descrizione = descrizione;
-        this.utente = null;
+        this.utente = utente;
         this.todo= new ArrayList<ToDo>();
     }
 

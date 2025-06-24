@@ -2,13 +2,11 @@ package gui;
 
 import controller.Controller;
 import model.Bacheca;
-import model.Utente;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class SelezioneBacheca {
@@ -20,8 +18,9 @@ public class SelezioneBacheca {
     private JButton creaNuovaBachecaButton;
     private JPanel creaPanel;
     private JPanel bachechePanel;
-    private JTable tableResult;
+    private JButton buttonIndietro;
 
+    //Frame e controller
     public static JFrame frameBacheca, frameChiamante;
     private Controller controller;
     private String utentelog;
@@ -36,16 +35,17 @@ public class SelezioneBacheca {
         frameChiamante = frame;
         this.utentelog = utentelog;
 
-        frameBacheca = new JFrame("Seleziona Bacheca");
+        frameBacheca = new JFrame("Selezione Bacheca");
         frameBacheca.setContentPane(principale);
         frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameBacheca.pack();
+        frameBacheca.setSize(900, 600);
+        frameBacheca.setLocationRelativeTo(null);
         frameBacheca.setVisible(true);
 
-        ModelloTabellaBacheca modello = new ModelloTabellaBacheca();
-        tableResult.setModel(modello);
-
-        controller.buildBacheche();
+        //Funzione che crea Bacheche per Admin
+        if(this.utentelog.equals("Admin")){
+            controller.buildBacheche();
+        }
 
         //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
         creaNuovaBachecaButton.addActionListener(new ActionListener() {
@@ -65,11 +65,34 @@ public class SelezioneBacheca {
                 String bachecaDaCercare = (String) comboBox1.getSelectedItem();
                 ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare,utentelog);
 
-                modello.settaDatiDaMostrare(bachecaDaMostrare);
-                modello.fireTableDataChanged();
+                bachechePanel.removeAll();
+                if(bachecaDaMostrare.isEmpty()){
+                    bachechePanel.add(new JLabel("Nessuna bacheca trovata."));
+                }else{
+                    for(Bacheca b: bachecaDaMostrare){
+                        JPanel card = new JPanel();
+                        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+                        card.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+                        card.add(new JLabel("Titolo: " + b.getTitolo()));
+                        card.add(new JLabel("Descrizione: " + b.getDescrizione()));
+
+                        bachechePanel.add(card);
+                        bachechePanel.add(Box.createHorizontalStrut(20));
+                    }
+                }
+                bachechePanel.revalidate();
+                bachechePanel.repaint();
             }
         });
 
+        //BOTTONE PER TORNARE INDIETRO
+        buttonIndietro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Accesso secondGui = new Accesso();
+                secondGui.frameAccesso.setVisible(true);
+                frameBacheca.setVisible(false);
+            }
+        });
     }
-
 }

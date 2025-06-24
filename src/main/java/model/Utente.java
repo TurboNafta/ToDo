@@ -26,9 +26,7 @@ public class Utente {
 
     //funzioni future
     public void CreaBacheca(Bacheca b) {
-        if (b != null && !this.bacheca.contains(b)) {// controllo che b non sia null, e che la lista delle bacheche non contenga già b
-            bacheca.add(b);//aggiungo b
-        }
+        bacheca.add(b);//aggiungo b
     }
 
     public void ModificaBacheca(Bacheca bmod) {

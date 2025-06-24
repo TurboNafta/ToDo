@@ -40,7 +40,7 @@ public class CreaBacheca {
                 if(universitàRadioButton.isSelected()){
                     try{
                         TitoloBacheca tipo = UNIVERSITA;
-                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
                         frameChiamante.setVisible(true);
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
@@ -50,7 +50,7 @@ public class CreaBacheca {
                 } else if (lavoroRadioButton.isSelected()) {
                     try{
                         TitoloBacheca tipo = LAVORO;
-                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
                         frameChiamante.setVisible(true);
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
@@ -60,7 +60,7 @@ public class CreaBacheca {
                 } else if (tempoLiberoRadioButton.isSelected()) {
                     try{
                         TitoloBacheca tipo = TEMPOLIBERO;
-                        controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
                         frameChiamante.setVisible(true);
 
                         frameCreaBacheca.setVisible(false);

@@ -6,11 +6,8 @@ import interfaces.InterfacciaToDo;
 import interfaces.InterfacciaUtente;
 import manager.BachecaManager;
 import manager.ToDoManager;
-import manager.UtenteManager;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Controller {
     private InterfacciaBacheca bachecaManager;
@@ -21,23 +18,10 @@ public class Controller {
 
 
     public Controller() {
-        this.bachecaManager = new BachecaManager();
-        this.toDoManager = new ToDoManager();
-        this.utenteManager = new UtenteManager();
-        this.utenteLoggato = null;
+        this.listaUtenti = new ArrayList<>();
     }
-    //GESTIONE UTENTE
-    // cerco utente nella lista di utenti
-    public Utente getUtente(String username) {
-        for (Utente u: listaUtenti) {
-            if (u.getUsername().equals(username)) {
-                return u;
-            }
-        }
-        return null;// se non va nel if restituisce null
-    }
-    // GESTIONE BACHECHE
 
+    // GESTIONE BACHECHE
     public ArrayList<Bacheca> getBachecaList(String username, String titolo) {
         Utente utente = getUtente(username);
         ArrayList<Bacheca> bachecheUtente=new ArrayList<>();
@@ -75,7 +59,7 @@ public class Controller {
 
 
     // --- GESTIONE TODO ---
-
+    /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
         return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
     }
@@ -104,33 +88,64 @@ public class Controller {
         Bacheca nuova = new Bacheca(titolo, utenteLoggato.getUsername());
         addBacheca(nuova);
         addToDo(todo, nuova);
-    }
+    }*/
 
     // ----- GESTIONE UTENTI -----
-
-    public boolean registraUtente(String username, String password){
-            if (utenteManager.utenteEsiste(username)) {
-                return false; // Utente già esistente
+    // cerco utente nella lista di utenti
+    public Utente getUtente(String username) {
+        for (Utente u: listaUtenti) {
+            if (u.getUsername().equals(username)) {
+                return u;
             }
-            utenteManager.aggiungiUtente(new Utente(username, password));
-            return true;
         }
+        return null;// se non va nel if restituisce null
+    }
 
-    public boolean verificaAccesso(String username, String password) {
-        Utente utente = utenteManager.getUtente(username);
-        if (utente != null && utente.getPassword().equals(password)) {
-            this.utenteLoggato = utente; //memorizza chi ha effettuato l'accesso
-            return true;
+
+    //Aggiunge un utente alla lista degli utenti contenuti nel controller
+    public void addUtente(Utente utente) {
+        this.listaUtenti.add(utente);
+    }
+
+    //Funzione che verifica l'esistenza dell'utente
+    public boolean esisteUtente(String username, String password) {
+        for(Utente u: listaUtenti){
+            if(password.equals(u.getPassword()) && u.getUsername().equals(username)){
+                return true;
+            }
         }
         return false;
     }
 
-    public boolean utenteEsiste(String username) {
-        return utenteManager.utenteEsiste(username);
+    //Ci da la lista degli utenti
+    public ArrayList<Utente> getListaUtenti() {
+        return listaUtenti;
     }
 
-    public Utente getUtenteLoggato() {
-        return utenteLoggato;
+    //Funzione che genera l'admin
+    public void buildAdmin(){
+        Utente admin = new Utente("admin", "1111");
+        this.listaUtenti.add(admin);
+    }
+
+    //Funzione che genera bacheche solamente per l'admin
+    public void buildBacheche() {
+        Utente admin = getUtente("admin");
+        //Admin non trovato, è la prima esecuzione del programma, devo crearlo
+        if(admin == null){
+            admin = new Utente("admin", "1111");
+            this.listaUtenti.add(admin);
+        }
+        //Devo controllare se Admin già possiede delle bacheche
+        if( !admin.getBacheca().isEmpty()){
+            return;
+        }
+        TitoloBacheca[] titoli = {TitoloBacheca.LAVORO, TitoloBacheca.TEMPOLIBERO, TitoloBacheca.UNIVERSITA};
+        String [] descr = {"PROVA1", "PROVA2", "PROVA3"};
+        for(int i=0; i<titoli.length; i++){
+            Bacheca b= new Bacheca(titoli[i], descr[i], admin);
+            admin.CreaBacheca(b);
+        }
     }
 }
 

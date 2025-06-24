@@ -41,7 +41,7 @@ public class CreaToDo {
         addToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (ActionEvent e){
-                controller.addToDo(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldUrl.getText(), textFieldColore.getText()), bacheca);
+                //controller.addToDo(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldUrl.getText(), textFieldColore.getText()), bacheca);
             }
         });
     }
