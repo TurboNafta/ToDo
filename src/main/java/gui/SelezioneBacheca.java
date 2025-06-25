@@ -43,7 +43,8 @@ public class SelezioneBacheca {
         frameBacheca.setVisible(true);
 
         //Funzione che crea Bacheche per Admin
-        if(this.utentelog.equals("Admin")){
+        System.out.println(this.utentelog);
+        if(this.utentelog.equals("admin")){
             controller.buildBacheche();
         }
 

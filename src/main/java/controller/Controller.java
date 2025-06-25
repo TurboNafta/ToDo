@@ -144,6 +144,8 @@ public class Controller {
         String [] descr = {"PROVA1", "PROVA2", "PROVA3"};
         for(int i=0; i<titoli.length; i++){
             Bacheca b= new Bacheca(titoli[i], descr[i], admin);
+            System.out.println(b.getTitolo()+" ");
+            System.out.println(b.getDescrizione()+"\n");
             admin.CreaBacheca(b);
         }
     }
