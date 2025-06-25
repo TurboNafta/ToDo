@@ -37,9 +37,11 @@ public class SelezioneBacheca {
 
         frameBacheca = new JFrame("Selezione Bacheca");
         frameBacheca.setContentPane(principale);
+        bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.X_AXIS));
         frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameBacheca.setSize(900, 600);
         frameBacheca.setLocationRelativeTo(null);
+        bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.Y_AXIS));
         frameBacheca.setVisible(true);
 
         //Funzione che crea Bacheche per Admin
@@ -66,21 +68,58 @@ public class SelezioneBacheca {
                 String bachecaDaCercare = (String) comboBox1.getSelectedItem();
                 ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare,utentelog);
 
-                bachechePanel.removeAll();
-                if(bachecaDaMostrare.isEmpty()){
-                    bachechePanel.add(new JLabel("Nessuna bacheca trovata."));
-                }else{
-                    for(Bacheca b: bachecaDaMostrare){
+                bachechePanel.removeAll(); // svuota il pannello principale
+
+                JPanel cardsPanel = new JPanel();
+                cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20)); // orizzontale, con margini tra le card
+                cardsPanel.setBackground(Color.WHITE); // sfondo bianco per un aspetto moderno
+
+                if (bachecaDaMostrare.isEmpty()) {
+                    cardsPanel.add(new JLabel("Nessuna bacheca trovata."));
+                } else {
+                    for (Bacheca b : bachecaDaMostrare) {
                         JPanel card = new JPanel();
                         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                        card.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
-                        card.add(new JLabel("Titolo: " + b.getTitolo()));
-                        card.add(new JLabel("Descrizione: " + b.getDescrizione()));
+                        card.setPreferredSize(new Dimension(220, 140));
+                        card.setBorder(BorderFactory.createCompoundBorder(
+                                BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
+                                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+                        ));
+                        card.setBackground(new Color(245, 245, 250)); // colore tenue e moderno
 
-                        bachechePanel.add(card);
-                        bachechePanel.add(Box.createHorizontalStrut(20));
+                        JLabel titolo = new JLabel(b.getTitolo().toString());
+                        titolo.setFont(new Font("Arial", Font.BOLD, 16));
+                        titolo.setForeground(new Color(40, 40, 90));
+                        card.add(titolo);
+
+                        JLabel descr = new JLabel("<html><body style='width:180px'>" + b.getDescrizione() + "</body></html>");
+                        descr.setFont(new Font("Arial", Font.PLAIN, 13));
+                        descr.setForeground(new Color(60, 60, 60));
+                        card.add(descr);
+
+                        card.add(Box.createVerticalGlue());
+
+                        JButton apriButton = new JButton("Apri");
+                        apriButton.setBackground(new Color(80, 150, 255));
+                        apriButton.setForeground(Color.WHITE);
+                        apriButton.setFocusPainted(false);
+                        apriButton.setBorder(BorderFactory.createEmptyBorder(6, 20, 6, 20));
+                        // qui puoi aggiungere un ActionListener personalizzato
+                        card.add(Box.createVerticalStrut(10));
+                        card.add(apriButton);
+
+                        cardsPanel.add(card);
                     }
                 }
+
+// Rendi scrollabile orizzontalmente
+                JScrollPane scroll = new JScrollPane(cardsPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                scroll.setBorder(null);
+                scroll.getHorizontalScrollBar().setUnitIncrement(16);
+
+                bachechePanel.setLayout(new BorderLayout()); // assicura che il pannello scrollabile occupi tutto
+                bachechePanel.add(scroll, BorderLayout.CENTER);
+
                 bachechePanel.revalidate();
                 bachechePanel.repaint();
             }

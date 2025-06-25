@@ -22,20 +22,21 @@ public class Controller {
     }
 
     // GESTIONE BACHECHE
-    public ArrayList<Bacheca> getBachecaList(String username, String titolo) {
+    public ArrayList<Bacheca> getBachecaList(String titolo, String username) {
         Utente utente = getUtente(username);
+        System.out.println("Utente trovato: " + (utente != null ? utente.getUsername() : "null"));
         ArrayList<Bacheca> bachecheUtente=new ArrayList<>();
         if (utente == null){
           return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
         } else{
            TitoloBacheca titoloBacheca=stringToTitoloBacheca(titolo);
-            for (Bacheca b: utente.getBacheca()){
-                if(b.getTitolo().equals(titolo)){
+            if (titolo == null || titolo.isEmpty()) {
+                return utente.getBacheca();
+            }
+            for (Bacheca b : utente.getBacheca()) {
+                if (b.getTitolo().equals(titoloBacheca)) {
                     bachecheUtente.add(b);
-                }else if(titolo==null){
-                    return utente.getBacheca();
                 }
-
             }
         }
         return bachecheUtente;
