@@ -19,7 +19,9 @@ public class VistaBacheca {
 
     public JFrame frameVista, frameChiamante;
     private Controller controller;
-
+    public JFrame getFrameVista() {
+        return frameVista;
+    }
     public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame) {
         this.frameChiamante = frame;
         this.controller = controller;
@@ -46,6 +48,8 @@ public class VistaBacheca {
                 frameVista.setVisible(false);
             }
         });
+
+
 
         //PERMETTE DI TROVARE I TODO
         buttonCerca.addActionListener(new ActionListener() {
