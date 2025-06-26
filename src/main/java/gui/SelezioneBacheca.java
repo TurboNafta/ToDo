@@ -115,7 +115,7 @@ public class SelezioneBacheca {
                             }
                         });
                         //AGGIUNGO IL BOTTONE A CARD
-                        card.add(Box.createVerticalStrut(10));
+                        card.add(Box.createHorizontalStrut(10));
                         card.add(apriButton);
                         cardsPanel.add(card);
 
@@ -133,7 +133,7 @@ public class SelezioneBacheca {
                             }
                         });
                         //AGGIUNGO IL BOTTONE A CARD
-                        card.add(Box.createVerticalStrut(5));
+                        card.add(Box.createHorizontalStrut(5));
                         card.add(modificaButton);
 
                         //BOTTONE PRE ELIMINARE LA BACHECA
@@ -149,10 +149,19 @@ public class SelezioneBacheca {
                                 buttonCerca.doClick(); // aggiorna la lista
                             }
                         });
-                        //AGGIUNGO IL BOTTONE A CARD
-                        card.add(Box.createVerticalStrut(5));
-                        card.add(eliminaButton);
-                        cardsPanel.add(card);
+                        //PANNELLO CON I BOTTONI
+                        JPanel bottoniPanel = new JPanel();
+                        bottoniPanel.setLayout(new BoxLayout(bottoniPanel, BoxLayout.X_AXIS));
+                        bottoniPanel.setOpaque(false); // così non copre lo sfondo della card
+
+                        bottoniPanel.add(apriButton);
+                        bottoniPanel.add(Box.createHorizontalStrut(10));
+                        bottoniPanel.add(modificaButton);
+                        bottoniPanel.add(Box.createHorizontalStrut(10));
+                        bottoniPanel.add(eliminaButton);
+
+                        card.add(Box.createHorizontalStrut(10));
+                        cardsPanel.add(bottoniPanel);
                     }
                 }
                 JScrollPane scroll = new JScrollPane(cardsPanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);

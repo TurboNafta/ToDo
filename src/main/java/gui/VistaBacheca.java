@@ -42,6 +42,7 @@ public class VistaBacheca {
         comboBox1.addItem("posizione");
         comboBox1.addItem("stato");
 
+        //BOTTONE CHE CREA TO DO
         creaToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
