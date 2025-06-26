@@ -80,7 +80,7 @@ public class SelezioneBacheca {
                                                   for (Bacheca b : bachecaDaMostrare) {
                                                       JPanel card = new JPanel();
                                                       card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                                                      card.setPreferredSize(new Dimension(220, 140));
+                                                      card.setPreferredSize(new Dimension(250, 160));
                                                       card.setBorder(BorderFactory.createCompoundBorder(
                                                               BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
                                                               BorderFactory.createEmptyBorder(10, 15, 10, 15)
@@ -104,7 +104,15 @@ public class SelezioneBacheca {
                                                       apriButton.setForeground(Color.WHITE);
                                                       apriButton.setFocusPainted(false);
                                                       apriButton.setBorder(BorderFactory.createEmptyBorder(6, 20, 6, 20));
-                                                      // qui puoi aggiungere un ActionListener personalizzato
+
+                                                      apriButton.addActionListener(new ActionListener() {
+                                                          @Override
+                                                          public void actionPerformed(ActionEvent e) {
+                                                              VistaBacheca vista = new VistaBacheca(b, controller, frameBacheca);
+                                                              vista.frameVista.setVisible(true);
+                                                              frameBacheca.setVisible(false);
+                                                          }
+                                                      });
                                                       card.add(Box.createVerticalStrut(10));
                                                       card.add(apriButton);
 

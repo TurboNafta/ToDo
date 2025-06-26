@@ -21,14 +21,6 @@ public class VistaBacheca {
     private Controller controller;
 
     public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame) {
-        comboBox1.addItem("titolo");
-        comboBox1.addItem("descrizione");
-        comboBox1.addItem("data scadenza");
-        comboBox1.addItem("colore sfondo");
-        comboBox1.addItem("url");
-        comboBox1.addItem("posizione");
-        comboBox1.addItem("stato");
-
         this.frameChiamante = frame;
         this.controller = controller;
 
@@ -37,6 +29,14 @@ public class VistaBacheca {
         frameVista.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameVista.pack();
         frameVista.setVisible(true);
+
+        comboBox1.addItem("titolo");
+        comboBox1.addItem("descrizione");
+        comboBox1.addItem("data scadenza");
+        comboBox1.addItem("colore sfondo");
+        comboBox1.addItem("url");
+        comboBox1.addItem("posizione");
+        comboBox1.addItem("stato");
 
         creaToDoButton.addActionListener(new ActionListener() {
             @Override
