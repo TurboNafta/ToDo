@@ -22,6 +22,7 @@ public class VistaBacheca {
     public JFrame getFrameVista() {
         return frameVista;
     }
+
     public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame) {
         this.frameChiamante = frame;
         this.controller = controller;
@@ -32,6 +33,7 @@ public class VistaBacheca {
         frameVista.pack();
         frameVista.setLocationRelativeTo(null);
 
+        comboBox1 = new JComboBox<>();
         comboBox1.addItem("titolo");
         comboBox1.addItem("descrizione");
         comboBox1.addItem("data scadenza");
