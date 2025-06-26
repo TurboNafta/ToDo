@@ -17,7 +17,7 @@ public class VistaBacheca {
     private JButton buttonCerca;
     private JPanel todoPanelris;
 
-    public static JFrame frameVista, frameChiamante;
+    public JFrame frameVista, frameChiamante;
     private Controller controller;
 
     public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame) {
@@ -26,10 +26,9 @@ public class VistaBacheca {
 
         frameVista = new JFrame("Seleziona To Do");
         frameVista.setContentPane(principale);
-        frameVista.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameVista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frameVista.pack();
         frameVista.setLocationRelativeTo(null);
-        frameVista.setVisible(true);
 
         comboBox1.addItem("titolo");
         comboBox1.addItem("descrizione");

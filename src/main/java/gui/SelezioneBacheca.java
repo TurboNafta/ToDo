@@ -21,19 +21,19 @@ public class SelezioneBacheca {
     private JButton buttonIndietro;
 
     //Frame e controller
-    public static JFrame frameBacheca, frameChiamante;
+    public  JFrame frameBacheca, frameChiamante;
     private Controller controller;
     private String utentelog;
 
     public SelezioneBacheca(Controller controller, JFrame frame, String utentelog) {
+        this.controller = controller;
+        frameChiamante = frame;
+        this.utentelog = utentelog;
+
         comboBox1.addItem("");
         comboBox1.addItem("Università");
         comboBox1.addItem("Lavoro");
         comboBox1.addItem("Tempo Libero");
-
-        this.controller = controller;
-        frameChiamante = frame;
-        this.utentelog = utentelog;
 
         frameBacheca = new JFrame("Selezione Bacheca");
         frameBacheca.setContentPane(principale);
@@ -42,7 +42,6 @@ public class SelezioneBacheca {
         frameBacheca.setSize(900, 600);
         frameBacheca.setLocationRelativeTo(null);
         bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.Y_AXIS));
-        frameBacheca.setVisible(true);
 
         //Funzione che crea Bacheche per Admin
         System.out.println(this.utentelog);
@@ -110,9 +109,8 @@ public class SelezioneBacheca {
                                 vista.frameVista.setVisible(true);
                                 vista.frameVista.toFront();
                                 vista.frameVista.requestFocus();
-                                frameBacheca.setVisible(false);
                                 frameBacheca.dispose();
-                                //frameBacheca.setVisible(false);
+
                             }
                         });
                         //AGGIUNGO IL BOTTONE A CARD
@@ -171,9 +169,8 @@ public class SelezioneBacheca {
         buttonIndietro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Accesso secondGui = new Accesso();
-                secondGui.frameAccesso.setVisible(true);
-                frameBacheca.setVisible(false);
+                frameChiamante.setVisible(true);
+                frameBacheca.dispose();
             }
         });
     }

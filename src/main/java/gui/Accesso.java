@@ -15,23 +15,27 @@ public class  Accesso{
     private JButton registratiButton;
 
     //Frame e controller
-    public static JFrame frameAccesso;
+    public JFrame frameAccesso;
     private Controller controller;
 
     public static void main(String[] args) {
         Controller controller = new Controller();
+        controller.buildAdmin();
+
+       new Accesso(controller);
+    }
+
+
+    public Accesso(Controller controller) {
+        this.controller = controller;
 
         frameAccesso = new JFrame("PrimaPagina");
-        frameAccesso.setContentPane(new Accesso().mainPanel);
+        frameAccesso.setContentPane(mainPanel);
         frameAccesso.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameAccesso.pack();
         frameAccesso.setLocationRelativeTo(null);
         frameAccesso.setVisible(true);
-    }
 
-    public Accesso() {
-        controller = new Controller();
-        controller.buildAdmin();
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -47,7 +51,7 @@ public class  Accesso{
 
                     SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);
                     secondGui.frameBacheca.setVisible(true);
-                    frameAccesso.setVisible(false);
+                    frameAccesso.dispose();
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
                 }
@@ -71,7 +75,7 @@ public class  Accesso{
 
                     SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);
                     secondGui.frameBacheca.setVisible(true);
-                    frameAccesso.setVisible(false);
+                    frameAccesso.dispose();
                 }
             }
         });
