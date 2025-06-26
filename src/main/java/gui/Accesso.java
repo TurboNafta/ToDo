@@ -65,8 +65,12 @@ public class  Accesso{
                 }else if(prova == true){
                     JOptionPane.showMessageDialog(mainPanel, "Utente già registrato");
                 }else{
-                    Registrazione registrazioneGui= new Registrazione(controller, frameAccesso);
-                    registrazioneGui.frame.setVisible(true);
+                    Utente u = new Utente(username, password);
+                    controller.addUtente(u);
+                    JOptionPane.showMessageDialog(mainPanel, "Utente registrato");
+
+                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);
+                    secondGui.frameBacheca.setVisible(true);
                     frameAccesso.setVisible(false);
                 }
             }

@@ -1,7 +1,6 @@
 package gui;
 
 import controller.Controller;
-import model.Bacheca;
 import model.TitoloBacheca;
 import model.Utente;
 
@@ -20,6 +19,7 @@ public class CreaBacheca {
     private JTextField textFieldDescrizione;
     private JButton buttonCreazione;
     private JLabel descrizioneLabel;
+    private JButton buttonAnnulla;
     private String utentelog;
 
     public static JFrame frameCreaBacheca, frameChiamante;
@@ -35,6 +35,7 @@ public class CreaBacheca {
         frameCreaBacheca.setContentPane(panel1);
         frameCreaBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameCreaBacheca.pack();
+        frameCreaBacheca.setLocationRelativeTo(null);
         frameCreaBacheca.setVisible(true);
 
 
@@ -86,5 +87,13 @@ public class CreaBacheca {
             }
         });
 
+        buttonAnnulla.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameCreaBacheca, utentelog);
+                secondGui.frameBacheca.setVisible(true);
+                frameCreaBacheca.setVisible(false);
+            }
+        });
     }
 }

@@ -14,8 +14,8 @@ public class VistaBacheca {
     private JComboBox comboBox1;
     private JButton tornaAllaHomeButton;
     private JButton creaToDoButton;
-    private JTextArea textAreaRisultati;
     private JButton buttonCerca;
+    private JPanel todoPanelris;
 
     public static JFrame frameVista, frameChiamante;
     private Controller controller;
@@ -24,10 +24,11 @@ public class VistaBacheca {
         this.frameChiamante = frame;
         this.controller = controller;
 
-        frameVista= new JFrame("Seleziona To Do");
+        frameVista = new JFrame("Seleziona To Do");
         frameVista.setContentPane(principale);
         frameVista.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frameVista.pack();
+        frameVista.setLocationRelativeTo(null);
         frameVista.setVisible(true);
 
         comboBox1.addItem("titolo");
@@ -46,6 +47,7 @@ public class VistaBacheca {
                 frameVista.setVisible(false);
             }
         });
+
         //PERMETTE DI TROVARE I TODO
         buttonCerca.addActionListener(new ActionListener() {
             @Override
@@ -53,8 +55,5 @@ public class VistaBacheca {
 
             }
         });
-
-
-
     }
 }
