@@ -40,7 +40,7 @@ public class Utente {
         }
     }
 
-    public void EliminaBacheca(Bacheca b) {
+    public void eliminaBacheca(Bacheca b) {
         bacheca.remove(b);
     }
 

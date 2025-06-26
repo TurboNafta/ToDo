@@ -1,6 +1,7 @@
 package gui;
 
 import controller.Controller;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -38,7 +39,10 @@ public class  Accesso{
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 boolean prova = controller.esisteUtente(username, password);
-                if(prova == true){
+                if(prova){
+                    Utente utente = controller.getUtente(username);
+                    controller.setUtenteLoggato(utente);
+
                     JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
 
                     SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);

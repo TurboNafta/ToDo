@@ -57,8 +57,42 @@ public class Controller {
         }
     }
 
+    public void login(String username, String password) {
+        for (Utente u : listaUtenti) {
+            if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
+                utenteLoggato = u;
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Credenziali errate");
+    }
 
 
+    public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
+        Utente u = getUtente(username);
+        if(utenteLoggato != null){
+            Bacheca nuova = new Bacheca(titolo, descrizione, utenteLoggato);
+            utenteLoggato.CreaBacheca(nuova);
+        } else {
+            throw new IllegalStateException("Nessun utente loggato");
+        }
+    }
+
+    public void setUtenteLoggato(Utente utente){
+        this.utenteLoggato = utente;
+    }
+
+    public void eliminaBacheca(Bacheca b){
+        if(utenteLoggato != null){
+            utenteLoggato.eliminaBacheca(b);
+        } else {
+            throw new IllegalStateException("Nessun utente loggato");
+        }
+    }
+
+    public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
+        b.modificaDescrizione(nuovaDescrizione);
+    }
     // --- GESTIONE TODO ---
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {

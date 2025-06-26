@@ -28,6 +28,8 @@ public class Bacheca {
         todo.add(t);
     }
 
+    public void eliminaToDo(ToDo t){ todo.remove(t); }
+
     public ArrayList<ToDo> getListaToDo(){
         return todo;
     }
@@ -38,6 +40,10 @@ public class Bacheca {
 
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
+    }
+
+    public void modificaDescrizione(String nuovaDescrizione){
+        this.descrizione = nuovaDescrizione;
     }
 
     public TitoloBacheca getTitolo() {

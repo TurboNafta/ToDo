@@ -3,6 +3,7 @@ package gui;
 import controller.Controller;
 import model.Bacheca;
 import model.TitoloBacheca;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -19,13 +20,16 @@ public class CreaBacheca {
     private JTextField textFieldDescrizione;
     private JButton buttonCreazione;
     private JLabel descrizioneLabel;
+    private String utentelog;
 
     public static JFrame frameCreaBacheca, frameChiamante;
     private Controller controller;
 
-    public CreaBacheca(Controller controller, JFrame callframe) {
+    public CreaBacheca(Controller controller, JFrame callframe, String utentelog) {
         this.controller = controller;
         frameChiamante = callframe;
+        Utente utente = controller.getUtente(utentelog);
+        controller.setUtenteLoggato(utente);
 
         frameCreaBacheca = new JFrame("Crea bacheca");
         frameCreaBacheca.setContentPane(panel1);
@@ -40,32 +44,38 @@ public class CreaBacheca {
                 if(universitàRadioButton.isSelected()){
                     try{
                         TitoloBacheca tipo = UNIVERSITA;
-                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
                         frameChiamante.setVisible(true);
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    } catch(IllegalStateException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }
                 } else if (lavoroRadioButton.isSelected()) {
                     try{
                         TitoloBacheca tipo = LAVORO;
-                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
                         frameChiamante.setVisible(true);
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    }catch(IllegalStateException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }
                 } else if (tempoLiberoRadioButton.isSelected()) {
                     try{
                         TitoloBacheca tipo = TEMPOLIBERO;
-                        //controller.addBacheca(new Bacheca(tipo, textFieldDescrizione.getText()));
+                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
                         frameChiamante.setVisible(true);
 
                         frameCreaBacheca.setVisible(false);
                         frameCreaBacheca.dispose();
                     }catch(IllegalArgumentException ex){
+                        JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
+                    }catch(IllegalStateException ex){
                         JOptionPane.showMessageDialog(frameCreaBacheca, "Bacheca non aggiunta", "Errore nella creazione della bacheca", JOptionPane.ERROR_MESSAGE);
                     }
                 }
