@@ -42,6 +42,7 @@ public class SelezioneBacheca {
         frameBacheca.setSize(900, 600);
         frameBacheca.setLocationRelativeTo(null);
         bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.Y_AXIS));
+        frameBacheca.setVisible(true);
 
         //Funzione che crea Bacheche per Admin
         System.out.println(this.utentelog);
@@ -56,7 +57,7 @@ public class SelezioneBacheca {
                 CreaBacheca terzaGui = new CreaBacheca(controller, frameBacheca, utentelog);
 
                 terzaGui.frameCreaBacheca.setVisible(true);
-                frameBacheca.setVisible(false);
+                frameBacheca.dispose();
             }
         });
 
