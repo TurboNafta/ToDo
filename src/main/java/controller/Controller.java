@@ -126,7 +126,7 @@ public class Controller {
 
         }
         // aggiungo il To Do in bacheca
-        bacheca.addToDo(todo);
+        bacheca.aggiungiToDo(todo);
     }
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
