@@ -1,26 +1,26 @@
 package gui;
+
 import controller.Controller;
 import model.Bacheca;
 import model.ToDo;
 import model.Utente;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.text.ParseException;
-import java.util.*;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
-
-public class CreaToDo {
+public class ModificaToDo {
     private JPanel panel1;
+    private JPanel ImgLabel;
     private JLabel TitoloLabel;
     private JLabel DescrizioneLabel;
     private JLabel ScadenzaLabel;
-    private JPanel ImgLabel;
     private JLabel PosizioneLabel;
     private JLabel URLLabel;
     private JLabel ColoreLabel;
-    private JButton addToDoButton;
     private JTextField textFieldTitolo;
     private JTextField textFieldDescrizione;
     private JTextField textFieldData;
@@ -28,31 +28,47 @@ public class CreaToDo {
     private JTextField textFieldPosizione;
     private JTextField textFieldUrl;
     private JTextField textFieldColore;
+    private JButton buttonModifica;
 
-    public JFrame frameCreaToDo, frameChiamante;
+    public JFrame frameModificaToDo, frameChiamante;
     private Controller controller;
     private Bacheca bacheca;
     private String utente;
+    private ToDo toDo;
 
-    public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
+    public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
         this.bacheca=bacheca;
         this.utente = utente;
+        toDo = t;
         frameChiamante = frame;
 
-        frameCreaToDo = new JFrame("PaginaInserimento");
-        frameCreaToDo.setContentPane(panel1);
-        frameCreaToDo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frameCreaToDo.pack();
-        frameCreaToDo.setLocationRelativeTo(null);
-        frameCreaToDo.setVisible(true);
+        frameModificaToDo = new JFrame("Pagina Modifica");
+        frameModificaToDo.setContentPane(panel1);
+        frameModificaToDo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameModificaToDo.pack();
+        frameModificaToDo.setLocationRelativeTo(null);
+        frameModificaToDo.setVisible(true);
 
-        addToDoButton.addActionListener(new ActionListener() {
+        textFieldTitolo.setText(toDo.getTitolo());
+        textFieldDescrizione.setText(toDo.getDescrizione());
+
+        GregorianCalendar data = toDo.getDatascadenza();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dataString = sdf.format(data.getTime());
+        textFieldData.setText(dataString);
+
+        textFieldImg.setText(toDo.getImage());
+        textFieldPosizione.setText(toDo.getPosizione());
+        textFieldUrl.setText(toDo.getUrl());
+        textFieldColore.setText(toDo.getColoresfondo());
+
+        buttonModifica.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed (ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 String dataStr = textFieldData.getText();
                 if (!dataStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                    JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/MM/aaaa");
+                    JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/MM/aaaa");
                     return;
                 }
                 try{
@@ -65,23 +81,19 @@ public class CreaToDo {
                     String url = textFieldUrl.getText();
                     String colore = textFieldColore.getText();
 
-                    // recupera l'utente loggato
                     ArrayList<Utente> utenti = new ArrayList<>();
                     utenti.add(controller.getUtente(utente));
 
-                    //Crea ToDo
-                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti);
-
                     //aggiungo il todo alla bacheca
-                    controller.addToDo(bacheca,nuovoToDo,utente);
+                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore);
 
                     //chiudo la finestra e riapro VistaBacheca
-                    frameCreaToDo.dispose();
+                    frameModificaToDo.dispose();
                     VistaBacheca vistaBacheca= new VistaBacheca(bacheca, controller,frameChiamante,utente);
                     vistaBacheca.frameVista.setVisible(true);
 
                 }catch(Exception ex){
-                    JOptionPane.showMessageDialog(frameCreaToDo,"Errore: "+ ex.getMessage());
+                    JOptionPane.showMessageDialog(frameModificaToDo,"Errore: "+ ex.getMessage());
                 }
             }
         });

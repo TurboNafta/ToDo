@@ -4,10 +4,9 @@ import model.*;
 import interfaces.InterfacciaBacheca;
 import interfaces.InterfacciaToDo;
 import interfaces.InterfacciaUtente;
-import manager.BachecaManager;
-import manager.ToDoManager;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class Controller {
     private InterfacciaBacheca bachecaManager;
@@ -127,6 +126,27 @@ public class Controller {
         }
         // aggiungo il To Do in bacheca
         bacheca.aggiungiToDo(todo);
+    }
+
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore){
+        if (todo == null) {
+            return;
+        };
+        if (titolo != null) todo.setTitolo(titolo);
+        if (descrizione != null) todo.setDescrizione(descrizione);
+        if (url != null) todo.setUrl(url);
+
+        String[] dataSplit = dataScadenza.split("/");
+        int anno = Integer.parseInt(dataSplit[2]);
+        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
+        int mese = Integer.parseInt(dataSplit[1])-1;
+        int gg = Integer.parseInt(dataSplit[0]);
+        GregorianCalendar DataScadenza = new GregorianCalendar(anno, mese, gg);
+        if (dataScadenza != null) todo.setDatascadenza(DataScadenza);
+
+        if (img != null) todo.setImage(img);
+        if (posizione != null) todo.setPosizione(posizione);
+        if (colore != null) todo.setColoresfondo(colore);
     }
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
@@ -256,6 +276,10 @@ public class Controller {
                 System.out.println("   - " + t.getTitolo() + ": " + t.getDescrizione());
             }
         }
+    }
+
+    public void eliminaToDo(Bacheca bacheca, ToDo t) {
+        bacheca.getTodo().remove(t);
     }
 }
 

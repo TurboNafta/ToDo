@@ -75,7 +75,8 @@ public class VistaBacheca {
                     for (ToDo t : toDoDaCercare) {
                         JPanel card = new JPanel();
                         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                        card.setPreferredSize(new Dimension(250, 160));
+                        card.setMaximumSize(new Dimension(350, Integer.MAX_VALUE));
+                        //card.setPreferredSize(new Dimension(190, 100));
                         card.setBorder(BorderFactory.createCompoundBorder(
                                 BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
                                 BorderFactory.createEmptyBorder(10, 15, 10, 15)
@@ -117,11 +118,49 @@ public class VistaBacheca {
                         card.add(new JLabel("Stato: " + t.getStato()));
                         card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
 
+                        /******************************************************************************************************************************/
+                        /******************************************************************************************************************************/
+
+                        //BOTTONE PER MODIFICARE LA DATI
+                        JButton modificaButton = new JButton("Modifica");
+                        modificaButton.setBackground(new Color(255, 200, 80));
+                        modificaButton.setForeground(Color.BLACK);
+                        modificaButton.setFocusPainted(false);
+                        modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+                        modificaButton.addActionListener(ev -> {
+                            ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
+                            modificaGui.frameModificaToDo.setVisible(true);
+                            frameVista.setVisible(false);
+                        });
+                        //AGGIUNGO IL BOTTONE A CARD
+                        card.add(Box.createVerticalStrut(5));
+                        card.add(modificaButton);
+
+
+                        //BOTTONE PER CANCELLARE IL TODO
+                        JButton eliminaButton = new JButton("Elimina");
+                        eliminaButton.setBackground(new Color(255, 80, 80));
+                        eliminaButton.setForeground(Color.WHITE);
+                        eliminaButton.setFocusPainted(false);
+                        eliminaButton.addActionListener(ev -> {
+                            int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
+                            if (conferma == JOptionPane.YES_OPTION) {
+                                controller.eliminaToDo(bacheca, t);
+                                buttonCerca.doClick(); // aggiorna la lista
+                            }
+                        });
+
+                        //AGGIUNGO ELIMINA A CARD
+                        card.add(Box.createVerticalStrut(5));
+                        card.add(eliminaButton);
+                        cardsPanel.add(card);
+
                         //PRENDE IL COLORE IN INPUT E LO METTE COME SFONDO
-                        todoPanelris.add(card);
-                        todoPanelris.add(Box.createHorizontalStrut(20));
+                        cardsPanel.add(card);
+                        cardsPanel.add(Box.createHorizontalStrut(20));
                     }
                 }
+                todoPanelris.add(cardsPanel);
                 todoPanelris.revalidate();
                 todoPanelris.repaint();
             }
@@ -131,7 +170,12 @@ public class VistaBacheca {
         tornaAllaHomeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
+                // frameChiamante.setVisible(true); // RIMUOVI QUESTA RIGA!
+                // frameVista.dispose();
+
+                // Crea una nuova SelezioneBacheca aggiornata
+                SelezioneBacheca selez = new SelezioneBacheca(controller, null, utenteLoggato);
+                selez.frameBacheca.setVisible(true);
                 frameVista.dispose();
             }
         });
