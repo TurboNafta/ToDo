@@ -164,4 +164,11 @@ public class ToDo {
     public void EliminaCondivisione(){
 
     }*/
+
+    public ArrayList<Utente> getUtentiPossessori() {
+        return utentiPossessori;
+    }
+    public void setUtentiPossessori(ArrayList<Utente> utentiPossessori){
+        this.utentiPossessori = utentiPossessori;
+    }
 }

@@ -2,10 +2,14 @@ package gui;
 import controller.Controller;
 import model.Bacheca;
 import model.ToDo;
+import model.Utente;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.util.*;
+
 
 public class CreaToDo {
     private JPanel panel1;
@@ -25,13 +29,15 @@ public class CreaToDo {
     private JTextField textFieldUrl;
     private JTextField textFieldColore;
 
-    public static JFrame frameCreaToDo, frameChiamante;
+    public JFrame frameCreaToDo, frameChiamante;
     private Controller controller;
     private Bacheca bacheca;
+    private String utente;
 
-    public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca) {
+    public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
         this.bacheca=bacheca;
+        this.utente = utente;
         frameChiamante = frame;
 
         frameCreaToDo = new JFrame("PaginaInserimento");
@@ -41,7 +47,41 @@ public class CreaToDo {
         addToDoButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed (ActionEvent e){
-                //controller.addToDo(new ToDo(textFieldTitolo.getText(), textFieldDescrizione.getText(), textFieldData.getText(), textFieldImg.getText(), textFieldPosizione.getText(), textFieldUrl.getText(), textFieldColore.getText()), bacheca);
+                String dataStr = textFieldData.getText();
+                if (!dataStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+                    JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/MM/aaaa");
+                    return;
+                }
+                try{
+                    // Recupera i dati dai campi di testo
+                    String titolo = textFieldTitolo.getText();
+                    String descrizione = textFieldDescrizione.getText();
+                    String dataScadenza = textFieldData.getText();
+                    String img = textFieldImg.getText();
+                    String posizione = textFieldPosizione.getText();
+                    String url = textFieldUrl.getText();
+                    String colore = textFieldColore.getText();
+
+                    // recupera l'utente loggato (modifica secondo la tua logica)
+                    ArrayList<Utente> utenti = new ArrayList<>();
+                    utenti.add(controller.getUtente(utente));
+
+                    //Crea ToDo
+                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti);
+
+                    //aggiungo il todo alla bacheca
+                    controller.addToDo(bacheca,nuovoToDo,utente);
+
+                    //chiudo la finestra e riapro VistaBacheca
+                    frameCreaToDo.dispose();
+                    VistaBacheca vistaBacheca= new VistaBacheca(bacheca, controller,frameChiamante,utente);
+                    vistaBacheca.frameVista.setVisible(true);
+
+                }catch(Exception ex){
+                    JOptionPane.showMessageDialog(frameCreaToDo,"Errore: "+ ex.getMessage());
+
+
+                }
             }
         });
     }

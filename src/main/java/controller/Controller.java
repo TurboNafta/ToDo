@@ -70,9 +70,9 @@ public class Controller {
 
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
         Utente u = getUtente(username);
-        if(utenteLoggato != null){
-            Bacheca nuova = new Bacheca(titolo, descrizione, utenteLoggato);
-            utenteLoggato.CreaBacheca(nuova);
+        if(u != null){
+            Bacheca nuova = new Bacheca(titolo, descrizione, u);
+            u.CreaBacheca(nuova);
         } else {
             throw new IllegalStateException("Nessun utente loggato");
         }
@@ -113,15 +113,27 @@ public class Controller {
         }
         return filtrati;
     }
+    public void addToDo(Bacheca bacheca, ToDo todo, String username) {
+        Utente u=getUtente(username);
+        if(u != null){
+           ArrayList<Utente> utenti=todo.getUtentiPossessori();
+           if(utenti==null)
+               utenti= new ArrayList<Utente>();
+           if(!utenti.contains(u)){
+               utenti.add(u);
+           }
+           todo.setUtentiPossessori(utenti);
 
+        }
+        // aggiungo il To Do in bacheca
+        bacheca.addToDo(todo);
+    }
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
         return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
     }
 
-    public void addToDo(ToDo todo, Bacheca bacheca) {
-        toDoManager.addToDo(todo, bacheca);
-    }
+
 
     public void removeToDo(ToDo todo, Bacheca bacheca) {
         toDoManager.removeToDo(todo, bacheca);

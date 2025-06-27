@@ -67,6 +67,9 @@ public class Bacheca {
     public void RicercaToDo(ToDo todo){
 
     }
+    public void addToDo(ToDo toDo) {
+        todo.add(toDo);
+    }
 
     public ArrayList<ToDo> getTodo() {
         return todo;
