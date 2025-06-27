@@ -21,12 +21,12 @@ public class ToDo {
 
 
     //gestisco la relazione * con condivisione
-    private ArrayList <Condivisione> condivisione;
+    private ArrayList <Utente> utentiPossessori;
     private Bacheca bacheca;
 
 
     //gestisco la checklist
-    private CheckList checklist;
+    private ArrayList<CheckList> attivitaCheckList;
 
     /*gestisco la composizione con bacheca
     private Bacheca bacheca;
@@ -35,7 +35,7 @@ public class ToDo {
     }*/
 
     //costruttore
-    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo){
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, ArrayList<Utente> utenti){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.url = url;
@@ -53,6 +53,9 @@ public class ToDo {
         this.coloresfondo = coloresfondo;
         this.stato = stato;
 
+        this.utentiPossessori = utenti;
+
+        this.attivitaCheckList = new ArrayList<>();
         /*
         this.condivisione = new ArrayList<Condivisione>();
         this.checklist = checklist;
@@ -100,22 +103,22 @@ public class ToDo {
         this.coloresfondo = coloresfondo;
     }
 
-    public ArrayList<Condivisione> getCondivisione() {
+    /*public ArrayList<Condivisione> getCondivisione() {
         return condivisione;
     }
 
     public void setCondivisione(ArrayList<Condivisione> condivisione) {
         this.condivisione = condivisione;
     }
+    */
 
-    public CheckList getChecklist() {
-        return checklist;
+    public ArrayList<CheckList> getAttivitaCheckList() {
+        return attivitaCheckList;
     }
 
-    public void setChecklist(CheckList checklist) {
-        this.checklist = checklist;
+    public void setAttivitaCheckList(ArrayList<CheckList> attivitaCheckList) {
+        this.attivitaCheckList = attivitaCheckList;
     }
-
 
     public Bacheca getBacheca() {
         return bacheca;

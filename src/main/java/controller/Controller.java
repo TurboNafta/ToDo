@@ -93,7 +93,27 @@ public class Controller {
     public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
         b.modificaDescrizione(nuovaDescrizione);
     }
+
     // --- GESTIONE TODO ---
+
+    public ArrayList<ToDo> getToDoPerBachecaUtente(String utenteLoggato, Bacheca bacheca, String nomeToDo) {
+        Utente utente = getUtente(utenteLoggato);
+        Bacheca b = bacheca;
+        ArrayList<ToDo> filtrati = new ArrayList<>();
+        ArrayList<ToDo> tuttiToDo = b.getTodo();
+
+        if(nomeToDo == null || nomeToDo.isEmpty()){
+            return tuttiToDo;
+        }else{
+            for(ToDo t : tuttiToDo){
+                if(t.getTitolo().equalsIgnoreCase(nomeToDo)){
+                    filtrati.add(t);
+                }
+            }
+        }
+        return filtrati;
+    }
+
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
         return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
@@ -182,6 +202,47 @@ public class Controller {
             System.out.println(b.getTitolo()+" ");
             System.out.println(b.getDescrizione()+"\n");
             admin.CreaBacheca(b);
+        }
+    }
+
+    //Funzione che genera i todo solamente per l'admin
+    public void buildToDoPerBachecaUtente(){
+        Utente admin = getUtente("admin");
+        if (admin == null) {
+            admin = new Utente("admin", "1111");
+            this.listaUtenti.add(admin);
+        }
+        //Se admin ha già bacheche coon ToDo non li ricrea
+        //Da implementare
+
+        String[] titoli = {"BASKET", "STUDIO", "CUCINARE"};
+        String[] descr = {"PROVA4", "PROVA5", "PROVA6"};
+        String[] url = {"http/1", "http/2", "http/3"};
+        String[] posizione = {"Desktop", "Download", "Documenti"};
+        String[] colore = {"Rosso", "Giallo", "Blu"};
+        String[] data = {"31/5/2025", "1/6/2025", "2/6/2025"};
+        String[] image = {"foto1", "foto2", "foto3"};
+
+        //ARRAYLIST OER GESTIRE LA CONDIVISIONE DEI TODO
+        ArrayList<Utente> utentiCondivisione = new ArrayList<>();
+        utentiCondivisione.add(admin);
+
+        int i=0;
+        for (Bacheca b : admin.getBacheca()) {
+            if (!b.getTodo().isEmpty()) {
+                return;
+            }else {
+                b.aggiungiToDo(new ToDo(titoli[i], descr[i], url[i], data[i], image[i], posizione[i], colore[i], utentiCondivisione));
+                i++;
+            }
+        }
+
+        //Stampa nel terminale, giusto per verificare
+        for (Bacheca b : admin.getBacheca()) {
+            System.out.println("Bacheca: " + b.getTitolo());
+            for (ToDo t : b.getTodo()) {
+                System.out.println("   - " + t.getTitolo() + ": " + t.getDescrizione());
+            }
         }
     }
 }

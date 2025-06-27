@@ -48,6 +48,7 @@ public class SelezioneBacheca {
         System.out.println(this.utentelog);
         if(this.utentelog.equals("admin")){
             controller.buildBacheche();
+            controller.buildToDoPerBachecaUtente();
         }
 
         //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
@@ -106,7 +107,7 @@ public class SelezioneBacheca {
                         apriButton.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                VistaBacheca vista = new VistaBacheca(b, controller, frameBacheca);
+                                VistaBacheca vista = new VistaBacheca(b, controller, frameBacheca, utentelog);
                                 vista.frameVista.setVisible(true);
                                 vista.frameVista.toFront();
                                 vista.frameVista.requestFocus();

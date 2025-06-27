@@ -30,10 +30,6 @@ public class Bacheca {
 
     public void eliminaToDo(ToDo t){ todo.remove(t); }
 
-    public ArrayList<ToDo> getListaToDo(){
-        return todo;
-    }
-
     public String getDescrizione() {
         return descrizione;
     }
