@@ -5,8 +5,11 @@ import interfaces.InterfacciaBacheca;
 import interfaces.InterfacciaToDo;
 import interfaces.InterfacciaUtente;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 public class Controller {
     private InterfacciaBacheca bachecaManager;
@@ -149,7 +152,49 @@ public class Controller {
         if (colore != null) todo.setColoresfondo(colore);
         if(stato!=null) todo.setStato(stato);
     }
+
+    // ToDo in scadenza oggi
+    public ArrayList<ToDo> getToDoInScadenzaOggi(String utente, Bacheca bacheca) {
+        ArrayList<ToDo> result = new ArrayList<>();
+        ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
+        java.util.Calendar oggi = java.util.Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String oggiStr = sdf.format(oggi.getTime());
+
+        for (ToDo t : tutti) {
+            String scadenzaStr = sdf.format(t.getDatascadenza().getTime());
+            if (scadenzaStr.equals(oggiStr)) {
+                result.add(t);
+            }
+        }
+        return result;
+    }
+
+    // ToDo in scadenza entro una certa data
+    public ArrayList<ToDo> getToDoInScadenzaEntro(String utente, Bacheca bacheca, String dataLimiteStr) {
+        ArrayList<ToDo> result = new ArrayList<>();
+        ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            java.util.Date dataLimite = sdf.parse(dataLimiteStr);
+
+            for (ToDo t : tutti) {
+                if (!t.getDatascadenza().getTime().after(dataLimite)) {
+                    result.add(t);
+                }
+            }
+        } catch (Exception ex) {
+          throw new IllegalArgumentException("Formato data non valido! Usa gg/MM/aaaa.");
+        }
+        return result;
+    }
+
+
+
+
     /*
+
+
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
         return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
     }
