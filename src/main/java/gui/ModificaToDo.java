@@ -29,6 +29,8 @@ public class ModificaToDo {
     private JTextField textFieldUrl;
     private JTextField textFieldColore;
     private JButton buttonModifica;
+    private JRadioButton completatoRadioButton;
+    private JLabel statoLabel;
 
     public JFrame frameModificaToDo, frameChiamante;
     private Controller controller;
