@@ -115,8 +115,8 @@ public class VistaBacheca {
                         card.add(new JLabel("Data Scadenza: " + dataString));
 
                         card.add(new JLabel("Immagine: " + t.getImage()));
-                        card.add(new JLabel("Stato: " + t.getStato()));
-                        card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
+                        card.add(new JLabel("Stato: " + t.getStatoString()));
+                        //card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
 
                         /******************************************************************************************************************************/
                         /******************************************************************************************************************************/

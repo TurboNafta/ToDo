@@ -4,6 +4,7 @@ import controller.Controller;
 import model.Bacheca;
 import model.ToDo;
 import model.Utente;
+import model.StatoToDo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,7 @@ public class ModificaToDo {
     private JButton buttonModifica;
     private JRadioButton completatoRadioButton;
     private JLabel statoLabel;
+
 
     public JFrame frameModificaToDo, frameChiamante;
     private Controller controller;
@@ -65,6 +67,12 @@ public class ModificaToDo {
         textFieldUrl.setText(toDo.getUrl());
         textFieldColore.setText(toDo.getColoresfondo());
 
+        if(toDo.getStato() == StatoToDo.COMPLETATO) {
+            completatoRadioButton.setSelected(true);
+        } else {
+            completatoRadioButton.setSelected(false);
+        }
+
         buttonModifica.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,12 +90,21 @@ public class ModificaToDo {
                     String posizione = textFieldPosizione.getText();
                     String url = textFieldUrl.getText();
                     String colore = textFieldColore.getText();
+                    StatoToDo stato=completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
+
+                    if(completatoRadioButton.isSelected()) {
+                        stato = StatoToDo.COMPLETATO;
+                    }else{
+                        stato = StatoToDo.NONCOMPLETATO;
+                    }
+
+
 
                     ArrayList<Utente> utenti = new ArrayList<>();
                     utenti.add(controller.getUtente(utente));
 
                     //aggiungo il todo alla bacheca
-                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore);
+                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore,stato);
 
                     //chiudo la finestra e riapro VistaBacheca
                     frameModificaToDo.dispose();

@@ -131,6 +131,15 @@ public class ToDo {
     public StatoToDo getStato() {
         return stato;
     }
+    public String getStatoString(){
+        String statoString = "";
+        if(stato == StatoToDo.NONCOMPLETATO){
+            statoString = "NON COMPLETATO";
+        } else if(stato == StatoToDo.COMPLETATO){
+            statoString = "COMPLETATO";
+        }
+        return statoString;
+    }
 
     public void setStato(StatoToDo stato) {
         this.stato = stato;

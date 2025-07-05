@@ -128,7 +128,7 @@ public class Controller {
         bacheca.aggiungiToDo(todo);
     }
 
-    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore){
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;
         };
@@ -147,6 +147,7 @@ public class Controller {
         if (img != null) todo.setImage(img);
         if (posizione != null) todo.setPosizione(posizione);
         if (colore != null) todo.setColoresfondo(colore);
+        if(stato!=null) todo.setStato(stato);
     }
     /*
     public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
