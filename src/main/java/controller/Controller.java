@@ -281,6 +281,21 @@ public class Controller {
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
         bacheca.getTodo().remove(t);
     }
+
+    public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {
+        bachecaOrigine.eliminaToDo(todo);
+        todo.setPosizione(String.valueOf(bachecaDestinazione.getTodo().size() + 1));
+        bachecaDestinazione.aggiungiToDo(todo);
+    }
+
+    public Bacheca getBachecaPerUtente(String username, String titoloBacheca) {
+        Utente utente = getUtente(username);
+        if (utente == null) return null;
+
+        TitoloBacheca titolo = stringToTitoloBacheca(titoloBacheca);
+        for (Bacheca b : utente.getBacheca()) {
+            if (b.getTitolo() == titolo) return b;
+        }
+        return null;
+    }
 }
-
-

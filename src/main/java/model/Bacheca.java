@@ -84,4 +84,5 @@ public class Bacheca {
     public void setUtente(Utente utente) {
         this.utente = utente;
     }
+
 }
