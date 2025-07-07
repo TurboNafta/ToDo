@@ -40,6 +40,7 @@ public class ModificaToDo {
     private String utente;
     private ToDo toDo;
     private JList<String> utentiList;
+    private JLabel CondivisiPanel;
 
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;

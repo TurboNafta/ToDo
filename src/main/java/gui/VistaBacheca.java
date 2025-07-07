@@ -21,6 +21,7 @@ public class VistaBacheca {
     private JButton buttonCerca;
     private JPanel todoPanelris;
     private JComboBox RicercacomboBox1;
+    private JLabel OrdinaLabel;
 
     //JFrame e Controller
     public JFrame frameVista, frameChiamante;
@@ -58,11 +59,21 @@ public class VistaBacheca {
 
         buttonCerca = new JButton("Cerca");
         ricerca.add(buttonCerca);
+        ricerca.add(new JLabel("Ordina per:"));
+        ricerca.add(comboBoxOrdina);
+
+        //combobox filtro ordina
+        comboBoxOrdina.removeAllItems();
+        comboBoxOrdina.addItem("Nessun Ordinamento");
+        comboBoxOrdina.addItem("Titolo A-Z");
+        comboBoxOrdina.addItem("Data di Scadenza");
+        comboBoxOrdina.addItem("Posizione");
+        comboBoxOrdina.addItem("Stato Completamento");
 
         // Abilita/disabilita la barra di ricerca in base al criterio
         RicercacomboBox1.addActionListener(e -> {
-            String criterio = (String) RicercacomboBox1.getSelectedItem();
-            if ("Titolo".equals(criterio) || "In scadenza entro".equals(criterio)) {
+            String criterioRicerca = (String) RicercacomboBox1.getSelectedItem();
+            if ("Titolo".equals(criterioRicerca) || "In scadenza entro".equals(criterioRicerca)) {
                 textField1.setEnabled(true);
             } else {
                 textField1.setText("");
@@ -73,14 +84,7 @@ public class VistaBacheca {
         RicercacomboBox1.setSelectedIndex(0);
         textField1.setEnabled(true);
 
-        //combobox filtro ordina
-        comboBoxOrdina.removeAllItems();
-        comboBoxOrdina.addItem("Nessun Ordinamento");
-        comboBoxOrdina.addItem("Titolo A-Z");
-        comboBoxOrdina.addItem("Data di Scadenza");
-        comboBoxOrdina.addItem("Posizione");
-        comboBoxOrdina.addItem("Stato Completamento");
-
+        //ordinamento live sulla lista generale
         comboBoxOrdina.addActionListener(e->aggiornaListaToDo());
 
         //BOTTONE CHE CREA TO DO
@@ -93,45 +97,51 @@ public class VistaBacheca {
             }
         });
 
-        //PERMETTE DI TROVARE I TODO
+        //Bottone CERCA con filtro e ordinamento
         buttonCerca.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<ToDo> toDoDaCercare = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, textField1.getText());
-                String criterio = (String) comboBoxOrdina.getSelectedItem();
-                String Criterio = (String) RicercacomboBox1.getSelectedItem();
+                //ArrayList<ToDo> toDoDaCercare = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, textField1.getText());
+                String criterioOrdine = (String) comboBoxOrdina.getSelectedItem();
+                String criterioRicerca = (String) RicercacomboBox1.getSelectedItem();
                 String testo = textField1.getText().trim();
                 ArrayList<ToDo> risultati = new ArrayList<>();
 
-                if ("Titolo".equals(Criterio)) {
-                    risultati = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, testo);
-                } else if ("Scadenza oggi".equals(Criterio)) {
-                    risultati = controller.getToDoInScadenzaOggi(utenteLoggato, bacheca);
-                } else if ("In scadenza entro".equals(Criterio)) {
-                    risultati = controller.getToDoInScadenzaEntro(utenteLoggato, bacheca, testo);
+                //RICERCA PER TITOLO
+                try {
+                    if ("Titolo".equals(criterioRicerca)) {
+                        risultati = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, testo);
+                    } else if ("Scadenza oggi".equals(criterioRicerca)) {
+                        risultati = controller.getToDoInScadenzaOggi(utenteLoggato, bacheca);
+                    } else if ("In scadenza entro".equals(criterioRicerca)) {
+                        risultati = controller.getToDoInScadenzaEntro(utenteLoggato, bacheca, testo);
+                    }
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(frameVista, ex.getMessage(), "Errore ricerca", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
-                mostraToDo(risultati);
-
-                if (criterio != null) {
-                    switch (criterio) {
+                //ORDINAMENTO
+                if (criterioOrdine != null) {
+                    switch (criterioOrdine) {
                         case "Titolo A-Z":
-                            toDoDaCercare.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
+                            risultati.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
                             break;
                         case "Data di Scadenza":
-                            toDoDaCercare.sort(Comparator.comparing(ToDo::getDatascadenza));
+                            risultati.sort(Comparator.comparing(ToDo::getDatascadenza));
                             break;
-                        case "Posizione":
-                            toDoDaCercare.sort(Comparator.comparing(t -> Integer.parseInt(t.getPosizione())));
+                        case "Posizione"://la posizione che si intende?????????????????????
+                            risultati.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
                             break;
                         case "Stato Completamento":
-                            toDoDaCercare.sort(Comparator.comparing(ToDo::getStato));
+                            risultati.sort(Comparator.comparing(ToDo::getStato));//fare qualcosa x mettere prima i nn completati
                             break;
                     }
                 }
+                mostraListaToDo(risultati);
 
-                todoPanelris.removeAll();
 
-                JPanel cardsPanel = new JPanel();
+
+               /* JPanel cardsPanel = new JPanel();
                 cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20)); // orizzontale, con margini tra le card
                 cardsPanel.setBackground(Color.WHITE);
 
@@ -182,13 +192,13 @@ public class VistaBacheca {
 
                         card.add(new JLabel("Immagine: " + t.getImage()));
                         card.add(new JLabel("Stato: " + t.getStato()));
-                        card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
+                        card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));*|
 
                         /******************************************************************************************************************************/
-                        /******************************************************************************************************************************/
+                /******************************************************************************************************************************/
 
-                        //BOTTONE PER MODIFICARE LA DATI
-                        if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
+                //BOTTONE PER MODIFICARE LA DATI
+                       /* if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
                             JButton modificaButton = new JButton("Modifica");
                             modificaButton.setBackground(new Color(255, 200, 80));
                             modificaButton.setForeground(Color.BLACK);
@@ -292,9 +302,12 @@ public class VistaBacheca {
                 }
                 todoPanelris.add(cardsPanel);
                 todoPanelris.revalidate();
-                todoPanelris.repaint();
+                todoPanelris.repaint();*/
             }
+
         });
+
+
 
         //PERMETTE DI TORNARE ALLA HOME
         tornaAllaHomeButton.addActionListener(new ActionListener() {
@@ -309,8 +322,12 @@ public class VistaBacheca {
                 frameVista.dispose();
             }
         });
-    }
 
+        // Mostra all'avvio
+        aggiornaListaToDo();
+
+    }
+    // Mostra tutti i ToDo della bacheca con eventuale ordinamento
     private void aggiornaListaToDo() {
         ArrayList<ToDo> lista = new ArrayList<>(bacheca.getTodo());
 
@@ -324,7 +341,7 @@ public class VistaBacheca {
                     lista.sort(Comparator.comparing(ToDo::getDatascadenza));
                     break;
                 case "Posizione":
-                    lista.sort(Comparator.comparing(ToDo::getPosizione, String.CASE_INSENSITIVE_ORDER));
+                    lista.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
                     break;
                 case "Stato Completamento":
                     lista.sort(Comparator.comparing(ToDo::getStato));
@@ -336,10 +353,17 @@ public class VistaBacheca {
         }
         mostraListaToDo(lista);
     }
+    // Converte posizione, gestendo errori
+    private int parseIntSafe(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
 
     private void mostraListaToDo(ArrayList<ToDo> lista) {
         todoPanelris.removeAll();
-
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
         cardsPanel.setBackground(Color.WHITE);
@@ -366,77 +390,125 @@ public class VistaBacheca {
                         default: card.setBackground(Color.LIGHT_GRAY);
                     }
                     card.setOpaque(true);
+                } else {
+                    card.setBackground(Color.LIGHT_GRAY);
                 }
 
+
+                //CARD DEL TODO
                 card.add(new JLabel("Titolo: " + t.getTitolo()));
                 card.add(new JLabel("Descrizione: " + t.getDescrizione()));
                 card.add(new JLabel("URL: " + t.getUrl()));
                 card.add(new JLabel("Posizione: " + t.getPosizione()));
-
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dataString = t.getDatascadenza() != null ? sdf.format(t.getDatascadenza().getTime()) : "N/D";
                 card.add(new JLabel("Data Scadenza: " + dataString));
                 card.add(new JLabel("Immagine: " + t.getImage()));
-                card.add(new JLabel("Stato: " + t.getStato()));
-                card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
+                card.add(new JLabel("Stato: " + t.getStatoString()));
 
-                JButton modificaButton = new JButton("Modifica");
-                modificaButton.setBackground(new Color(255, 200, 80));
-                modificaButton.setForeground(Color.BLACK);
-                modificaButton.setFocusPainted(false);
-                modificaButton.addActionListener(ev -> {
-                    ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
-                    modificaGui.frameModificaToDo.setVisible(true);
-                    frameVista.setVisible(false);
-                });
-                card.add(Box.createVerticalStrut(5));
-                card.add(modificaButton);
+                // Pulsanti disponibili solo se autore
+                if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
+                    JButton modificaButton = new JButton("Modifica");
+                    modificaButton.setBackground(new Color(255, 200, 80));
+                    modificaButton.setForeground(Color.BLACK);
+                    modificaButton.setFocusPainted(false);
+                    modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+                    modificaButton.addActionListener(ev -> {
+                        ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
+                        modificaGui.frameModificaToDo.setVisible(true);
+                        frameVista.setVisible(false);
+                    });
+                    //aggiungo a card
+                    card.add(Box.createVerticalStrut(5));
+                    card.add(modificaButton);
 
-                JButton eliminaButton = new JButton("Elimina");
-                eliminaButton.setBackground(new Color(255, 80, 80));
-                eliminaButton.setForeground(Color.BLACK);
-                eliminaButton.setFocusPainted(false);
-                eliminaButton.addActionListener(ev -> {
-                    int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
-                    if (conferma == JOptionPane.YES_OPTION) {
-                        controller.eliminaToDo(bacheca, t);
-                        aggiornaListaToDo();
-                    }
-                });
-                card.add(Box.createVerticalStrut(5));
-                card.add(eliminaButton);
-
-                JButton spostaButton = new JButton("Sposta in un altra Bacheca");
-                spostaButton.setBackground(new Color(80, 150, 255));
-                spostaButton.setForeground(Color.BLACK);
-                spostaButton.setFocusPainted(false);
-                spostaButton.addActionListener(ev -> {
-                    String[] bacheche = {"Università", "Lavoro", "Tempo Libero"};
-                    String scelta = (String) JOptionPane.showInputDialog(
-                            frameVista,
-                            "Scegli bacheca di destinazione: ",
-                            "Sposta To Do",
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            bacheche,
-                            bacheche[0]
-                    );
-                    if(scelta != null && !scelta.equalsIgnoreCase(bacheca.getTitolo().toString())){
-                        Bacheca destinazione = controller.getBachecaPerUtente(utenteLoggato, scelta);
-                        if(destinazione != null) {
-                            controller.spostaToDoInAltraBacheca(t, bacheca, destinazione);
-                            aggiornaListaToDo();
-                            JOptionPane.showMessageDialog(frameVista, "ToDo spostato in'" + scelta + "'");
-                        } else {
-                            JOptionPane.showMessageDialog(frameVista, "Errore: bacheca non trovata.");
+                    //BUTTON ELIMINA
+                    JButton eliminaButton = new JButton("Elimina");
+                    eliminaButton.setBackground(new Color(255, 80, 80));
+                    eliminaButton.setForeground(Color.BLACK);
+                    eliminaButton.setFocusPainted(false);
+                    eliminaButton.addActionListener(ev -> {
+                        int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
+                        if (conferma == JOptionPane.YES_OPTION) {
+                            controller.eliminaToDo(bacheca, t);
+                            aggiornaListaToDo();//buttonCerca.doClick()
                         }
-                    }
-                });
-                card.add(Box.createVerticalStrut(5));
-                card.add(spostaButton);
+                    });
+                    // aggiungo il bottone a card
+                    card.add(Box.createVerticalStrut(5));
+                    card.add(eliminaButton);
+                    //cardsPanel.add(card);
 
+                    //BUTTON SPOSTA
+                    JButton spostaButton = new JButton("Sposta in un altra Bacheca");
+                    spostaButton.setBackground(new Color(80, 150, 255));
+                    spostaButton.setForeground(Color.BLACK);
+                    spostaButton.setFocusPainted(false);
+                    spostaButton.addActionListener(ev -> {
+                        String[] bacheche = {"Università", "Lavoro", "Tempo Libero"};
+                        String scelta = (String) JOptionPane.showInputDialog(
+                                frameVista,
+                                "Scegli bacheca di destinazione: ",
+                                "Sposta To Do",
+                                JOptionPane.PLAIN_MESSAGE,
+                                null,
+                                bacheche,
+                                bacheche[0]
+                        );
+                        if (scelta != null && !scelta.equalsIgnoreCase(bacheca.getTitolo().toString())) {
+                            Bacheca destinazione = controller.getBachecaPerUtente(utenteLoggato, scelta);
+                            if (destinazione != null) {
+                                controller.spostaToDoInAltraBacheca(t, bacheca, destinazione);
+                                aggiornaListaToDo();
+                                JOptionPane.showMessageDialog(frameVista, "ToDo spostato in'" + scelta + "'");
+                            } else {
+                                JOptionPane.showMessageDialog(frameVista, "Errore: bacheca non trovata.");
+                            }
+                        }
+                    });
+                    card.add(Box.createVerticalStrut(5));
+                    card.add(spostaButton);
+
+                    //cardsPanel.add(card);
+                    //cardsPanel.add(Box.createHorizontalStrut(20));
+                }
+
+                //BOTTONE PER VEDERE CONDIVISIONI
+                ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
+                //utentiCondivisi.removeIf(u -> u.getUsername().equals(t.getAutore().getUsername()));
+                if (!utentiCondivisi.isEmpty()) {
+                    JButton condivisiButton = new JButton("Condiviso con...");
+                    condivisiButton.setBackground(new Color(120, 200, 255));
+                    condivisiButton.setForeground(Color.BLACK);
+                    condivisiButton.setFocusPainted(false);
+                    condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+                    condivisiButton.addActionListener(ev -> {
+                        StringBuilder sb = new StringBuilder();
+
+                        if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
+                            // L'autore vede tutti gli utenti (escluso sé stesso)
+                            for (Utente u : utentiCondivisi) {
+                                sb.append(u.getUsername()).append("\n");
+                            }
+                        } else {
+                            // Un utente condiviso vede solo sé stesso
+                            if (utentiCondivisi.stream().anyMatch(u -> u.getUsername().equals(utenteLoggato))) {
+                                sb.append(utenteLoggato).append("\n");
+                            }
+                        }
+
+                        JOptionPane.showMessageDialog(frameVista,
+                                sb.length() > 0 ? sb.toString() : "Non condiviso con nessuno.",
+                                "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
+                    });
+                    card.add(Box.createVerticalStrut(5));
+                    card.add(condivisiButton);
+                }
+
+                //PRENDE IL COLORE IN INPUT E LO METTE COME SFONDO
                 cardsPanel.add(card);
                 cardsPanel.add(Box.createHorizontalStrut(20));
+
             }
         }
 
@@ -444,8 +516,9 @@ public class VistaBacheca {
         todoPanelris.revalidate();
         todoPanelris.repaint();
     }
+}
 
-    private void mostraToDo (ArrayList < ToDo > lista) {
+    /*private void mostraToDo (ArrayList < ToDo > lista) {
         todoPanelris.removeAll();
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
@@ -504,7 +577,7 @@ public class VistaBacheca {
                 /******************************************************************************************************************************/
 
                 //BOTTONE PER MODIFICARE LA DATI
-                if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
+              /*  if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
                     JButton modificaButton = new JButton("Modifica");
                     modificaButton.setBackground(new Color(255, 200, 80));
                     modificaButton.setForeground(Color.BLACK);
@@ -582,4 +655,4 @@ public class VistaBacheca {
         todoPanelris.repaint();
 
     }
-}
+}*/
