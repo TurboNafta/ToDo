@@ -22,6 +22,7 @@ public class ToDo {
 
     //gestisco la relazione * con condivisione
     private ArrayList <Utente> utentiPossessori;
+    private Utente autore;
     private Bacheca bacheca;
 
 
@@ -35,7 +36,7 @@ public class ToDo {
     }*/
 
     //costruttore
-    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, ArrayList<Utente> utenti){
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, ArrayList<Utente> utenti, Utente autore){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.url = url;
@@ -54,6 +55,7 @@ public class ToDo {
         this.stato = stato;
 
         this.utentiPossessori = utenti;
+        this.autore = autore;
 
         this.attivitaCheckList = new ArrayList<>();
         /*
@@ -170,5 +172,11 @@ public class ToDo {
     }
     public void setUtentiPossessori(ArrayList<Utente> utentiPossessori){
         this.utentiPossessori = utentiPossessori;
+    }
+    public Utente getAutore() {
+        return autore;
+    }
+    public void setAutore(Utente autore) {
+        this.autore = autore;
     }
 }

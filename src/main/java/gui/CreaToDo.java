@@ -33,6 +33,7 @@ public class CreaToDo {
     private Controller controller;
     private Bacheca bacheca;
     private String utente;
+    private JList<String> utentiList;
 
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
@@ -46,6 +47,15 @@ public class CreaToDo {
         frameCreaToDo.pack();
         frameCreaToDo.setLocationRelativeTo(null);
         frameCreaToDo.setVisible(true);
+
+        //Serve a popolare la list per le condivisioni dei Todo
+        DefaultListModel<String> utentiModel = new DefaultListModel<>();
+        for (Utente u : controller.getTuttiUtenti()) {
+            if (!u.getUsername().equals(utente)) // non aggiungere l'autore
+                utentiModel.addElement(u.getUsername());
+        }
+        utentiList.setModel(utentiModel);
+        utentiList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         addToDoButton.addActionListener(new ActionListener() {
             @Override
@@ -69,15 +79,29 @@ public class CreaToDo {
                     ArrayList<Utente> utenti = new ArrayList<>();
                     utenti.add(controller.getUtente(utente));
 
+                    for (String u : utentiList.getSelectedValuesList()) {
+                        utenti.add(controller.getUtente(u));
+                    }
+
                     //Crea ToDo
-                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti);
+                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtente(utente));
 
-                    //aggiungo il todo alla bacheca
-                    controller.addToDo(bacheca,nuovoToDo,utente);
+                    for (Utente u : utenti) {
+                        Bacheca bachecaUtente = controller.getOrCreateBacheca(
+                                bacheca.getTitolo(),
+                                bacheca.getDescrizione(),
+                                u.getUsername()
+                        );
+                        controller.addToDo(bachecaUtente, nuovoToDo, u.getUsername());
+                    }
 
-                    //chiudo la finestra e riapro VistaBacheca
+                    /*chiudo la finestra e riapro VistaBacheca
                     frameCreaToDo.dispose();
                     VistaBacheca vistaBacheca= new VistaBacheca(bacheca, controller,frameChiamante,utente);
+                    vistaBacheca.frameVista.setVisible(true);*/
+
+                    frameCreaToDo.dispose();
+                    VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
                     vistaBacheca.frameVista.setVisible(true);
 
                 }catch(Exception ex){

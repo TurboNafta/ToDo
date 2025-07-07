@@ -21,6 +21,8 @@ public class  Accesso{
     public static void main(String[] args) {
         Controller controller = new Controller();
         controller.buildAdmin();
+        controller.buildBacheche();
+        controller.buildToDoPerBachecaUtente();
 
        new Accesso(controller);
     }
