@@ -5,8 +5,11 @@ import interfaces.InterfacciaBacheca;
 import interfaces.InterfacciaToDo;
 import interfaces.InterfacciaUtente;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 public class Controller {
     private InterfacciaBacheca bachecaManager;
@@ -128,7 +131,7 @@ public class Controller {
         bacheca.aggiungiToDo(todo);
     }
 
-    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore){
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;
         };
@@ -147,35 +150,44 @@ public class Controller {
         if (img != null) todo.setImage(img);
         if (posizione != null) todo.setPosizione(posizione);
         if (colore != null) todo.setColoresfondo(colore);
-    }
-    /*
-    public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
-        return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
+        if(stato!=null) todo.setStato(stato);
     }
 
+    // ToDo in scadenza oggi
+    public ArrayList<ToDo> getToDoInScadenzaOggi(String utente, Bacheca bacheca) {
+        ArrayList<ToDo> result = new ArrayList<>();
+        ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
+        java.util.Calendar oggi = java.util.Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String oggiStr = sdf.format(oggi.getTime());
 
-
-    public void removeToDo(ToDo todo, Bacheca bacheca) {
-        toDoManager.removeToDo(todo, bacheca);
-    }
-
-    public void updateToDo(ToDo todo, Bacheca bacheca) {
-        toDoManager.updateToDo(todo, bacheca);
-    }
-
-    public void addABacheca(ToDo todo, TitoloBacheca titolo){
-        String titoloBacheca = titolo.toString();
-        List<Bacheca> bacheca = getBachecaList(titoloBacheca);
-        for(Bacheca b: bacheca){
-            if(b.getTitolo() == titolo){
-                addToDo(todo, b);
-                return;
+        for (ToDo t : tutti) {
+            String scadenzaStr = sdf.format(t.getDatascadenza().getTime());
+            if (scadenzaStr.equals(oggiStr)) {
+                result.add(t);
             }
         }
-        Bacheca nuova = new Bacheca(titolo, utenteLoggato.getUsername());
-        addBacheca(nuova);
-        addToDo(todo, nuova);
-    }*/
+        return result;
+    }
+
+    // ToDo in scadenza entro una certa data
+    public ArrayList<ToDo> getToDoInScadenzaEntro(String utente, Bacheca bacheca, String dataLimiteStr) {
+        ArrayList<ToDo> result = new ArrayList<>();
+        ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            java.util.Date dataLimite = sdf.parse(dataLimiteStr);
+
+            for (ToDo t : tutti) {
+                if (!t.getDatascadenza().getTime().after(dataLimite)) {
+                    result.add(t);
+                }
+            }
+        } catch (Exception ex) {
+          throw new IllegalArgumentException("Formato data non valido! Usa gg/MM/aaaa.");
+        }
+        return result;
+    }
 
     // ----- GESTIONE UTENTI -----
     // cerco utente nella lista di utenti
@@ -210,29 +222,34 @@ public class Controller {
     }
 
     //Funzione che genera l'admin
-    public void buildAdmin(){
+    public void buildAdmin() {
+        // Controlla se admin esiste già tra gli utenti
+        for (Utente u : listaUtenti) {
+            if (u.getUsername().equals("admin")) {
+                // Già esiste, non fare nulla
+                return;
+            }
+        }
+        // Se non esiste, crea l’admin
         Utente admin = new Utente("admin", "1111");
-        this.listaUtenti.add(admin);
+        listaUtenti.add(admin);
     }
 
     //Funzione che genera bacheche solamente per l'admin
     public void buildBacheche() {
         Utente admin = getUtente("admin");
-        //Admin non trovato, è la prima esecuzione del programma, devo crearlo
-        if(admin == null){
-            admin = new Utente("admin", "1111");
-            this.listaUtenti.add(admin);
+        if (admin == null) {
+            buildAdmin();
+            admin = getUtente("admin");
         }
-        //Devo controllare se Admin già possiede delle bacheche
-        if( !admin.getBacheca().isEmpty()){
+        //SE CI SONO BACHECHE NON FACCIO NIENTE
+        if (!admin.getBacheca().isEmpty()) {
             return;
         }
         TitoloBacheca[] titoli = {TitoloBacheca.LAVORO, TitoloBacheca.TEMPOLIBERO, TitoloBacheca.UNIVERSITA};
-        String [] descr = {"PROVA1", "PROVA2", "PROVA3"};
-        for(int i=0; i<titoli.length; i++){
-            Bacheca b= new Bacheca(titoli[i], descr[i], admin);
-            System.out.println(b.getTitolo()+" ");
-            System.out.println(b.getDescrizione()+"\n");
+        String[] descr = {"PROVA1", "PROVA2", "PROVA3"};
+        for (int i = 0; i < titoli.length; i++) {
+            Bacheca b = new Bacheca(titoli[i], descr[i], admin);
             admin.CreaBacheca(b);
         }
     }
@@ -264,7 +281,7 @@ public class Controller {
             if (!b.getTodo().isEmpty()) {
                 return;
             }else {
-                b.aggiungiToDo(new ToDo(titoli[i], descr[i], url[i], data[i], image[i], posizione[i], colore[i], utentiCondivisione));
+                b.aggiungiToDo(new ToDo(titoli[i], descr[i], url[i], data[i], image[i], posizione[i], colore[i], utentiCondivisione, admin));
                 i++;
             }
         }
@@ -279,7 +296,53 @@ public class Controller {
     }
 
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
-        bacheca.getTodo().remove(t);
+        // Se l'autore è l'utente loggato, elimina il ToDo da tutte le bacheche condivise
+        if(t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
+            ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
+            for (Utente u : utentiCondivisi) {
+                // Cerca la bacheca giusta per ogni utente
+                ArrayList<Bacheca> bachecheUtente = getBachecaList(bacheca.getTitolo().toString(), u.getUsername());
+                for (Bacheca b : bachecheUtente) {
+                    if (b.getDescrizione().equals(bacheca.getDescrizione())) {
+                        b.getTodo().remove(t);
+                    }
+                }
+            }
+        } else {
+            // Altrimenti elimina solo dalla propria bacheca
+            bacheca.getTodo().remove(t);
+        }
+    }
+
+    public Utente[] getTuttiUtenti() {
+        return listaUtenti.toArray(new Utente[0]);
+    }
+
+    public Bacheca creaBachecaSeManca(TitoloBacheca titolo, String descrizione, String username) {
+        Utente utente = getUtente(username);
+        if (utente == null) throw new IllegalArgumentException("Utente non trovato: " + username);
+
+        // Controlla se esiste già bacheca con stesso titolo e descrizione
+        for (Bacheca b : utente.getBacheca()) {
+            if (b.getTitolo() == titolo && b.getDescrizione().equals(descrizione)) {
+                return b;
+            }
+        }
+        // Se manca, la crea
+        Bacheca nuova = new Bacheca(titolo, descrizione, utente);
+        utente.CreaBacheca(nuova);
+        return nuova;
+    }
+
+    public Bacheca getOrCreateBacheca(TitoloBacheca titolo, String descrizione, String username) {
+        ArrayList<Bacheca> bList = getBachecaList(titolo.toString(), username);
+        for (Bacheca b : bList) {
+            if (b.getDescrizione().equals(descrizione)) {
+                return b;
+            }
+        }
+        // Se nessuna bacheca con titolo e descrizione coincidono, la creo
+        return creaBachecaSeManca(titolo, descrizione, username);
     }
 
     public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {

@@ -46,10 +46,6 @@ public class SelezioneBacheca {
 
         //Funzione che crea Bacheche per Admin
         System.out.println(this.utentelog);
-        if(this.utentelog.equals("admin")){
-            controller.buildBacheche();
-            controller.buildToDoPerBachecaUtente();
-        }
 
         //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
         creaNuovaBachecaButton.addActionListener(new ActionListener() {
@@ -171,7 +167,7 @@ public class SelezioneBacheca {
         buttonIndietro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                frameChiamante.setVisible(true);
+                new Accesso(controller);
                 frameBacheca.dispose();
             }
         });
