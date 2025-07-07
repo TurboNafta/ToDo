@@ -39,6 +39,7 @@ public class ModificaToDo {
     private Bacheca bacheca;
     private String utente;
     private ToDo toDo;
+    private JList<String> utentiList;
 
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
@@ -67,6 +68,27 @@ public class ModificaToDo {
         textFieldUrl.setText(toDo.getUrl());
         textFieldColore.setText(toDo.getColoresfondo());
 
+        //Serve a popolare la list per le condivisioni dei Todo
+        DefaultListModel<String> utentiModel = new DefaultListModel<>();
+        for (Utente u : controller.getListaUtenti()) {
+            if (!u.getUsername().equals(utente)) // non aggiungere l'autore
+                utentiModel.addElement(u.getUsername());
+        }
+        utentiList.setModel(utentiModel);
+        utentiList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        // PRENDE UTENTI GIA POSSESSORI
+        ArrayList<String> utentiPossessori = new ArrayList<>();
+        for (Utente u : toDo.getUtentiPossessori()) {
+            if (!u.getUsername().equals(utente))
+                utentiPossessori.add(u.getUsername());
+        }
+        int[] indices = utentiPossessori.stream()
+                .mapToInt(username -> utentiModel.indexOf(username))
+                .filter(i -> i >= 0)
+                .toArray();
+        utentiList.setSelectedIndices(indices);
+
         if(toDo.getStato() == StatoToDo.COMPLETATO) {
             completatoRadioButton.setSelected(true);
         } else {
@@ -82,6 +104,9 @@ public class ModificaToDo {
                     return;
                 }
                 try{
+                    // PRENDE VECCHI POSSESSORI
+                    ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
+
                     // Recupera i dati dai campi di testo
                     String titolo = textFieldTitolo.getText();
                     String descrizione = textFieldDescrizione.getText();
@@ -98,18 +123,47 @@ public class ModificaToDo {
                         stato = StatoToDo.NONCOMPLETATO;
                     }
 
+                    // COSTRUISCE NUOVA LISTA POSSESSORI
+                    ArrayList<Utente> nuoviPossessori = new ArrayList<>();
+                    nuoviPossessori.add(controller.getUtente(utente));
+                    for(String nome : utentiList.getSelectedValuesList()){
+                        nuoviPossessori.add(controller.getUtente(nome));
+                    }
+                    toDo.setUtentiPossessori(nuoviPossessori);
 
+                    // MODIFICA TODO
+                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
 
-                    ArrayList<Utente> utenti = new ArrayList<>();
-                    utenti.add(controller.getUtente(utente));
+                    // AGGIORNA BACHECHE DEI POSSESSORI
+                    for (Utente u : nuoviPossessori) {
+                        Bacheca bachecaUtente = controller.getOrCreateBacheca(
+                                bacheca.getTitolo(),
+                                bacheca.getDescrizione(),
+                                u.getUsername()
+                        );
+                        if (!bachecaUtente.getTodo().contains(toDo)) {
+                            controller.addToDo(bachecaUtente, toDo, u.getUsername());
+                        }
+                    }
 
-                    //aggiungo il todo alla bacheca
-                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore,stato);
+                    // TOGLIE TODO DA UTENTI NON PIU' POSSESSORI
+                    for (Utente u : vecchiPossessori) {
+                        if (!nuoviPossessori.contains(u)) {
+                            Bacheca bachecaUtente = controller.getOrCreateBacheca(
+                                    bacheca.getTitolo(),
+                                    bacheca.getDescrizione(),
+                                    u.getUsername()
+                            );
+                            controller.eliminaToDo(bachecaUtente, toDo);
+                        }
+                    }
 
-                    //chiudo la finestra e riapro VistaBacheca
                     frameModificaToDo.dispose();
-                    VistaBacheca vistaBacheca= new VistaBacheca(bacheca, controller,frameChiamante,utente);
-                    vistaBacheca.frameVista.setVisible(true);
+                    ArrayList<Bacheca> bacheche = controller.getBachecaList(bacheca.getTitolo().toString(), utente);
+                    if (!bacheche.isEmpty()) {
+                        VistaBacheca vistaBacheca = new VistaBacheca(bacheche.get(0), controller, frameChiamante, utente);
+                        vistaBacheca.frameVista.setVisible(true);
+                    }
 
                 }catch(Exception ex){
                     JOptionPane.showMessageDialog(frameModificaToDo,"Errore: "+ ex.getMessage());

@@ -189,40 +189,6 @@ public class Controller {
         return result;
     }
 
-
-
-
-    /*
-
-
-    public ArrayList<ToDo> getToDoByBacheca(Bacheca bacheca) {
-        return new ArrayList<>(toDoManager.getToDoByBacheca(bacheca));
-    }
-
-
-
-    public void removeToDo(ToDo todo, Bacheca bacheca) {
-        toDoManager.removeToDo(todo, bacheca);
-    }
-
-    public void updateToDo(ToDo todo, Bacheca bacheca) {
-        toDoManager.updateToDo(todo, bacheca);
-    }
-
-    public void addABacheca(ToDo todo, TitoloBacheca titolo){
-        String titoloBacheca = titolo.toString();
-        List<Bacheca> bacheca = getBachecaList(titoloBacheca);
-        for(Bacheca b: bacheca){
-            if(b.getTitolo() == titolo){
-                addToDo(todo, b);
-                return;
-            }
-        }
-        Bacheca nuova = new Bacheca(titolo, utenteLoggato.getUsername());
-        addBacheca(nuova);
-        addToDo(todo, nuova);
-    }*/
-
     // ----- GESTIONE UTENTI -----
     // cerco utente nella lista di utenti
     public Utente getUtente(String username) {

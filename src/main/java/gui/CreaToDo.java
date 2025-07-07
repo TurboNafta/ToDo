@@ -95,11 +95,6 @@ public class CreaToDo {
                         controller.addToDo(bachecaUtente, nuovoToDo, u.getUsername());
                     }
 
-                    /*chiudo la finestra e riapro VistaBacheca
-                    frameCreaToDo.dispose();
-                    VistaBacheca vistaBacheca= new VistaBacheca(bacheca, controller,frameChiamante,utente);
-                    vistaBacheca.frameVista.setVisible(true);*/
-
                     frameCreaToDo.dispose();
                     VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
                     vistaBacheca.frameVista.setVisible(true);
