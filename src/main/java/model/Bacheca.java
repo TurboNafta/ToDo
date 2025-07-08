@@ -65,9 +65,9 @@ public class Bacheca implements InterfacciaBacheca {
         todo.add(t);
     }
 
-    public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
-        b.modificaDescrizione(nuovaDescrizione);
-    }
+    //public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
+    //b.modificaDescrizione(nuovaDescrizione);
+    //}
 
     public void eliminaToDo(ToDo t){ todo.remove(t); }
 
