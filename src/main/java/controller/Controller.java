@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class Controller {
 
@@ -20,7 +21,7 @@ public class Controller {
 
     // GESTIONE BACHECHE
     public ArrayList<Bacheca> getBachecaList(String titolo, String username) {
-        Utente utente = getUtente(username);
+        Utente utente = getUtenteByUsername(username);
         System.out.println("Utente trovato: " + (utente != null ? utente.getUsername() : "null"));
         ArrayList<Bacheca> bachecheUtente=new ArrayList<>();
         if (utente == null){
@@ -66,7 +67,7 @@ public class Controller {
 
 
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
-        Utente u = getUtente(username);
+        Utente u = getUtenteByUsername(username);
         if(u != null){
             Bacheca nuova = new Bacheca(titolo, descrizione, u);
             u.CreaBacheca(nuova);
@@ -75,7 +76,8 @@ public class Controller {
         }
     }
 
-    public void setUtenteLoggato(Utente utente){
+    public void setUtenteLoggato(Utente utente){//dovrebbe stare in utente
+
         this.utenteLoggato = utente;
     }
     //sta nel model
@@ -94,7 +96,7 @@ public class Controller {
     // --- GESTIONE TODO ---
 
     public ArrayList<ToDo> getToDoPerBachecaUtente(String utenteLoggato, Bacheca bacheca, String nomeToDo) {
-        Utente utente = getUtente(utenteLoggato);
+        Utente utente = getUtenteByUsername(utenteLoggato);
         Bacheca b = bacheca;
         ArrayList<ToDo> filtrati = new ArrayList<>();
         ArrayList<ToDo> tuttiToDo = b.getTodo();
@@ -112,7 +114,7 @@ public class Controller {
     }
 
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
-        Utente u=getUtente(username);
+        Utente u=getUtenteByUsername(username);
         if(u != null){
            ArrayList<Utente> utenti=todo.getUtentiPossessori();
            if(utenti==null)
@@ -153,7 +155,7 @@ public class Controller {
     public ArrayList<ToDo> getToDoInScadenzaOggi(String utente, Bacheca bacheca) {
         ArrayList<ToDo> result = new ArrayList<>();
         ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
-        java.util.Calendar oggi = java.util.Calendar.getInstance();
+      Calendar oggi = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String oggiStr = sdf.format(oggi.getTime());
 
@@ -188,7 +190,7 @@ public class Controller {
     // ----- GESTIONE UTENTI ----- DOVREBBERO ANDARE NEL MODEL
     // possono essere lasciati nel Controller se la lista utenti è solo lì, ma se vuoi che ogni utente si gestisca, vanno in Utente/interfaccia.
     // cerco utente nella lista di utenti
-  public Utente getUtente(String username) {
+  public Utente getUtenteByUsername(String username) {
         for (Utente u: listaUtenti) {
             if (u.getUsername().equals(username)) {
                 return u;
@@ -234,10 +236,10 @@ public class Controller {
 
     //Funzione che genera bacheche solamente per l'admin
     public void buildBacheche() {
-        Utente admin = getUtente("admin");
+        Utente admin = getUtenteByUsername("admin");
         if (admin == null) {
             buildAdmin();
-            admin = getUtente("admin");
+            admin = getUtenteByUsername("admin");
         }
         //SE CI SONO BACHECHE NON FACCIO NIENTE
         if (!admin.getBacheca().isEmpty()) {
@@ -253,7 +255,7 @@ public class Controller {
 
     //Funzione che genera i todo solamente per l'admin
     public void buildToDoPerBachecaUtente(){
-        Utente admin = getUtente("admin");
+        Utente admin = getUtenteByUsername("admin");
         if (admin == null) {
             admin = new Utente("admin", "1111");
             this.listaUtenti.add(admin);
@@ -316,7 +318,7 @@ public class Controller {
     }
 
     public Bacheca creaBachecaSeManca(TitoloBacheca titolo, String descrizione, String username) {
-        Utente utente = getUtente(username);
+        Utente utente = getUtenteByUsername(username);
         if (utente == null) throw new IllegalArgumentException("Utente non trovato: " + username);
 
         // Controlla se esiste già bacheca con stesso titolo e descrizione
@@ -349,7 +351,7 @@ public class Controller {
     }
 
     public Bacheca getBachecaPerUtente(String username, String titoloBacheca) {
-        Utente utente = getUtente(username);
+        Utente utente = getUtenteByUsername(username);
         if (utente == null) return null;
 
         TitoloBacheca titolo = stringToTitoloBacheca(titoloBacheca);

@@ -77,14 +77,14 @@ public class CreaToDo {
 
                     // recupera l'utente loggato
                     ArrayList<Utente> utenti = new ArrayList<>();
-                    utenti.add(controller.getUtente(utente));
+                    utenti.add(controller.getUtenteByUsername(utente));
 
                     for (String u : utentiList.getSelectedValuesList()) {
-                        utenti.add(controller.getUtente(u));
+                        utenti.add(controller.getUtenteByUsername(u));
                     }
 
                     //Crea ToDo
-                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtente(utente));
+                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtenteByUsername(utente));
 
                     for (Utente u : utenti) {
                         Bacheca bachecaUtente = controller.getOrCreateBacheca(

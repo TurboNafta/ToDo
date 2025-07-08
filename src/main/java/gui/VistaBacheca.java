@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Calendar;
 
 public class VistaBacheca {
     private JPanel principale;
@@ -380,6 +381,16 @@ public class VistaBacheca {
                         BorderFactory.createEmptyBorder(10, 15, 10, 15)
                 ));
 
+                JLabel labelTitolo = new JLabel(t.getTitolo());
+                Calendar oggi = Calendar.getInstance();
+                if (t.getDatascadenza().before(oggi)) {
+                    labelTitolo.setForeground(Color.RED);
+                } else {
+                    labelTitolo.setForeground(Color.BLACK);
+                }
+                card.add(labelTitolo);
+
+
                 // Colore sfondo
                 String colore = t.getColoresfondo();
                 if (colore != null) {
@@ -469,7 +480,7 @@ public class VistaBacheca {
                     card.add(Box.createVerticalStrut(5));
                     card.add(spostaButton);
 
-                    //cardsPanel.add(card);
+                    cardsPanel.add(card);
                     //cardsPanel.add(Box.createHorizontalStrut(20));
                 }
 

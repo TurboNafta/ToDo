@@ -28,7 +28,7 @@ public class CreaBacheca {
     public CreaBacheca(Controller controller, JFrame callframe, String utentelog) {
         this.controller = controller;
         frameChiamante = callframe;
-        Utente utente = controller.getUtente(utentelog);
+        Utente utente = controller.getUtenteByUsername(utentelog);
         controller.setUtenteLoggato(utente);
 
         frameCreaBacheca = new JFrame("Crea bacheca");

@@ -48,7 +48,7 @@ public class  Accesso{
                 String password = new String(passwordField.getPassword());
                 boolean prova = controller.esisteUtente(username, password);
                 if(prova){
-                    Utente utente = controller.getUtente(username);
+                    Utente utente = controller.getUtenteByUsername(username);
                     controller.setUtenteLoggato(utente);
 
                     JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");

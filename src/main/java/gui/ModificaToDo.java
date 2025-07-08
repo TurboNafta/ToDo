@@ -126,9 +126,9 @@ public class ModificaToDo {
 
                     // COSTRUISCE NUOVA LISTA POSSESSORI
                     ArrayList<Utente> nuoviPossessori = new ArrayList<>();
-                    nuoviPossessori.add(controller.getUtente(utente));
+                    nuoviPossessori.add(controller.getUtenteByUsername(utente));
                     for(String nome : utentiList.getSelectedValuesList()){
-                        nuoviPossessori.add(controller.getUtente(nome));
+                        nuoviPossessori.add(controller.getUtenteByUsername(nome));
                     }
                     toDo.setUtentiPossessori(nuoviPossessori);
 
