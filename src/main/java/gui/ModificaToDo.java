@@ -133,7 +133,7 @@ public class ModificaToDo {
                     toDo.setUtentiPossessori(nuoviPossessori);
 
                     // MODIFICA TODO
-                    controller.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
+                    t.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
 
                     // AGGIORNA BACHECHE DEI POSSESSORI
                     for (Utente u : nuoviPossessori) {

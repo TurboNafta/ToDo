@@ -1,9 +1,6 @@
 package controller;
 
 import model.*;
-import interfaces.InterfacciaBacheca;
-import interfaces.InterfacciaToDo;
-import interfaces.InterfacciaUtente;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -12,9 +9,7 @@ import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 
 public class Controller {
-    private InterfacciaBacheca bachecaManager;
-    private InterfacciaToDo toDoManager;
-    private InterfacciaUtente utenteManager;
+
     private Utente utenteLoggato; // Utente attualmente autenticato
     private ArrayList<Utente> listaUtenti;
 
@@ -59,7 +54,7 @@ public class Controller {
         }
     }
 
-    public void login(String username, String password) {
+    public void login(String username, String password) {//NON VIENE USATO????????
         for (Utente u : listaUtenti) {
             if (u.getUsername().equals(username) && u.getPassword().equals(password)) {
                 utenteLoggato = u;
@@ -83,18 +78,18 @@ public class Controller {
     public void setUtenteLoggato(Utente utente){
         this.utenteLoggato = utente;
     }
-
-    public void eliminaBacheca(Bacheca b){
+    //sta nel model
+   /*public void eliminaBacheca(Bacheca b){
         if(utenteLoggato != null){
             utenteLoggato.eliminaBacheca(b);
         } else {
             throw new IllegalStateException("Nessun utente loggato");
         }
-    }
+    }*/
 
-    public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
+    /*public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
         b.modificaDescrizione(nuovaDescrizione);
-    }
+    }*/
 
     // --- GESTIONE TODO ---
 
@@ -115,6 +110,7 @@ public class Controller {
         }
         return filtrati;
     }
+
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
         Utente u=getUtente(username);
         if(u != null){
@@ -130,8 +126,8 @@ public class Controller {
         // aggiungo il To Do in bacheca
         bacheca.aggiungiToDo(todo);
     }
-
-    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
+    //STA NEL MODEL
+    /*public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;
         };
@@ -151,7 +147,7 @@ public class Controller {
         if (posizione != null) todo.setPosizione(posizione);
         if (colore != null) todo.setColoresfondo(colore);
         if(stato!=null) todo.setStato(stato);
-    }
+    }*/
 
     // ToDo in scadenza oggi
     public ArrayList<ToDo> getToDoInScadenzaOggi(String utente, Bacheca bacheca) {
@@ -189,9 +185,10 @@ public class Controller {
         return result;
     }
 
-    // ----- GESTIONE UTENTI -----
+    // ----- GESTIONE UTENTI ----- DOVREBBERO ANDARE NEL MODEL
+    // possono essere lasciati nel Controller se la lista utenti è solo lì, ma se vuoi che ogni utente si gestisca, vanno in Utente/interfaccia.
     // cerco utente nella lista di utenti
-    public Utente getUtente(String username) {
+  public Utente getUtente(String username) {
         for (Utente u: listaUtenti) {
             if (u.getUsername().equals(username)) {
                 return u;

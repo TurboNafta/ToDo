@@ -1,8 +1,10 @@
 package model;
 
+import interfaces.InterfacciaBacheca;
+
 import java.util.*;
 
-public class Bacheca {
+public class Bacheca implements InterfacciaBacheca {
     private String descrizione;
     //gestisco enumerazione
     private TitoloBacheca titolo;
@@ -12,10 +14,6 @@ public class Bacheca {
     private Utente utente;
 
 
-   /* public Bacheca(Utente u) {
-        utente= u;
-    }*/
-
     //costruttore
     public Bacheca(TitoloBacheca titolo, String descrizione, Utente utente) {
         this.titolo = titolo;
@@ -24,12 +22,7 @@ public class Bacheca {
         this.todo= new ArrayList<ToDo>();
     }
 
-    public void aggiungiToDo(ToDo t){
-        todo.add(t);
-    }
-
-    public void eliminaToDo(ToDo t){ todo.remove(t); }
-
+    //GETTER E SETTER
     public String getDescrizione() {
         return descrizione;
     }
@@ -49,24 +42,6 @@ public class Bacheca {
     public void setTitolo(TitoloBacheca titolo) {
         this.titolo = titolo;
     }
-    public void CreaToDo(ToDo todo){
-
-    }
-    public void ModificaToDo(ToDo todo){
-
-    }
-    public void SpostaToDo(ToDo todo){
-
-    }
-    public void OrdinaTodo(ToDo todo){
-
-    }
-    public void ToDoInScadenza(ToDo todo){
-
-    }
-    public void RicercaToDo(ToDo todo){
-
-    }
 
 
     public ArrayList<ToDo> getTodo() {
@@ -84,5 +59,17 @@ public class Bacheca {
     public void setUtente(Utente utente) {
         this.utente = utente;
     }
+
+    //INTERFACCIA BACHECA
+    public void aggiungiToDo(ToDo t){
+        todo.add(t);
+    }
+
+    public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
+        b.modificaDescrizione(nuovaDescrizione);
+    }
+
+    public void eliminaToDo(ToDo t){ todo.remove(t); }
+
 
 }

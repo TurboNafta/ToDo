@@ -1,13 +1,12 @@
 
 package interfaces;
 
-import model.Bacheca;
-import model.Utente;
-import java.util.List;
+import model.*;
+import java.util.*;
 
 public interface InterfacciaBacheca {
-    List<Bacheca> getAllBacheche();
-    List<Bacheca> getBachecheByUtente(Utente utente);
-    void addBacheca(Bacheca bacheca, Utente utente);
-    // Eventuali metodi per update/remove se servono
+    void aggiungiToDo(ToDo todo);
+    void eliminaToDo(ToDo todo);
+    void modificaDescrizione(String nuovaDescrizione);
+
 }

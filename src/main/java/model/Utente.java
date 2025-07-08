@@ -1,11 +1,14 @@
 package model;
 
+import interfaces.InterfacciaUtente;
+
 import java.util.*;
+
 
 /**
  * The type Utente.
  */
-public class Utente {
+public class Utente implements InterfacciaUtente {
     private final String username;
     private String password;
 
@@ -20,29 +23,6 @@ public class Utente {
         this.bacheca = new ArrayList<>();
     }
 
-    //funzioni future
-    public void CreaBacheca(Bacheca b) {
-        bacheca.add(b);//aggiungo b
-    }
-
-    public void ModificaBacheca(Bacheca bmod) {
-        for(int i=0; i<bacheca.size(); i++){//ciclo sulle bacheche
-            Bacheca b= bacheca.get(i);//creo una bacheca temporanea dove metto l'oggetto nella posizione i della lista
-            if (b.getTitolo().equals(bmod.getTitolo())) {// se trovo una corrispondenza
-                bacheca.set(i, bmod);//sostituisce con la nuova versione
-                return;
-            }
-
-        }
-    }
-
-    public void eliminaBacheca(Bacheca b) {
-        bacheca.remove(b);
-    }
-
-    public void LeggereUtenti(ToDo todo){
-      //da implementare
-    }
 
     public String getPassword() {
         return password;
@@ -63,4 +43,14 @@ public class Utente {
     public String getUsername() {
         return username;
     }
+
+    // INTERFACCIA UTENTE
+    public void CreaBacheca(Bacheca b) {
+         bacheca.add(b);
+         //aggiungo b
+    }
+    public void eliminaBacheca(Bacheca b){
+        bacheca.remove(b);
+    }
+
 }

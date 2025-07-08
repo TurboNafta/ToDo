@@ -1,12 +1,13 @@
 package interfaces;
 
+import model.StatoToDo;
 import model.ToDo;
 import model.Bacheca;
-import java.util.List;
+import java.util.*;
 
+// InterfacciaToDo.java
 public interface InterfacciaToDo {
-    List<ToDo> getToDoByBacheca(Bacheca bacheca);
-    void addToDo(ToDo todo, Bacheca bacheca);
-    void removeToDo(ToDo todo, Bacheca bacheca);
-    void updateToDo(ToDo todo, Bacheca bacheca);
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato);
 }
+
+

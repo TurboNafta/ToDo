@@ -142,7 +142,7 @@ public class SelezioneBacheca {
                         eliminaButton.addActionListener(ev -> {
                             int conferma = JOptionPane.showConfirmDialog(frameBacheca, "Vuoi eliminare questa bacheca?", "Conferma", JOptionPane.YES_NO_OPTION);
                             if (conferma == JOptionPane.YES_OPTION) {
-                                b.getUtente().getBacheca().remove(b);
+                                b.getUtente().eliminaBacheca(b);
                                 buttonCerca.doClick(); // aggiorna la lista
                             }
                         });

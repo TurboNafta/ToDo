@@ -1,9 +1,11 @@
 package model;
 
+import interfaces.InterfacciaToDo;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-public class ToDo {
+public class ToDo implements InterfacciaToDo {
     private String titolo;
     private String descrizione;
     private String url;
@@ -147,13 +149,6 @@ public class ToDo {
         this.stato = stato;
     }
 
-    public void ModificaSfondo(ToDo todo, String nuovoColore){
-        if(todo!=null && nuovoColore!= null){
-            todo.setColoresfondo(nuovoColore);
-        }
-
-    }
-
     public String getImage() {
         return image;
     }
@@ -169,23 +164,44 @@ public class ToDo {
     public void setDatascadenza(GregorianCalendar datascadenza) {
         this.datascadenza = datascadenza;
     }
-    /*public void AggiungiCondivisione(){
-
-    }
-    public void EliminaCondivisione(){
-
-    }*/
 
     public ArrayList<Utente> getUtentiPossessori() {
         return utentiPossessori;
     }
+
     public void setUtentiPossessori(ArrayList<Utente> utentiPossessori){
         this.utentiPossessori = utentiPossessori;
     }
+
     public Utente getAutore() {
         return autore;
     }
+
     public void setAutore(Utente autore) {
         this.autore = autore;
     }
+    //INTERFACCIA TO DO
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
+        if (todo == null) {
+            return;
+        };
+        if (titolo != null) todo.setTitolo(titolo);
+        if (descrizione != null) todo.setDescrizione(descrizione);
+        if (url != null) todo.setUrl(url);
+
+        String[] dataSplit = dataScadenza.split("/");
+        int anno = Integer.parseInt(dataSplit[2]);
+        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
+        int mese = Integer.parseInt(dataSplit[1])-1;
+        int gg = Integer.parseInt(dataSplit[0]);
+        GregorianCalendar DataScadenza = new GregorianCalendar(anno, mese, gg);
+        if (dataScadenza != null) todo.setDatascadenza(DataScadenza);
+
+        if (img != null) todo.setImage(img);
+        if (posizione != null) todo.setPosizione(posizione);
+        if (colore != null) todo.setColoresfondo(colore);
+        if(stato!=null) todo.setStato(stato);
+    }
+
+
 }

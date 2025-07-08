@@ -1,9 +1,12 @@
 package interfaces;
 
+import model.Bacheca;
 import model.Utente;
+import java.util.ArrayList;
 
+// InterfacciaUtente.java
 public interface InterfacciaUtente {
-    boolean utenteEsiste(String username);
-    void aggiungiUtente(Utente u);
-    Utente getUtente(String username);
+    public void CreaBacheca(Bacheca b);
+    public void eliminaBacheca(Bacheca b);
+
 }
