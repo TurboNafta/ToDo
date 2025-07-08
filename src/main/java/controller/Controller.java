@@ -266,7 +266,7 @@ public class Controller {
         String[] titoli = {"BASKET", "STUDIO", "CUCINARE"};
         String[] descr = {"PROVA4", "PROVA5", "PROVA6"};
         String[] url = {"http/1", "http/2", "http/3"};
-        String[] posizione = {"Desktop", "Download", "Documenti"};
+        String[] posizione = {"1", "2", "3"};
         String[] colore = {"Rosso", "Giallo", "Blu"};
         String[] data = {"31/5/2025", "1/6/2025", "2/6/2025"};
         String[] image = {"foto1", "foto2", "foto3"};

@@ -410,7 +410,7 @@ public class VistaBacheca {
                 card.add(new JLabel("Titolo: " + t.getTitolo()));
                 card.add(new JLabel("Descrizione: " + t.getDescrizione()));
                 card.add(new JLabel("URL: " + t.getUrl()));
-                card.add(new JLabel("Posizione: " + t.getPosizione()));
+                //card.add(new JLabel("Posizione: " + t.getPosizione()));
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dataString = t.getDatascadenza() != null ? sdf.format(t.getDatascadenza().getTime()) : "N/D";
                 card.add(new JLabel("Data Scadenza: " + dataString));
