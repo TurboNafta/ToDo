@@ -96,14 +96,6 @@
             </constraints>
             <properties/>
           </component>
-          <component id="e39d8" class="javax.swing.JTextField" binding="textFieldImg">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
           <component id="eca0f" class="javax.swing.JTextField" binding="textFieldPosizione">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -151,6 +143,14 @@
             <properties>
               <text value="Colore Sfondo"/>
             </properties>
+          </component>
+          <component id="e39d8" class="javax.swing.JTextField" binding="textFieldImg">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>

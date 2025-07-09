@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class FinestraChecklist {
     private JPanel mainPanel;
+    private JCheckBox checkBox1;
+    private JTextField textField1;
     private JPanel checklistPanel;
     private JTextField attivitaField;
     private JButton aggiungiButton;
@@ -86,16 +88,12 @@ public class FinestraChecklist {
     public void show() {
         frame.setVisible(true);
     }
-
     public boolean isOkPressed(){
         return okPressed;
     }
 
-    public ArrayList<String> getAttivita() {
-        ArrayList<String> selected = new ArrayList<>();
-        for (JCheckBox cb : checkboxes) {
-            selected.add(cb.getText());
-        }
-        return selected;
+    public ArrayList<Attivita> getAttivita() {
+        aggiornaDallaCheckBox();
+        return attivita;
     }
 }
