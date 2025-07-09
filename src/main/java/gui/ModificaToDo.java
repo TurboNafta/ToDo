@@ -95,12 +95,18 @@ public class ModificaToDo {
             completatoRadioButton.setSelected(false);
         }
 
+        //BOTTONE CHE APRE FINESTRACHECKLIST
         checklistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 FinestraChecklist checklist = new FinestraChecklist(checklistItems);
-                checklist.show();
                 checklistItems = checklist.getAttivita();
+                // Ottieni la lista vera delle attività dalla checklist del ToDo
+                FinestraChecklist checklistFinestra = new FinestraChecklist(toDo.getChecklist().getAttivita());
+                checklistFinestra.show();
+                /// Quando chiudi la finestra, aggiorna la lista delle attività della checklist vera
+                toDo.getChecklist().setAttivita(checklistFinestra.getAttivita());
+
             }
         });
 

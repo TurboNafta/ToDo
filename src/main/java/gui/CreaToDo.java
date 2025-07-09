@@ -36,7 +36,7 @@ public class CreaToDo {
     private String utente;
     private JList<String> utentiList;
     private JButton checklistButton;
-    private ArrayList<Attivita> checklistItems = new ArrayList<>();
+    private CheckList checklistTemp = new CheckList(null, false);  // ci servirà per accumulare dati
 
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
@@ -51,12 +51,17 @@ public class CreaToDo {
         frameCreaToDo.setLocationRelativeTo(null);
         frameCreaToDo.setVisible(true);
 
+      // ci servirà per accumulare dati
+
+        //BOTTONE CHE APRE FINESTRACHECKLIST
         checklistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FinestraChecklist checklist = new FinestraChecklist(checklistItems);
-                checklist.show();
-                checklistItems = checklist.getAttivita();
+                // Lancia la finestra checklist passando la lista attività attuale
+                FinestraChecklist finestraChecklist = new FinestraChecklist(checklistTemp.getAttivita());
+                finestraChecklist.show();
+    // All'uscita aggiorna la tua checklist temporanea con le attività modificate
+                checklistTemp.setAttivita(finestraChecklist.getAttivita());
             }
         });
 
@@ -97,6 +102,8 @@ public class CreaToDo {
 
                     //Crea ToDo
                     ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtenteByUsername(utente));
+                    nuovoToDo.setChecklist(checklistTemp);
+
 
                     for (Utente u : utenti) {
                         Bacheca bachecaUtente = controller.getOrCreateBacheca(

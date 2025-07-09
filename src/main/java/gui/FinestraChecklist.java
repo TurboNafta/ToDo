@@ -33,6 +33,7 @@ public class FinestraChecklist {
         checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(checklistPanel);
 
+
         attivitaField = new JTextField(20);
         aggiungiButton = new JButton("Aggiungi attività");
         okButton = new JButton("OK");
