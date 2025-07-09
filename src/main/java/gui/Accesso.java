@@ -18,8 +18,6 @@ public class  Accesso{
     public JFrame frameAccesso;
     private Controller controller;
 
-    //PROVOLA
-
     public static void main(String[] args) {
         Controller controller = new Controller();
         controller.buildAdmin();

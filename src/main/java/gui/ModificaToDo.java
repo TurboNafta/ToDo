@@ -164,6 +164,8 @@ public class ModificaToDo {
                     if (!bacheche.isEmpty()) {
                         VistaBacheca vistaBacheca = new VistaBacheca(bacheche.get(0), controller, frameChiamante, utente);
                         vistaBacheca.frameVista.setVisible(true);
+                    }else{
+                        VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
                     }
 
                 }catch(Exception ex){
