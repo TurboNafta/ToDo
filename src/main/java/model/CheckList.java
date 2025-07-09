@@ -14,12 +14,14 @@ public class CheckList {
     }
 
     //funzioni
-    private void AggiungiAttivita(Attivita attivita){
-
+    private void AggiungiAttivita(Attivita a){
+        if(!attivita.contains(a)){
+            attivita.add(a);
+        }
     }
 
-    private void RimuoviAttivita(Attivita attivita){
-
+    private void RimuoviAttivita(Attivita a){
+        attivita.remove(a);
     }
 
     public ArrayList<Attivita> getAttivita() {

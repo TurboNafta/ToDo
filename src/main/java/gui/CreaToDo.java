@@ -7,7 +7,6 @@ import model.Utente;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -34,6 +33,7 @@ public class CreaToDo {
     private Bacheca bacheca;
     private String utente;
     private JList<String> utentiList;
+    private JButton checklistButton;
 
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
