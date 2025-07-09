@@ -23,11 +23,11 @@ public class Controller {
     public ArrayList<Bacheca> getBachecaList(String titolo, String username) {
         Utente utente = getUtenteByUsername(username);
         System.out.println("Utente trovato: " + (utente != null ? utente.getUsername() : "null"));
-        ArrayList<Bacheca> bachecheUtente=new ArrayList<>();
-        if (utente == null){
-          return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
-        } else{
-           TitoloBacheca titoloBacheca=stringToTitoloBacheca(titolo);
+        ArrayList<Bacheca> bachecheUtente = new ArrayList<>();
+        if (utente == null) {
+            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
+        } else {
+            TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
             if (titolo == null || titolo.isEmpty()) {
                 return utente.getBacheca();
             }
@@ -40,9 +40,10 @@ public class Controller {
         return bachecheUtente;
 
     }
+
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
-        if(titoloStr == null) return null;
-        switch(titoloStr.toLowerCase()) {
+        if (titoloStr == null) return null;
+        switch (titoloStr.toLowerCase()) {
             case "università":
             case "universita":
                 return TitoloBacheca.UNIVERSITA;
@@ -68,7 +69,7 @@ public class Controller {
 
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
         Utente u = getUtenteByUsername(username);
-        if(u != null){
+        if (u != null) {
             Bacheca nuova = new Bacheca(titolo, descrizione, u);
             u.CreaBacheca(nuova);
         } else {
@@ -76,7 +77,7 @@ public class Controller {
         }
     }
 
-    public void setUtenteLoggato(Utente utente){//dovrebbe stare in utente
+    public void setUtenteLoggato(Utente utente) {//dovrebbe stare in utente
 
         this.utenteLoggato = utente;
     }
@@ -101,11 +102,11 @@ public class Controller {
         ArrayList<ToDo> filtrati = new ArrayList<>();
         ArrayList<ToDo> tuttiToDo = b.getTodo();
 
-        if(nomeToDo == null || nomeToDo.isEmpty()){
+        if (nomeToDo == null || nomeToDo.isEmpty()) {
             return tuttiToDo;
-        }else{
-            for(ToDo t : tuttiToDo){
-                if(t.getTitolo().equalsIgnoreCase(nomeToDo)){
+        } else {
+            for (ToDo t : tuttiToDo) {
+                if (t.getTitolo().equalsIgnoreCase(nomeToDo)) {
                     filtrati.add(t);
                 }
             }
@@ -114,15 +115,15 @@ public class Controller {
     }
 
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
-        Utente u=getUtenteByUsername(username);
-        if(u != null){
-           ArrayList<Utente> utenti=todo.getUtentiPossessori();
-           if(utenti==null)
-               utenti= new ArrayList<Utente>();
-           if(!utenti.contains(u)){
-               utenti.add(u);
-           }
-           todo.setUtentiPossessori(utenti);
+        Utente u = getUtenteByUsername(username);
+        if (u != null) {
+            ArrayList<Utente> utenti = todo.getUtentiPossessori();
+            if (utenti == null)
+                utenti = new ArrayList<Utente>();
+            if (!utenti.contains(u)) {
+                utenti.add(u);
+            }
+            todo.setUtentiPossessori(utenti);
 
         }
         // aggiungo il To Do in bacheca
@@ -155,7 +156,7 @@ public class Controller {
     public ArrayList<ToDo> getToDoInScadenzaOggi(String utente, Bacheca bacheca) {
         ArrayList<ToDo> result = new ArrayList<>();
         ArrayList<ToDo> tutti = getToDoPerBachecaUtente(utente, bacheca, "");
-      Calendar oggi = Calendar.getInstance();
+        Calendar oggi = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String oggiStr = sdf.format(oggi.getTime());
 
@@ -182,7 +183,7 @@ public class Controller {
                 }
             }
         } catch (Exception ex) {
-          throw new IllegalArgumentException("Formato data non valido! Usa gg/MM/aaaa.");
+            throw new IllegalArgumentException("Formato data non valido! Usa gg/MM/aaaa.");
         }
         return result;
     }
@@ -190,8 +191,8 @@ public class Controller {
     // ----- GESTIONE UTENTI ----- DOVREBBERO ANDARE NEL MODEL
     // possono essere lasciati nel Controller se la lista utenti è solo lì, ma se vuoi che ogni utente si gestisca, vanno in Utente/interfaccia.
     // cerco utente nella lista di utenti
-  public Utente getUtenteByUsername(String username) {
-        for (Utente u: listaUtenti) {
+    public Utente getUtenteByUsername(String username) {
+        for (Utente u : listaUtenti) {
             if (u.getUsername().equals(username)) {
                 return u;
             }
@@ -207,8 +208,8 @@ public class Controller {
 
     //Funzione che verifica l'esistenza dell'utente
     public boolean esisteUtente(String username, String password) {
-        for(Utente u: listaUtenti){
-            if(password.equals(u.getPassword()) && u.getUsername().equals(username)){
+        for (Utente u : listaUtenti) {
+            if (password.equals(u.getPassword()) && u.getUsername().equals(username)) {
                 return true;
             }
         }
@@ -254,7 +255,7 @@ public class Controller {
     }
 
     //Funzione che genera i todo solamente per l'admin
-    public void buildToDoPerBachecaUtente(){
+    public void buildToDoPerBachecaUtente() {
         Utente admin = getUtenteByUsername("admin");
         if (admin == null) {
             admin = new Utente("admin", "1111");
@@ -275,11 +276,11 @@ public class Controller {
         ArrayList<Utente> utentiCondivisione = new ArrayList<>();
         utentiCondivisione.add(admin);
 
-        int i=0;
+        int i = 0;
         for (Bacheca b : admin.getBacheca()) {
             if (!b.getTodo().isEmpty()) {
                 return;
-            }else {
+            } else {
                 b.aggiungiToDo(new ToDo(titoli[i], descr[i], url[i], data[i], image[i], posizione[i], colore[i], utentiCondivisione, admin));
                 i++;
             }
@@ -296,7 +297,7 @@ public class Controller {
 
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
         // Se l'autore è l'utente loggato, elimina il ToDo da tutte le bacheche condivise
-        if(t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
+        if (t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
             ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
             for (Utente u : utentiCondivisi) {
                 // Cerca la bacheca giusta per ogni utente
@@ -359,5 +360,37 @@ public class Controller {
             if (b.getTitolo() == titolo) return b;
         }
         return null;
+    }
+
+    // Imposta la checklist (sostituisce interamente la lista delle attività)
+    public void setChecklist(ToDo todo, ArrayList<Attivita> attivitaList) {
+        if (todo.getChecklist() == null) {
+            todo.setChecklist(new CheckList(todo, false));
+        }
+        todo.getChecklist().setAttivita(attivitaList);
+    }
+
+    // Ritorna la lista delle attività della checklist
+    public ArrayList<Attivita> getChecklist(ToDo todo) {
+        if (todo.getChecklist() == null) return new ArrayList<>();
+        return todo.getChecklist().getAttivita();
+    }
+
+    // Aggiungi una attività alla checklist
+    public void aggiungiAttivita(ToDo todo, Attivita attivita) {
+        if (todo.getChecklist() == null) {
+            todo.setChecklist(new CheckList(todo, false));
+        }
+        ArrayList<Attivita> lista = todo.getChecklist().getAttivita();
+        if (!lista.contains(attivita)) {
+            lista.add(attivita);
+        }
+    }
+
+    // Modifica stato di una attività
+    public void setStatoAttivita(ToDo todo, int index, StatoAttivita stato) {
+        if (todo.getChecklist() != null && index >= 0 && index < todo.getChecklist().getAttivita().size()) {
+            todo.getChecklist().getAttivita().get(index).setStato(stato);
+        }
     }
 }

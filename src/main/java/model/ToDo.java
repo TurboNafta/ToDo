@@ -29,7 +29,7 @@ public class ToDo implements InterfacciaToDo {
 
 
     //gestisco la checklist
-    private ArrayList<CheckList> attivitaCheckList;
+    private CheckList checklist;
 
     /*gestisco la composizione con bacheca
     private Bacheca bacheca;
@@ -59,7 +59,7 @@ public class ToDo implements InterfacciaToDo {
         this.utentiPossessori = utenti;
         this.autore = autore;
 
-        this.attivitaCheckList = new ArrayList<>();
+        this.checklist = new CheckList(this, false);
         /*
         this.condivisione = new ArrayList<Condivisione>();
         this.checklist = checklist;
@@ -116,12 +116,11 @@ public class ToDo implements InterfacciaToDo {
     }
     */
 
-    public ArrayList<CheckList> getAttivitaCheckList() {
-        return attivitaCheckList;
+    public CheckList getChecklist() {
+        return checklist;
     }
-
-    public void setAttivitaCheckList(ArrayList<CheckList> attivitaCheckList) {
-        this.attivitaCheckList = attivitaCheckList;
+    public void setChecklist(CheckList checklist) {
+        this.checklist = checklist;
     }
 
     public Bacheca getBacheca() {

@@ -1,8 +1,10 @@
 package gui;
 import controller.Controller;
+import model.Attivita;
 import model.Bacheca;
 import model.ToDo;
 import model.Utente;
+import model.CheckList;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -34,6 +36,7 @@ public class CreaToDo {
     private String utente;
     private JList<String> utentiList;
     private JButton checklistButton;
+    private ArrayList<Attivita> checklistItems = new ArrayList<>();
 
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
@@ -47,6 +50,15 @@ public class CreaToDo {
         frameCreaToDo.pack();
         frameCreaToDo.setLocationRelativeTo(null);
         frameCreaToDo.setVisible(true);
+
+        checklistButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FinestraChecklist checklist = new FinestraChecklist(checklistItems);
+                checklist.show();
+                checklistItems = checklist.getAttivita();
+            }
+        });
 
         //Serve a popolare la list per le condivisioni dei Todo
         DefaultListModel<String> utentiModel = new DefaultListModel<>();

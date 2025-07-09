@@ -1,10 +1,7 @@
 package gui;
 
 import controller.Controller;
-import model.Bacheca;
-import model.ToDo;
-import model.Utente;
-import model.StatoToDo;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -41,6 +38,8 @@ public class ModificaToDo {
     private ToDo toDo;
     private JList<String> utentiList;
     private JLabel CondivisiPanel;
+    private JButton checklistButton;
+    private ArrayList<Attivita> checklistItems = new ArrayList<>();
 
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
@@ -95,6 +94,15 @@ public class ModificaToDo {
         } else {
             completatoRadioButton.setSelected(false);
         }
+
+        checklistButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FinestraChecklist checklist = new FinestraChecklist(checklistItems);
+                checklist.show();
+                checklistItems = checklist.getAttivita();
+            }
+        });
 
         buttonModifica.addActionListener(new ActionListener() {
             @Override

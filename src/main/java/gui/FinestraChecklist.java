@@ -1,6 +1,101 @@
 package gui;
 
+import model.Attivita;
+import model.StatoAttivita;
+
 import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
 
 public class FinestraChecklist {
+    private JPanel mainPanel;
+    private JPanel checklistPanel;
+    private JTextField attivitaField;
+    private JButton aggiungiButton;
+    private JButton okButton;
+
+    private JFrame frame;
+    private ArrayList<Attivita> attivita;
+    private ArrayList<JCheckBox> checkboxes;
+
+    private boolean okPressed = false;
+
+    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale) {
+        attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
+        checkboxes = new ArrayList<>();
+
+        frame = new JFrame("Checklist");
+        mainPanel = new JPanel(new BorderLayout());
+
+        checklistPanel = new JPanel();
+        checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(checklistPanel);
+
+        attivitaField = new JTextField(20);
+        aggiungiButton = new JButton("Aggiungi attività");
+        okButton = new JButton("OK");
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.add(attivitaField);
+        inputPanel.add(aggiungiButton);
+
+        mainPanel.add(inputPanel, BorderLayout.NORTH);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(okButton, BorderLayout.SOUTH);
+
+        frame.setContentPane(mainPanel);
+        frame.setSize(400, 400);
+        frame.setLocationRelativeTo(null);
+
+        aggiornaChecklist();
+
+        aggiungiButton.addActionListener(e -> {
+            String text = attivitaField.getText().trim();
+            if (!text.isEmpty()) {
+                attivita.add(new Attivita(text, StatoAttivita.NONCOMPLETATA));
+                attivitaField.setText("");
+                aggiornaChecklist();
+            }
+        });
+
+        okButton.addActionListener(e -> {
+            aggiornaDallaCheckBox();
+            okPressed = true;
+            frame.dispose();
+        });
+    }
+
+    private void aggiornaChecklist() {
+        checklistPanel.removeAll();
+        checkboxes.clear();
+        for (Attivita item : attivita) {
+            JCheckBox cb = new JCheckBox(item.getTitolo(), item.getStato() == StatoAttivita.COMPLETATA);
+            checkboxes.add(cb);
+            checklistPanel.add(cb);
+        }
+        checklistPanel.revalidate();
+        checklistPanel.repaint();
+    }
+
+    private void aggiornaDallaCheckBox() {
+        for(int i = 0; i < attivita.size(); i++){
+            attivita.get(i).setStato(checkboxes.get(i).isSelected() ? StatoAttivita.COMPLETATA : StatoAttivita.NONCOMPLETATA);
+        }
+    }
+
+    public void show() {
+        frame.setVisible(true);
+    }
+
+    public boolean isOkPressed(){
+        return okPressed;
+    }
+
+    public ArrayList<String> getAttivita() {
+        ArrayList<String> selected = new ArrayList<>();
+        for (JCheckBox cb : checkboxes) {
+            selected.add(cb.getText());
+        }
+        return selected;
+    }
 }
