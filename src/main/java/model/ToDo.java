@@ -202,6 +202,5 @@ public class ToDo implements InterfacciaToDo {
         if (colore != null) todo.setColoresfondo(colore);
         if(stato!=null) todo.setStato(stato);
     }
-
-
+    
 }
