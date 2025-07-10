@@ -20,7 +20,6 @@ public class Attivita {
     }
 
 
-    //funzioni future
     public String getTitolo() {
         return titolo;
     }

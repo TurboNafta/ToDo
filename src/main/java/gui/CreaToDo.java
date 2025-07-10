@@ -52,10 +52,10 @@ public class CreaToDo {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Lancia la finestra checklist passando la lista attività attuale, e passo null perchè il todo deve ancora essere creato
-                FinestraChecklist finestraChecklist = new FinestraChecklist(checklistTemp.getAttivita(),null);
-                finestraChecklist.show();
+                FinestraChecklist checklist = new FinestraChecklist(checklistTemp.getAttivita(),null,frameCreaToDo);
+                checklist.setVisible(true);
                 // All'uscita aggiorna la checklist temporanea con le attività modificate
-                checklistTemp.setAttivita(finestraChecklist.getAttivita());
+                checklistTemp.setAttivita(checklist.getAttivita());
             }
         });
 

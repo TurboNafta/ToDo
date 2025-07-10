@@ -18,7 +18,7 @@ public class FinestraChecklist extends JDialog {
     private JButton aggiungiButton;
     private JButton okButton;
 
-    private JFrame frame;
+    //private JFrame frame;
     private ArrayList<Attivita> attivita;
     private ArrayList<JCheckBox> checkboxes;
 
@@ -51,9 +51,9 @@ public class FinestraChecklist extends JDialog {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(okButton, BorderLayout.SOUTH);
 
-        frame.setContentPane(mainPanel);
-        frame.setSize(400, 400);
-        frame.setLocationRelativeTo(owner);
+        this.setContentPane(mainPanel);
+        this.setSize(400, 400);
+        this.setLocationRelativeTo(owner);
 
         aggiornaChecklist();
 
@@ -69,7 +69,7 @@ public class FinestraChecklist extends JDialog {
         okButton.addActionListener(e -> {
             aggiornaDallaCheckBox();
             okPressed = true;
-            frame.dispose();
+            this.dispose();
         });
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
@@ -95,9 +95,7 @@ public class FinestraChecklist extends JDialog {
         }
     }
 
-    public void show() {
-        frame.setVisible(true);
-    }
+
     public boolean isOkPressed(){
         return okPressed;
     }

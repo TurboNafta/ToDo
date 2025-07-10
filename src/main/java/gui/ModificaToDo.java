@@ -39,7 +39,7 @@ public class ModificaToDo {
     private JList<String> utentiList;
     private JLabel CondivisiPanel;
     private JButton checklistButton;
-    private ArrayList<Attivita> checklistItems = new ArrayList<>();
+
 
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
@@ -99,8 +99,8 @@ public class ModificaToDo {
         checklistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FinestraChecklist checklist = new FinestraChecklist(toDo.getChecklist().getAttivita(),toDo);
-               checklist.show();
+                FinestraChecklist checklist = new FinestraChecklist(toDo.getChecklist().getAttivita(),toDo,frameModificaToDo);
+               checklist.setVisible(true);
                //quando FinestraChecklist viene chiusa,aggiorno ToDo
               toDo.getChecklist().setAttivita(checklist.getAttivita());
 
@@ -108,7 +108,6 @@ public class ModificaToDo {
                 if(toDo.getChecklist().tutteCompletate()&& !toDo.getChecklist().getAttivita().isEmpty()) {
                     completatoRadioButton.setSelected(true);
                     toDo.setStato(StatoToDo.COMPLETATO);
-                    statoLabel.setText("Completato");
                 }else{
                     completatoRadioButton.setSelected(false);
                     toDo.setStato(StatoToDo.NONCOMPLETATO);
@@ -137,13 +136,9 @@ public class ModificaToDo {
                     String posizione = textFieldPosizione.getText();
                     String url = textFieldUrl.getText();
                     String colore = textFieldColore.getText();
+
                     StatoToDo stato=completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
 
-                    if(completatoRadioButton.isSelected()) {
-                        stato = StatoToDo.COMPLETATO;
-                    }else{
-                        stato = StatoToDo.NONCOMPLETATO;
-                    }
 
                     // COSTRUISCE NUOVA LISTA POSSESSORI
                     ArrayList<Utente> nuoviPossessori = new ArrayList<>();

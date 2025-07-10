@@ -226,19 +226,44 @@ public class VistaBacheca {
                 card.add(labelTitolo);
 
 
-                // Colore sfondo
+                // Colore sfondo dei todo
                 String colore = t.getColoresfondo();
                 if (colore != null) {
                     switch (colore.toLowerCase()) {
-                        case "rosso": card.setBackground(Color.RED); break;
-                        case "giallo": card.setBackground(Color.YELLOW); break;
-                        case "blu": card.setBackground(Color.BLUE); break;
+                        case "rosso":
+                            card.setBackground(new Color(255, 153, 153)); // rosso chiaro
+                            break;
+                        case "giallo":
+                            card.setBackground(new Color(255, 255, 153)); // giallo chiaro
+                            break;
+                        case "blu":
+                            card.setBackground(new Color(153, 204, 255)); // azzurro chiaro
+                            break;
+                        case "verde":
+                            card.setBackground(new Color(153, 255, 153)); // verde chiaro
+                            break;
+                        case "arancione":
+                            card.setBackground(new Color(255, 204, 153)); // arancione chiaro
+                            break;
+                        case "rosa":
+                            card.setBackground(new Color(255, 204, 229)); // rosa pastello
+                            break;
+                        case "viola":
+                            card.setBackground(new Color(204, 153, 255)); // lilla
+                            break;
+                        case "celeste":
+                            card.setBackground(new Color(204, 255, 255)); // celeste chiaro
+                            break;
+                        case "marrone":
+                            card.setBackground(new Color(210, 180, 140)); // marroncino chiaro
+                            break;
                         default: card.setBackground(Color.LIGHT_GRAY);
                     }
                     card.setOpaque(true);
                 } else {
                     card.setBackground(Color.LIGHT_GRAY);
                 }
+
 
 
                 //CARD DEL TODO
