@@ -49,4 +49,17 @@ public class CheckList {
     public void setCompletata(boolean completata) {
         this.completata = completata;
     }
+
+    //VERIFICA SE TUTTE LE ATTIVITA' SONO COMPLETATE
+    public boolean tutteCompletate(){
+        if(attivita.isEmpty()){
+            return false;
+        }
+        for(Attivita a : attivita){
+            if(a.getStato() != StatoAttivita.COMPLETATA){
+                return false;
+            }
+        }
+        return true;
+    }
 }

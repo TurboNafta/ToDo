@@ -2,12 +2,14 @@ package gui;
 
 import model.Attivita;
 import model.StatoAttivita;
+import model.ToDo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class FinestraChecklist {
+
+public class FinestraChecklist extends JDialog {
     private JPanel mainPanel;
     private JCheckBox checkBox1;
     private JTextField textField1;
@@ -21,12 +23,15 @@ public class FinestraChecklist {
     private ArrayList<JCheckBox> checkboxes;
 
     private boolean okPressed = false;
+    private ToDo todoAssociato;
 
-    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale) {
+
+    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale,ToDo todo, Frame owner) {
+        super(owner, "Checklist", true);
         attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
         checkboxes = new ArrayList<>();
+        this.todoAssociato=todo;
 
-        frame = new JFrame("Checklist");
         mainPanel = new JPanel(new BorderLayout());
 
         checklistPanel = new JPanel();
@@ -48,7 +53,7 @@ public class FinestraChecklist {
 
         frame.setContentPane(mainPanel);
         frame.setSize(400, 400);
-        frame.setLocationRelativeTo(null);
+        frame.setLocationRelativeTo(owner);
 
         aggiornaChecklist();
 
@@ -66,6 +71,10 @@ public class FinestraChecklist {
             okPressed = true;
             frame.dispose();
         });
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    }
+    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale) {
+        this(attivitaIniziale, null, null); // Pass null for ToDo and owner if no specific parent
     }
 
     private void aggiornaChecklist() {
@@ -94,7 +103,7 @@ public class FinestraChecklist {
     }
 
     public ArrayList<Attivita> getAttivita() {
-        aggiornaDallaCheckBox();
+        //aggiornaDallaCheckBox();
         return attivita;
     }
 }

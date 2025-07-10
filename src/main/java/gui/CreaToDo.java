@@ -1,10 +1,6 @@
 package gui;
 import controller.Controller;
-import model.Attivita;
-import model.Bacheca;
-import model.ToDo;
-import model.Utente;
-import model.CheckList;
+import model.*;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -51,16 +47,14 @@ public class CreaToDo {
         frameCreaToDo.setLocationRelativeTo(null);
         frameCreaToDo.setVisible(true);
 
-      // ci servirà per accumulare dati
-
         //BOTTONE CHE APRE FINESTRACHECKLIST
         checklistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lancia la finestra checklist passando la lista attività attuale
-                FinestraChecklist finestraChecklist = new FinestraChecklist(checklistTemp.getAttivita());
+                // Lancia la finestra checklist passando la lista attività attuale, e passo null perchè il todo deve ancora essere creato
+                FinestraChecklist finestraChecklist = new FinestraChecklist(checklistTemp.getAttivita(),null);
                 finestraChecklist.show();
-    // All'uscita aggiorna la tua checklist temporanea con le attività modificate
+                // All'uscita aggiorna la checklist temporanea con le attività modificate
                 checklistTemp.setAttivita(finestraChecklist.getAttivita());
             }
         });
@@ -68,7 +62,7 @@ public class CreaToDo {
         //Serve a popolare la list per le condivisioni dei Todo
         DefaultListModel<String> utentiModel = new DefaultListModel<>();
         for (Utente u : controller.getTuttiUtenti()) {
-            if (!u.getUsername().equals(utente)) // non aggiungere l'autore
+            if (!u.getUsername().equals(utente))
                 utentiModel.addElement(u.getUsername());
         }
         utentiList.setModel(utentiModel);
@@ -102,7 +96,17 @@ public class CreaToDo {
 
                     //Crea ToDo
                     ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtenteByUsername(utente));
+                   //Setto la checklist per il nuovo Todo,
                     nuovoToDo.setChecklist(checklistTemp);
+                    // associo il ToDo con la sua checklist
+                    checklistTemp.setTodo(nuovoToDo);
+
+                    //controllo se tutte le attività sono complete e setto lo stato del ToDo
+                    if(checklistTemp.tutteCompletate()&& !checklistTemp.getAttivita().isEmpty()) {
+                        nuovoToDo.setStato(StatoToDo.COMPLETATO);
+                    }else{
+                        nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
+                    }
 
 
                     for (Utente u : utenti) {

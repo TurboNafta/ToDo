@@ -99,13 +99,20 @@ public class ModificaToDo {
         checklistButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                FinestraChecklist checklist = new FinestraChecklist(checklistItems);
-                checklistItems = checklist.getAttivita();
-                // Ottieni la lista vera delle attività dalla checklist del ToDo
-                FinestraChecklist checklistFinestra = new FinestraChecklist(toDo.getChecklist().getAttivita());
-                checklistFinestra.show();
-                /// Quando chiudi la finestra, aggiorna la lista delle attività della checklist vera
-                toDo.getChecklist().setAttivita(checklistFinestra.getAttivita());
+                FinestraChecklist checklist = new FinestraChecklist(toDo.getChecklist().getAttivita(),toDo);
+               checklist.show();
+               //quando FinestraChecklist viene chiusa,aggiorno ToDo
+              toDo.getChecklist().setAttivita(checklist.getAttivita());
+
+              //controllo se tutte le attività sono completate e aggiorno lo stato dei ToDo
+                if(toDo.getChecklist().tutteCompletate()&& !toDo.getChecklist().getAttivita().isEmpty()) {
+                    completatoRadioButton.setSelected(true);
+                    toDo.setStato(StatoToDo.COMPLETATO);
+                    statoLabel.setText("Completato");
+                }else{
+                    completatoRadioButton.setSelected(false);
+                    toDo.setStato(StatoToDo.NONCOMPLETATO);
+                }
 
             }
         });
