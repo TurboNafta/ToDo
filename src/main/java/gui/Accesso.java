@@ -18,7 +18,16 @@ public class  Accesso{
     public JFrame frameAccesso;
     private Controller controller;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {try {
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) { // O "Windows", "Mac OS X", ecc.
+                UIManager.setLookAndFeel(info.getClassName());
+                break;
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
         Controller controller = new Controller();
         controller.buildAdmin();
         controller.buildBacheche();
