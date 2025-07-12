@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.List;
 
 public class SelezioneBacheca {
     private JPanel principale;
@@ -63,7 +63,7 @@ public class SelezioneBacheca {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String bachecaDaCercare = (String) comboBox1.getSelectedItem();
-                ArrayList<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare, utentelog);
+                List<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare, utentelog);
                 bachechePanel.removeAll();
 
                 JPanel cardsPanel = new JPanel();

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Comparator;
 import java.util.Calendar;
 
@@ -21,11 +22,12 @@ public class VistaBacheca {
     private JButton creaToDoButton;
     private JButton buttonCerca;
     private JPanel todoPanelris;
-    private JComboBox RicercacomboBox1;
+    private JComboBox<String> ricercaComboBox;
     private JLabel OrdinaLabel;
 
     //JFrame e Controller
-    public JFrame frameVista, frameChiamante;
+    public final JFrame frameVista;
+    public final JFrame frameChiamante;
     private Controller controller;
     private String utenteLoggato;
     private Bacheca bacheca;
@@ -47,15 +49,15 @@ public class VistaBacheca {
         frameVista.setVisible(true);
 
         // --- NUOVO: ComboBox criteri di ricerca ---
-        String[] criteri = {"Titolo", "Scadenza oggi", "In scadenza entro"};
-        RicercacomboBox1 = new JComboBox<>(criteri);
+        String[] criteri = {CriteriRicerca.TITOLO, CriteriRicerca.SCADENZA_OGGI, CriteriRicerca.IN_SCADENZA_ENTRO};
+        ricercaComboBox = new JComboBox<>(criteri);
         textField1 = new JTextField(20); // unica barra di ricerca
 
         // Pulisci e ricostruisci il pannello ricerca
         ricerca.removeAll();
         ricerca.setLayout(new FlowLayout(FlowLayout.LEFT));
         ricerca.add(new JLabel("Criterio:"));
-        ricerca.add(RicercacomboBox1);
+        ricerca.add(ricercaComboBox);
         ricerca.add(textField1);
 
         buttonCerca = new JButton("Cerca");
@@ -65,16 +67,16 @@ public class VistaBacheca {
 
         //combobox filtro ordina
         comboBoxOrdina.removeAllItems();
-        comboBoxOrdina.addItem("Nessun Ordinamento");
-        comboBoxOrdina.addItem("Titolo A-Z");
-        comboBoxOrdina.addItem("Data di Scadenza");
-        comboBoxOrdina.addItem("Posizione");
-        comboBoxOrdina.addItem("Stato Completamento");
+        comboBoxOrdina.addItem(CriteriOrdinamento.NESSUN_ORDINAMENTO);
+        comboBoxOrdina.addItem(CriteriOrdinamento.TITOLO_AZ);
+        comboBoxOrdina.addItem(CriteriOrdinamento.DATA_SCADENZA);
+        comboBoxOrdina.addItem(CriteriOrdinamento.POSIZIONE);
+        comboBoxOrdina.addItem(CriteriOrdinamento.STATO_COMPLETAMENTO);
 
         // Abilita/disabilita la barra di ricerca in base al criterio
-        RicercacomboBox1.addActionListener(e -> {
-            String criterioRicerca = (String) RicercacomboBox1.getSelectedItem();
-            if ("Titolo".equals(criterioRicerca) || "In scadenza entro".equals(criterioRicerca)) {
+        ricercaComboBox.addActionListener(e -> {
+            String criterioRicerca = (String) ricercaComboBox.getSelectedItem();
+            if (CriteriRicerca.TITOLO.equals(criterioRicerca) || CriteriRicerca.IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
                 textField1.setEnabled(true);
             } else {
                 textField1.setText("");
@@ -82,81 +84,68 @@ public class VistaBacheca {
             }
         });
         // Default: Titolo selezionato
-        RicercacomboBox1.setSelectedIndex(0);
+        ricercaComboBox.setSelectedIndex(0);
         textField1.setEnabled(true);
 
         //ordinamento live sulla lista generale
         comboBoxOrdina.addActionListener(e->aggiornaListaToDo());
 
         //BOTTONE CHE CREA TO DO
-        creaToDoButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca,utenteLoggato);
-                quartaGui.frameCreaToDo.setVisible(true);
-                frameVista.setVisible(false);
-            }
+        creaToDoButton.addActionListener(e -> { //
+            CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca,utenteLoggato);
+            quartaGui.frameCreaToDo.setVisible(true);
+            frameVista.setVisible(false);
         });
 
         //Bottone CERCA con filtro e ordinamento
-        buttonCerca.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //ArrayList<ToDo> toDoDaCercare = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, textField1.getText());
-                String criterioOrdine = (String) comboBoxOrdina.getSelectedItem();
-                String criterioRicerca = (String) RicercacomboBox1.getSelectedItem();
-                String testo = textField1.getText().trim();
-                ArrayList<ToDo> risultati = new ArrayList<>();
+        buttonCerca.addActionListener(e -> { // Convertito in lambda
 
-                //RICERCA PER TITOLO
-                try {
-                    if ("Titolo".equals(criterioRicerca)) {
-                        risultati = controller.getToDoPerBachecaUtente(utenteLoggato, bacheca, testo);
-                    } else if ("Scadenza oggi".equals(criterioRicerca)) {
-                        risultati = controller.getToDoInScadenzaOggi(utenteLoggato, bacheca);
-                    } else if ("In scadenza entro".equals(criterioRicerca)) {
-                        risultati = controller.getToDoInScadenzaEntro(utenteLoggato, bacheca, testo);
-                    }
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(frameVista, ex.getMessage(), "Errore ricerca", JOptionPane.ERROR_MESSAGE);
-                    return;
+            String criterioOrdine = (String) comboBoxOrdina.getSelectedItem();
+            String criterioRicerca = (String) ricercaComboBox.getSelectedItem();
+            String testo = textField1.getText().trim();
+            List<ToDo> risultati = new ArrayList<>();
+
+            //RICERCA PER TITOLO
+            try {
+                if (CriteriRicerca.TITOLO.equals(criterioRicerca)) {
+                    risultati = controller.getToDoPerBachecaUtente(bacheca,testo);
+                } else if (CriteriRicerca.SCADENZA_OGGI.equals(criterioRicerca)) {
+                    risultati = controller.getToDoInScadenzaOggi(bacheca);
+                } else if (CriteriRicerca.IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
+                    risultati = controller.getToDoInScadenzaEntro(bacheca, testo);
                 }
-                //ORDINAMENTO
-                if (criterioOrdine != null) {
-                    switch (criterioOrdine) {
-                        case "Titolo A-Z":
-                            risultati.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
-                            break;
-                        case "Data di Scadenza":
-                            risultati.sort(Comparator.comparing(ToDo::getDatascadenza));
-                            break;
-                        case "Posizione"://la posizione che si intende?????????????????????
-                            risultati.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
-                            break;
-                        case "Stato Completamento":
-                            risultati.sort(Comparator.comparing(ToDo::getStato));//fare qualcosa x mettere prima i nn completati
-                            break;
-                    }
-                }
-                mostraListaToDo(risultati);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(frameVista, ex.getMessage(), "Errore ricerca", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-
+            //ORDINAMENTO
+            if (criterioOrdine != null) {
+                switch (criterioOrdine) {
+                    case CriteriOrdinamento.TITOLO_AZ:
+                        risultati.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
+                        break;
+                    case CriteriOrdinamento.DATA_SCADENZA:
+                        risultati.sort(Comparator.comparing(ToDo::getDatascadenza));
+                        break;
+                    case CriteriOrdinamento.POSIZIONE:
+                        risultati.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
+                        break;
+                    case CriteriOrdinamento.STATO_COMPLETAMENTO:
+                        risultati.sort(Comparator.comparing(ToDo::getStato));//fare qualcosa x mettere prima i nn completati
+                        break;
+                    default:
+                        break;
+                }
+            }
+            mostraListaToDo(risultati);
         });
 
-
-
         //PERMETTE DI TORNARE ALLA HOME
-        tornaAllaHomeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // frameChiamante.setVisible(true); // RIMUOVI QUESTA RIGA!
-                // frameVista.dispose();
-
-                // Crea una nuova SelezioneBacheca aggiornata
-                SelezioneBacheca selez = new SelezioneBacheca(controller, null, utenteLoggato);
-                selez.frameBacheca.setVisible(true);
-                frameVista.dispose();
-            }
+        tornaAllaHomeButton.addActionListener(e -> { // Convertito in lambda
+            // Crea una nuova SelezioneBacheca aggiornata
+            SelezioneBacheca selez = new SelezioneBacheca(controller, null, utenteLoggato);
+            selez.frameBacheca.setVisible(true);
+            frameVista.dispose();
         });
 
         // Mostra all'avvio
@@ -165,24 +154,24 @@ public class VistaBacheca {
     }
     // Mostra tutti i ToDo della bacheca con eventuale ordinamento
     private void aggiornaListaToDo() {
-        ArrayList<ToDo> lista = new ArrayList<>(bacheca.getTodo());
+        List<ToDo> lista = new ArrayList<>(bacheca.getTodo()); // Usare List per buona pratica
 
         String criterio = (String) comboBoxOrdina.getSelectedItem();
         if (criterio != null) {
             switch (criterio) {
-                case "Titolo A-Z":
+                case CriteriOrdinamento.TITOLO_AZ: // Usate le costanti
                     lista.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
                     break;
-                case "Data di Scadenza":
+                case CriteriOrdinamento.DATA_SCADENZA: // Usate le costanti
                     lista.sort(Comparator.comparing(ToDo::getDatascadenza));
                     break;
-                case "Posizione":
+                case CriteriOrdinamento.POSIZIONE: // Usate le costanti
                     lista.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
                     break;
-                case "Stato Completamento":
+                case CriteriOrdinamento.STATO_COMPLETAMENTO: // Usate le costanti
                     lista.sort(Comparator.comparing(ToDo::getStato));
                     break;
-                case "Nessun Ordinamento":
+                case CriteriOrdinamento.NESSUN_ORDINAMENTO:
                 default:
                     break;
             }
@@ -193,12 +182,203 @@ public class VistaBacheca {
     private int parseIntSafe(String s) {
         try {
             return Integer.parseInt(s);
-        } catch (Exception ex) {
+        } catch (NumberFormatException _) {
             return 0;
         }
     }
+    private void mostraListaToDo(List<ToDo> lista) { // Usare List per buona pratica
+        todoPanelris.removeAll();
+        JPanel cardsPanel = new JPanel();
+        cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
+        cardsPanel.setBackground(Color.WHITE);
 
-    private void mostraListaToDo(ArrayList<ToDo> lista) {
+        if (lista.isEmpty()) {
+            cardsPanel.add(new JLabel("Nessun ToDo presente."));
+        } else {
+            for (ToDo t : lista) {
+                cardsPanel.add(createToDoCard(t)); // Delega la creazione della card a un altro metodo
+                cardsPanel.add(Box.createHorizontalStrut(20));
+            }
+        }
+
+        todoPanelris.add(cardsPanel);
+        todoPanelris.revalidate();
+        todoPanelris.repaint();
+    }
+    private JPanel createToDoCard(ToDo t) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setMaximumSize(new Dimension(350, Integer.MAX_VALUE));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
+                BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+
+        // Imposta colore sfondo della card
+        setCardBackgroundColor(card, t.getColoresfondo());
+
+        // Aggiungi label titolo
+        JLabel labelTitolo = new JLabel(t.getTitolo());
+        Calendar oggi = Calendar.getInstance();
+        labelTitolo.setForeground(t.getDatascadenza().before(oggi) ? Color.RED : Color.BLACK);
+        card.add(labelTitolo);
+
+        // Aggiungi dettagli ToDo
+        addToDoDetailsToCard(card, t);
+
+        // Aggiungi pulsanti azione se l'utente è l'autore
+        if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
+            card.add(createModificaButton(t));
+            card.add(Box.createVerticalStrut(5));
+            card.add(createEliminaButton(t));
+            card.add(Box.createVerticalStrut(5));
+            card.add(createSpostaButton(t));
+        }
+
+        // Aggiungi pulsante per vedere condivisioni
+        if (!t.getUtentiPossessori().isEmpty()) { // Usare .isEmpty() per StringBuilder
+            card.add(Box.createVerticalStrut(5));
+            card.add(createCondivisiConButton(t));
+        }
+
+        return card;
+    }
+
+    // Nuovo metodo: Imposta il colore di sfondo della card
+    private void setCardBackgroundColor(JPanel card, String colore) {
+        if (colore != null) {
+            Color backgroundColor;
+            switch (colore.toLowerCase()) {
+                case "rosso": backgroundColor = new Color(255, 153, 153); break;
+                case "giallo": backgroundColor = new Color(255, 255, 153); break;
+                case "blu": backgroundColor = new Color(153, 204, 255); break;
+                case "verde": backgroundColor = new Color(153, 255, 153); break;
+                case "arancione": backgroundColor = new Color(255, 204, 153); break;
+                case "rosa": backgroundColor = new Color(255, 204, 229); break;
+                case "viola": backgroundColor = new Color(204, 153, 255); break;
+                case "celeste": backgroundColor = new Color(204, 255, 255); break;
+                case "marrone": backgroundColor = new Color(210, 180, 140); break;
+                default: backgroundColor = Color.LIGHT_GRAY;
+            }
+            card.setBackground(backgroundColor);
+            card.setOpaque(true);
+        } else {
+            card.setBackground(Color.LIGHT_GRAY);
+        }
+    }
+
+    // Nuovo metodo: Aggiunge i dettagli del ToDo alla card
+    private void addToDoDetailsToCard(JPanel card, ToDo t) {
+        card.add(new JLabel("Titolo: " + t.getTitolo()));
+        card.add(new JLabel("Descrizione: " + t.getDescrizione()));
+        card.add(new JLabel("URL: " + t.getUrl()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String dataString = t.getDatascadenza() != null ? sdf.format(t.getDatascadenza().getTime()) : "N/D";
+        card.add(new JLabel("Data Scadenza: " + dataString));
+        card.add(new JLabel("Immagine: " + t.getImage()));
+        card.add(new JLabel("Stato: " + t.getStatoString()));
+    }
+
+    // Metodi per creare i bottoni (da spostare in classi utility o inner classes se diventano troppo complessi)
+    private JButton createModificaButton(ToDo t) {
+        JButton modificaButton = new JButton("Modifica");
+        modificaButton.setBackground(new Color(255, 200, 80));
+        modificaButton.setForeground(Color.BLACK);
+        modificaButton.setFocusPainted(false);
+        modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+        modificaButton.addActionListener(ev -> {
+            ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
+            modificaGui.frameModificaToDo.setVisible(true);
+            frameVista.setVisible(false);
+        });
+        return modificaButton;
+    }
+
+    private JButton createEliminaButton(ToDo t) {
+        JButton eliminaButton = new JButton("Elimina");
+        eliminaButton.setBackground(new Color(255, 80, 80));
+        eliminaButton.setForeground(Color.BLACK);
+        eliminaButton.setFocusPainted(false);
+        eliminaButton.addActionListener(ev -> {
+            int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
+            if (conferma == JOptionPane.YES_OPTION) {
+                controller.eliminaToDo(bacheca, t);
+                aggiornaListaToDo();
+            }
+        });
+        return eliminaButton;
+    }
+
+    private JButton createSpostaButton(ToDo t) {
+        JButton spostaButton = new JButton("Sposta in un'altra Bacheca");
+        spostaButton.setBackground(new Color(80, 150, 255));
+        spostaButton.setForeground(Color.BLACK);
+        spostaButton.setFocusPainted(false);
+        spostaButton.addActionListener(ev -> {
+            String[] bacheche = {"Università", "Lavoro", "Tempo Libero"};
+            String scelta = (String) JOptionPane.showInputDialog(
+                    frameVista,
+                    "Scegli bacheca di destinazione: ",
+                    "Sposta To Do",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    bacheche,
+                    bacheche[0]
+            );
+            if (scelta != null && !scelta.equalsIgnoreCase(bacheca.getTitolo().toString())) {
+                Bacheca destinazione = controller.getBachecaPerUtente(utenteLoggato, scelta);
+                if (destinazione != null) {
+                    controller.spostaToDoInAltraBacheca(t, bacheca, destinazione);
+                    aggiornaListaToDo();
+                    JOptionPane.showMessageDialog(frameVista, "ToDo spostato in '" + scelta + "'");
+                } else {
+                    JOptionPane.showMessageDialog(frameVista, "Errore: bacheca non trovata.");
+                }
+            }
+        });
+        return spostaButton;
+    }
+
+    private JButton createCondivisiConButton(ToDo t) {
+        JButton condivisiButton = new JButton("Condiviso con...");
+        condivisiButton.setBackground(new Color(120, 200, 255));
+        condivisiButton.setForeground(Color.BLACK);
+        condivisiButton.setFocusPainted(false);
+        condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+        condivisiButton.addActionListener(ev -> {
+            StringBuilder sb = new StringBuilder();
+            List<Utente> utentiCondivisi = t.getUtentiPossessori(); // Usare List per buona pratica
+            for (Utente u : utentiCondivisi) {
+                sb.append(u.getUsername()).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(frameVista,
+                    sb.isEmpty() ? sb.toString() : "Non condiviso con nessuno.",
+                    "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
+        });
+        return condivisiButton;
+    }
+}
+
+ final class CriteriRicerca {
+    private CriteriRicerca() {}
+    public static final String TITOLO = "Titolo";
+    public static final String SCADENZA_OGGI = "Scadenza oggi";
+    public static final String IN_SCADENZA_ENTRO = "In scadenza entro";
+}
+
+final class CriteriOrdinamento {
+    private CriteriOrdinamento() {}
+    public static final String NESSUN_ORDINAMENTO = "Nessun Ordinamento";
+    public static final String TITOLO_AZ = "Titolo A-Z";
+    public static final String DATA_SCADENZA = "Data di Scadenza";
+    public static final String POSIZIONE = "Posizione";
+    public static final String STATO_COMPLETAMENTO = "Stato Completamento";
+}
+
+
+   /* private void mostraListaToDo(List<ToDo> lista) {
         todoPanelris.removeAll();
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
@@ -270,7 +450,7 @@ public class VistaBacheca {
                 card.add(new JLabel("Titolo: " + t.getTitolo()));
                 card.add(new JLabel("Descrizione: " + t.getDescrizione()));
                 card.add(new JLabel("URL: " + t.getUrl()));
-                //card.add(new JLabel("Posizione: " + t.getPosizione()));
+
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dataString = t.getDatascadenza() != null ? sdf.format(t.getDatascadenza().getTime()) : "N/D";
                 card.add(new JLabel("Data Scadenza: " + dataString));
@@ -308,7 +488,7 @@ public class VistaBacheca {
                     // aggiungo il bottone a card
                     card.add(Box.createVerticalStrut(5));
                     card.add(eliminaButton);
-                    //cardsPanel.add(card);
+
 
                     //BUTTON SPOSTA
                     JButton spostaButton = new JButton("Sposta in un altra Bacheca");
@@ -341,12 +521,12 @@ public class VistaBacheca {
                     card.add(spostaButton);
 
                     cardsPanel.add(card);
-                    //cardsPanel.add(Box.createHorizontalStrut(20));
+
                 }
 
                 //BOTTONE PER VEDERE CONDIVISIONI
                 ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
-                //utentiCondivisi.removeIf(u -> u.getUsername().equals(t.getAutore().getUsername()));
+
                 if (!utentiCondivisi.isEmpty()) {
                     JButton condivisiButton = new JButton("Condiviso con...");
                     condivisiButton.setBackground(new Color(120, 200, 255));
@@ -379,144 +559,6 @@ public class VistaBacheca {
         todoPanelris.add(cardsPanel);
         todoPanelris.revalidate();
         todoPanelris.repaint();
-    }
-}
-
-    /*private void mostraToDo (ArrayList < ToDo > lista) {
-        todoPanelris.removeAll();
-        JPanel cardsPanel = new JPanel();
-        cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
-        cardsPanel.setBackground(Color.WHITE);
-
-        if (lista.isEmpty()) {
-            cardsPanel.add(new JLabel("Nessun ToDo trovato."));
-        } else {
-            for (ToDo t : lista) {
-                JPanel card = new JPanel();
-                card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                card.setMaximumSize(new Dimension(350, Integer.MAX_VALUE));
-                //card.setPreferredSize(new Dimension(190, 100));
-                card.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
-                        BorderFactory.createEmptyBorder(10, 15, 10, 15)
-                ));
-                card.setBackground(new Color(245, 245, 250));
-
-                card.add(new JLabel("Titolo: " + t.getTitolo()));
-                card.add(new JLabel("Descrizione: " + t.getDescrizione()));
-                card.add(new JLabel("URL: " + t.getUrl()));
-                card.add(new JLabel("Posizione: " + t.getPosizione()));
-
-                //GESTIONE COLORE SFONDO
-                String colore = t.getColoresfondo();
-                if (colore != null) {
-                    switch (colore.toLowerCase()) {
-                        case "rosso":
-                            card.setBackground(Color.RED);
-                            break;
-                        case "giallo":
-                            card.setBackground(Color.YELLOW);
-                            break;
-                        case "blu":
-                            card.setBackground(Color.BLUE);
-                            break;
-                        default:
-                            //COLORE DEFAULT
-                            card.setBackground(Color.LIGHT_GRAY);
-                    }
-                    //RENDO BACKGROUND VISIBILE
-                    card.setOpaque(true);
-                }
-
-                //GESTIONE DATA
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String dataString = sdf.format(t.getDatascadenza().getTime());
-                card.add(new JLabel("Data Scadenza: " + dataString));
-
-                card.add(new JLabel("Immagine: " + t.getImage()));
-                card.add(new JLabel("Stato: " + t.getStatoString()));
-                //card.add(new JLabel("Colore Sfondo: " + t.getColoresfondo()));
-
-                /******************************************************************************************************************************/
-                /******************************************************************************************************************************/
-
-                //BOTTONE PER MODIFICARE LA DATI
-              /*  if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
-                    JButton modificaButton = new JButton("Modifica");
-                    modificaButton.setBackground(new Color(255, 200, 80));
-                    modificaButton.setForeground(Color.BLACK);
-                    modificaButton.setFocusPainted(false);
-                    modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
-                    modificaButton.addActionListener(ev -> {
-                        ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
-                        modificaGui.frameModificaToDo.setVisible(true);
-                        frameVista.setVisible(false);
-                    });
-                    //AGGIUNGO IL BOTTONE A CARD
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(modificaButton);
+    }*/
 
 
-                    //BOTTONE PER CANCELLARE IL TODO
-                    JButton eliminaButton = new JButton("Elimina");
-                    eliminaButton.setBackground(new Color(255, 80, 80));
-                    eliminaButton.setForeground(Color.WHITE);
-                    eliminaButton.setFocusPainted(false);
-                    eliminaButton.addActionListener(ev -> {
-                        int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
-                        if (conferma == JOptionPane.YES_OPTION) {
-                            controller.eliminaToDo(bacheca, t);
-                            buttonCerca.doClick(); // aggiorna la lista
-                        }
-                    });
-
-                    //AGGIUNGO ELIMINA A CARD
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(eliminaButton);
-                    cardsPanel.add(card);
-                }
-
-                //BOTTONE PER VEDERE CONDIVISIONI
-                ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
-                //utentiCondivisi.removeIf(u -> u.getUsername().equals(t.getAutore().getUsername()));
-                if (!utentiCondivisi.isEmpty()) {
-                    JButton condivisiButton = new JButton("Condiviso con...");
-                    condivisiButton.setBackground(new Color(120, 200, 255));
-                    condivisiButton.setForeground(Color.BLACK);
-                    condivisiButton.setFocusPainted(false);
-                    condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
-                    condivisiButton.addActionListener(ev -> {
-                        StringBuilder sb = new StringBuilder();
-
-                        if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
-                            // L'autore vede tutti gli utenti (escluso sé stesso)
-                            for (Utente u : utentiCondivisi) {
-                                sb.append(u.getUsername()).append("\n");
-                            }
-                        } else {
-                            // Un utente condiviso vede solo sé stesso
-                            if (utentiCondivisi.stream().anyMatch(u -> u.getUsername().equals(utenteLoggato))) {
-                                sb.append(utenteLoggato).append("\n");
-                            }
-                        }
-
-                        JOptionPane.showMessageDialog(frameVista,
-                                sb.length() > 0 ? sb.toString() : "Non condiviso con nessuno.",
-                                "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
-                    });
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(condivisiButton);
-                }
-
-                //PRENDE IL COLORE IN INPUT E LO METTE COME SFONDO
-                cardsPanel.add(card);
-                cardsPanel.add(Box.createHorizontalStrut(20));
-
-            }
-        }
-        todoPanelris.add(cardsPanel);
-        todoPanelris.revalidate();
-        todoPanelris.repaint();
-
-    }
-}*/
