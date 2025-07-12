@@ -9,7 +9,7 @@ public class CheckList {
     private ToDo todo;
 
     //gestisco aggregazione con attivita
-    private ArrayList<Attivita> attivita;
+    private List<Attivita> attivita;
     public CheckList( ToDo t, boolean completata){
         this.todo = t;
         this.attivita=new ArrayList<>();
@@ -27,11 +27,11 @@ public class CheckList {
         attivita.remove(a);
     }
 
-    public ArrayList<Attivita> getAttivita() {
+    public List<Attivita> getAttivita() {
         return attivita;
     }
 
-    public void setAttivita(ArrayList<Attivita> attivita) {
+    public void setAttivita(List<Attivita> attivita) {
         this.attivita = attivita;
     }
 

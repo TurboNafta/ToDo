@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.GregorianCalendar;
 
 public class ModificaToDo {
@@ -176,7 +176,7 @@ public class ModificaToDo {
                     }
 
                     frameModificaToDo.dispose();
-                    ArrayList<Bacheca> bacheche = controller.getBachecaList(bacheca.getTitolo().toString(), utente);
+                    List<Bacheca> bacheche = controller.getBachecaList(bacheca.getTitolo().toString(), utente);
                     if (!bacheche.isEmpty()) {
                         VistaBacheca vistaBacheca = new VistaBacheca(bacheche.get(0), controller, frameChiamante, utente);
                         vistaBacheca.frameVista.setVisible(true);

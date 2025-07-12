@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class Controller {
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName()); // Dichiarazione del logger
     private Utente utenteLoggato; // Utente attualmente autenticato
-    private ArrayList<Utente> listaUtenti;
+    private final List<Utente> listaUtenti;
     private static final String NOME_UTENTE_AMMINISTRATORE = "admin";
 
 
@@ -25,7 +25,7 @@ public class Controller {
         LOGGER.info("Utente trovato: {}"+username);
         ArrayList<Bacheca> bachecheUtente = new ArrayList<>();
         if (utente == null) {
-            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
+            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti:*
         } else {
             TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
             if (titolo == null || titolo.isEmpty()) {
@@ -109,8 +109,8 @@ public class Controller {
 
     // ToDo in scadenza oggi
     public List<ToDo> getToDoInScadenzaOggi(Bacheca bacheca) {
-        ArrayList<ToDo> result = new ArrayList<>();
-        ArrayList<ToDo> tutti = getToDoPerBachecaUtente(bacheca, "");
+        List<ToDo> result = new ArrayList<>();
+        List<ToDo> tutti = getToDoPerBachecaUtente(bacheca, "");
         Calendar oggi = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         String oggiStr = sdf.format(oggi.getTime());
@@ -126,8 +126,8 @@ public class Controller {
 
     // ToDo in scadenza entro una certa data
     public List<ToDo> getToDoInScadenzaEntro( Bacheca bacheca, String dataLimiteStr) {
-        ArrayList<ToDo> result = new ArrayList<>();
-        ArrayList<ToDo> tutti = getToDoPerBachecaUtente( bacheca, "");
+        List<ToDo> result = new ArrayList<>();
+        List<ToDo> tutti = getToDoPerBachecaUtente( bacheca, "");
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             java.util.Date dataLimite = sdf.parse(dataLimiteStr);
@@ -256,7 +256,7 @@ public class Controller {
             ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
             for (Utente u : utentiCondivisi) {
                 // Cerca la bacheca giusta per ogni utente
-                ArrayList<Bacheca> bachecheUtente = getBachecaList(bacheca.getTitolo().toString(), u.getUsername());
+                List<Bacheca> bachecheUtente = getBachecaList(bacheca.getTitolo().toString(), u.getUsername());
                 for (Bacheca b : bachecheUtente) {
                     if (b.getDescrizione().equals(bacheca.getDescrizione())) {
                         b.getTodo().remove(t);
@@ -290,7 +290,7 @@ public class Controller {
     }
 
     public Bacheca getOrCreateBacheca(TitoloBacheca titolo, String descrizione, String username) {
-        ArrayList<Bacheca> bList = getBachecaList(titolo.toString(), username);
+        List<Bacheca> bList = getBachecaList(titolo.toString(), username);
         for (Bacheca b : bList) {
             if (b.getDescrizione().equals(descrizione)) {
                 return b;
