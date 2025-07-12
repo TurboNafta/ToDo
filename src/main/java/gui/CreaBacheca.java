@@ -47,10 +47,15 @@ public class CreaBacheca {
         frameCreaBacheca.setLocationRelativeTo(null);
         frameCreaBacheca.setVisible(true);
 
+        ButtonGroup tipoBacheca = new ButtonGroup();
+        tipoBacheca.add(universitaRadioButton);
+        tipoBacheca.add(lavoroRadioButton);
+        tipoBacheca.add(tempoLiberoRadioButton);
+
         buttonCreazione.addActionListener(e-> {
                 if(universitaRadioButton.isSelected()){
                     try{
-                        TitoloBacheca tipo = UNIVERSITA;
+                        TitoloBacheca tipo = UNIVERSITÀ;
                         controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
                         frameChiamante.setVisible(true);
                         frameCreaBacheca.setVisible(false);

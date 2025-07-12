@@ -2,8 +2,8 @@ package model;
 
 import interfaces.InterfacciaToDo;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class ToDo implements InterfacciaToDo {
     private String titolo;
@@ -23,7 +23,7 @@ public class ToDo implements InterfacciaToDo {
 
 
     //gestisco la relazione * con condivisione
-    private ArrayList <Utente> utentiPossessori;
+    private List<Utente> utentiPossessori;
     private Utente autore;
     private Bacheca bacheca;
 
@@ -31,14 +31,8 @@ public class ToDo implements InterfacciaToDo {
     //gestisco la checklist
     private CheckList checklist;
 
-    /*gestisco la composizione con bacheca
-    private Bacheca bacheca;
-    public ToDo(Bacheca b){
-        bacheca = b;
-    }*/
-
     //costruttore
-    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, ArrayList<Utente> utenti, Utente autore){
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, List<Utente> utenti, Utente autore){
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.url = url;
@@ -54,16 +48,11 @@ public class ToDo implements InterfacciaToDo {
 
         this.posizione = posizione;
         this.coloresfondo = coloresfondo;
-        this.stato = stato;
 
         this.utentiPossessori = utenti;
         this.autore = autore;
 
-        this.checklist = new CheckList(this, false);
-        /*
-        this.condivisione = new ArrayList<Condivisione>();
-        this.checklist = checklist;
-        */
+        this.checklist = new CheckList(this);
     }
 
 
@@ -106,15 +95,6 @@ public class ToDo implements InterfacciaToDo {
     public void setColoresfondo(String coloresfondo) {
         this.coloresfondo = coloresfondo;
     }
-
-    /*public ArrayList<Condivisione> getCondivisione() {
-        return condivisione;
-    }
-
-    public void setCondivisione(ArrayList<Condivisione> condivisione) {
-        this.condivisione = condivisione;
-    }
-    */
 
     public CheckList getChecklist() {
         return checklist;
@@ -164,11 +144,11 @@ public class ToDo implements InterfacciaToDo {
         this.datascadenza = datascadenza;
     }
 
-    public ArrayList<Utente> getUtentiPossessori() {
+    public List<Utente> getUtentiPossessori() {
         return utentiPossessori;
     }
 
-    public void setUtentiPossessori(ArrayList<Utente> utentiPossessori){
+    public void setUtentiPossessori(List<Utente> utentiPossessori){
         this.utentiPossessori = utentiPossessori;
     }
 
@@ -176,14 +156,11 @@ public class ToDo implements InterfacciaToDo {
         return autore;
     }
 
-    public void setAutore(Utente autore) {
-        this.autore = autore;
-    }
     //INTERFACCIA TO DO
     public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;
-        };
+        }
         if (titolo != null) todo.setTitolo(titolo);
         if (descrizione != null) todo.setDescrizione(descrizione);
         if (url != null) todo.setUrl(url);
@@ -193,8 +170,8 @@ public class ToDo implements InterfacciaToDo {
         //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
         int mese = Integer.parseInt(dataSplit[1])-1;
         int gg = Integer.parseInt(dataSplit[0]);
-        GregorianCalendar DataScadenza = new GregorianCalendar(anno, mese, gg);
-        if (dataScadenza != null) todo.setDatascadenza(DataScadenza);
+        GregorianCalendar dataScadenza2 = new GregorianCalendar(anno, mese, gg);
+        todo.setDatascadenza(dataScadenza2);
 
         if (img != null) todo.setImage(img);
         if (posizione != null) todo.setPosizione(posizione);

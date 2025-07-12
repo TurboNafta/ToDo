@@ -38,7 +38,8 @@ public class CreaToDo {
     private String utente;
     private JList<String> utentiList;
     private JButton checklistButton;
-    private CheckList checklistTemp = new CheckList(null, false);  // ci servirà per accumulare dati
+    private JButton buttonAnnulla;
+    private CheckList checklistTemp = new CheckList(null);  // ci servirà per accumulare dati
 
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
@@ -126,6 +127,12 @@ public class CreaToDo {
                 }catch(Exception ex){
                     JOptionPane.showMessageDialog(frameCreaToDo,"Errore: "+ ex.getMessage());
                 }
+        });
+
+        buttonAnnulla.addActionListener(e-> {
+            VistaBacheca secondGui = new VistaBacheca(bacheca, controller, frameChiamante, utente);
+            secondGui.frameVista.setVisible(true);
+            frameCreaToDo.dispose();
         });
     }
 }

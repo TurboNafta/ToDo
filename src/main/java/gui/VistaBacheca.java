@@ -278,7 +278,7 @@ public class VistaBacheca {
         card.add(new JLabel("Stato: " + t.getStatoString()));
     }
 
-    // Metodi per creare i bottoni (da spostare in classi utility o inner classes se diventano troppo complessi)
+    // Metodi per creare i bottoni
     private JButton createModificaButton(ToDo t) {
         JButton modificaButton = new JButton("Modifica");
         modificaButton.setBackground(new Color(255, 200, 80));
@@ -313,28 +313,87 @@ public class VistaBacheca {
         spostaButton.setBackground(new Color(80, 150, 255));
         spostaButton.setForeground(Color.BLACK);
         spostaButton.setFocusPainted(false);
+
         spostaButton.addActionListener(ev -> {
-            String[] bacheche = {"Università", "Lavoro", "Tempo Libero"};
-            String scelta = (String) JOptionPane.showInputDialog(
+            Utente utente = controller.getUtenteByUsername(utenteLoggato);
+            if (utente == null) {
+                JOptionPane.showMessageDialog(frameVista,
+                        "Errore nel recupero dell'utente",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Bacheca> bacheche = utente.getBacheca();
+            String[] titoliBacheca = bacheche.stream()
+                    .map(b -> b.getTitolo().toString())
+                    .distinct()
+                    .filter(titolo -> !titolo.equals(bacheca.getTitolo().toString()))
+                    .toArray(String[]::new);
+
+            if (titoliBacheca.length == 0) {
+                JOptionPane.showMessageDialog(frameVista,
+                        "Non ci sono altre bacheche disponibili.",
+                        "Nessuna bacheca",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            String titolo = (String) JOptionPane.showInputDialog(
                     frameVista,
                     "Scegli bacheca di destinazione: ",
                     "Sposta To Do",
                     JOptionPane.PLAIN_MESSAGE,
                     null,
-                    bacheche,
-                    bacheche[0]
+                    titoliBacheca,
+                    titoliBacheca[0]
             );
-            if (scelta != null && !scelta.equalsIgnoreCase(bacheca.getTitolo().toString())) {
-                Bacheca destinazione = controller.getBachecaPerUtente(utenteLoggato, scelta);
-                if (destinazione != null) {
-                    controller.spostaToDoInAltraBacheca(t, bacheca, destinazione);
-                    aggiornaListaToDo();
-                    JOptionPane.showMessageDialog(frameVista, "ToDo spostato in '" + scelta + "'");
-                } else {
-                    JOptionPane.showMessageDialog(frameVista, "Errore: bacheca non trovata.");
+
+            if (titolo != null) {
+                String[] descrizioni = bacheche.stream()
+                        .filter(b -> b.getTitolo().toString().equals(titolo))
+                        .map(Bacheca::getDescrizione)
+                        .toArray(String[]::new);
+
+                if (descrizioni.length == 0) {
+                    JOptionPane.showMessageDialog(frameVista,
+                            "Nessuna bacheca trovata con questo titolo",
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String descrizione = (String) JOptionPane.showInputDialog(
+                        frameVista,
+                        "Scegli la descrizione della bacheca:",
+                        "Sposta To Do - Descrizione",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        descrizioni,
+                        descrizioni[0]
+                );
+
+                if (descrizione != null) {
+                    Bacheca bachecaDestinazione = controller.getBachecaPerTitoloEDescrizione(
+                            utenteLoggato,
+                            titolo,
+                            descrizione
+                    );
+
+                    if (bachecaDestinazione != null) {
+                        controller.spostaToDoInAltraBacheca(t, bacheca, bachecaDestinazione);
+                        aggiornaListaToDo();
+                        JOptionPane.showMessageDialog(
+                                frameVista,
+                                "ToDo spostato con successo",
+                                "Operazione completata",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    }
                 }
             }
         });
+
         return spostaButton;
     }
 
@@ -347,12 +406,23 @@ public class VistaBacheca {
         condivisiButton.addActionListener(ev -> {
             StringBuilder sb = new StringBuilder();
             List<Utente> utentiCondivisi = t.getUtentiPossessori(); // Usare List per buona pratica
+
+            if (utentiCondivisi.size() <= 1) {
+                JOptionPane.showMessageDialog(frameVista,
+                        "Non condiviso con nessuno.",
+                        "Nessuna Condivisione",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
             for (Utente u : utentiCondivisi) {
                 sb.append(u.getUsername()).append("\n");
             }
 
+            String messaggio = sb.length()>0 ? sb.toString() : "Non condiviso con nessuno.";
+
             JOptionPane.showMessageDialog(frameVista,
-                    sb.isEmpty() ? sb.toString() : "Non condiviso con nessuno.",
+                    messaggio,
                     "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
         });
         return condivisiButton;

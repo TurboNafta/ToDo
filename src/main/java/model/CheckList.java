@@ -1,36 +1,28 @@
 package model;
 
+import interfaces.InterfacciaCheckList;
+
 import java.util.*;
 
-public class CheckList {
-    private boolean completata;
+public class CheckList implements InterfacciaCheckList {
 
-    //gestisco relazione con todo
+    //gestisco relazione con to do
     private ToDo todo;
 
     //gestisco aggregazione con attivita
     private List<Attivita> attivita;
-    public CheckList( ToDo t, boolean completata){
+    public CheckList( ToDo t){
         this.todo = t;
         this.attivita=new ArrayList<>();
-        this.completata = completata;
     }
 
     //funzioni
-    private void AggiungiAttivita(Attivita a){
-        if(!attivita.contains(a)){
-            attivita.add(a);
-        }
-    }
-
-    private void RimuoviAttivita(Attivita a){
-        attivita.remove(a);
-    }
-
+    @Override
     public List<Attivita> getAttivita() {
         return attivita;
     }
 
+    @Override
     public void setAttivita(List<Attivita> attivita) {
         this.attivita = attivita;
     }
@@ -41,13 +33,6 @@ public class CheckList {
 
     public void setTodo(ToDo todo) {
         this.todo = todo;
-    }
-
-    public boolean isCompletata() {
-        return completata;
-    }
-    public void setCompletata(boolean completata) {
-        this.completata = completata;
     }
 
     //VERIFICA SE TUTTE LE ATTIVITA' SONO COMPLETATE

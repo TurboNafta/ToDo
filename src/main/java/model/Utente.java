@@ -14,7 +14,7 @@ public class Utente implements InterfacciaUtente {
 
 
     //serve a gestire la relazione 3..* con Bacheca
-    private ArrayList<Bacheca> bacheca;
+    private List<Bacheca> bacheca;
 
     //costruttore
     public Utente(String username, String password){
@@ -28,15 +28,11 @@ public class Utente implements InterfacciaUtente {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public ArrayList<Bacheca> getBacheca() {
+    public List<Bacheca> getBacheca() {
         return bacheca;
     }
 
-    public void setBacheca(ArrayList<Bacheca> bacheca) {
+    public void setBacheca(List<Bacheca> bacheca) {
         this.bacheca = bacheca;
     }
 
@@ -45,12 +41,13 @@ public class Utente implements InterfacciaUtente {
     }
 
     // INTERFACCIA UTENTE
-    public void CreaBacheca(Bacheca b) {
+    @Override
+    public void aggiungiBacheca(Bacheca b) {
          bacheca.add(b);
-         //aggiungo b
     }
+
+    @Override
     public void eliminaBacheca(Bacheca b){
         bacheca.remove(b);
     }
-
 }

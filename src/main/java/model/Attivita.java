@@ -6,11 +6,7 @@ public class Attivita {
 
 
     //gestisco enumerazione
-    private StatoAttivita stato = StatoAttivita.NONCOMPLETATA;
-
-
-    //gestisco la checklist
-    private CheckList checklist = null;
+    private StatoAttivita stato;
 
 
     //costruttore

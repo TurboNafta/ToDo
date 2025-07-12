@@ -137,43 +137,53 @@ public class ModificaToDo {
 
         private void inizializzaModificaListener() {
             buttonModifica.addActionListener(e -> {
-                if (!isValidDate(textFieldData.getText())) {
-                    try {
-                        if (!isValidDate(textFieldData.getText())) {
-                            JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
-                            return;
-                        }
-                        // PRENDE VECCHI POSSESSORI
-                        ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
-                        // Recupera i dati dai campi di testo
-                        String titolo = textFieldTitolo.getText();
-                        String descrizione = textFieldDescrizione.getText();
-                        String dataScadenza = textFieldData.getText();
-                        String img = textFieldImg.getText();
-                        String posizione = textFieldPosizione.getText();
-                        String url = textFieldUrl.getText();
-                        String colore = textFieldColore.getText();
-                        StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
-
-                        // COSTRUISCE NUOVA LISTA POSSESSORI
-                        ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
-
-                        // MODIFICA TO do
-                        modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
-
-                        // AGGIORNA BACHECHE
-                        aggiornaBacheche(vecchiPossessori, nuoviPossessori);
-                        chiudiEApriVista();
-
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(frameModificaToDo, "Errore: " + ex.getMessage());
+                try {
+                    if (!isValidDate(textFieldData.getText())) {
+                        JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
+                        return;
                     }
+                    // PRENDE VECCHI POSSESSORI
+                    ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
+                    // Recupera i dati dai campi di testo
+                    String titolo = textFieldTitolo.getText();
+                    String descrizione = textFieldDescrizione.getText();
+                    String dataScadenza = textFieldData.getText();
+                    String img = textFieldImg.getText();
+                    String posizione = textFieldPosizione.getText();
+                    String url = textFieldUrl.getText();
+                    String colore = textFieldColore.getText();
+                    StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
+
+                    // COSTRUISCE NUOVA LISTA POSSESSORI
+                    ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
+
+                    // MODIFICA TO do
+                    modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
+
+                    // AGGIORNA BACHECHE
+                    aggiornaBacheche(vecchiPossessori, nuoviPossessori);
+                    chiudiEApriVista();
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frameModificaToDo, "Errore: " + ex.getMessage());
                 }
             });
         }
 
     private boolean isValidDate(String dateStr) {
-        return dateStr.matches("\\d{2}-\\d{2}-\\d{4}");
+        if( !dateStr.matches("\\d{2}/\\d{2}/\\d{4}")){
+            return false;
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            sdf.parse(dateStr);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     private ArrayList<Utente> getNuoviPossessori() {

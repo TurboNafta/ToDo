@@ -45,7 +45,7 @@ public class Controller {
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
         if (titoloStr == null) return null;
         return switch (titoloStr.toLowerCase()) {
-            case "universita" -> TitoloBacheca.UNIVERSITA;
+            case "università" -> TitoloBacheca.UNIVERSITÀ;
             case "lavoro" -> TitoloBacheca.LAVORO;
             case "tempo libero" -> TitoloBacheca.TEMPOLIBERO;
             default -> null;
@@ -57,7 +57,7 @@ public class Controller {
         Utente u = getUtenteByUsername(username);
         if (u != null) {
             Bacheca nuova = new Bacheca(titolo, descrizione, u);
-            u.CreaBacheca(nuova);
+            u.aggiungiBacheca(nuova);
         } else {
             throw new IllegalStateException("Nessun utente loggato");
         }
@@ -72,8 +72,8 @@ public class Controller {
     // --- GESTIONE TO dO ---
 
     public List<ToDo> getToDoPerBachecaUtente( Bacheca bacheca, String nomeToDo) {
-        ArrayList<ToDo> filtrati = new ArrayList<>();
-        ArrayList<ToDo> tuttiToDo = bacheca.getTodo();
+        List<ToDo> filtrati = new ArrayList<>();
+        List<ToDo> tuttiToDo = bacheca.getTodo();
 
         if (nomeToDo == null || nomeToDo.isEmpty()) {
             return tuttiToDo;
@@ -90,7 +90,7 @@ public class Controller {
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
         Utente u = getUtenteByUsername(username);
         if (u != null) {
-            ArrayList<Utente> utenti = todo.getUtentiPossessori();
+            List<Utente> utenti = todo.getUtentiPossessori();
             if (utenti == null)
                 utenti = new ArrayList<>();
             if (!utenti.contains(u)) {
@@ -196,11 +196,11 @@ public class Controller {
         if (!admin.getBacheca().isEmpty()) {
             return;
         }
-        TitoloBacheca[] titoli = {TitoloBacheca.LAVORO, TitoloBacheca.TEMPOLIBERO, TitoloBacheca.UNIVERSITA};
+        TitoloBacheca[] titoli = {TitoloBacheca.LAVORO, TitoloBacheca.TEMPOLIBERO, TitoloBacheca.UNIVERSITÀ};
         String[] descr = {"PROVA1", "PROVA2", "PROVA3"};
         for (int i = 0; i < titoli.length; i++) {
             Bacheca b = new Bacheca(titoli[i], descr[i], admin);
-            admin.CreaBacheca(b);
+            admin.aggiungiBacheca(b);
         }
     }
 
@@ -280,7 +280,7 @@ public class Controller {
         }
         // Se manca, la crea
         Bacheca nuova = new Bacheca(titolo, descrizione, utente);
-        utente.CreaBacheca(nuova);
+        utente.aggiungiBacheca(nuova);
         return nuova;
     }
 
@@ -309,6 +309,26 @@ public class Controller {
         for (Bacheca b : utente.getBacheca()) {
             if (b.getTitolo() == titolo) return b;
         }
+        return null;
+    }
+
+    public Bacheca getBachecaPerTitoloEDescrizione(String utenteLoggato, String titolo, String descrizione) {
+        if (utenteLoggato == null || titolo == null || descrizione == null) {
+            return null;
+        }
+
+        Utente utente = getUtenteByUsername(utenteLoggato);
+        if (utente == null) {
+            return null;
+        }
+
+        for (Bacheca bacheca : utente.getBacheca()) {
+            if (bacheca.getTitolo().toString().equalsIgnoreCase(titolo) &&
+                    bacheca.getDescrizione().equalsIgnoreCase(descrizione)) {
+                return bacheca;
+            }
+        }
+
         return null;
     }
 }

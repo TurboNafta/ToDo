@@ -8,8 +8,8 @@ public class Bacheca implements InterfacciaBacheca {
     private String descrizione;
     //gestisco enumerazione
     private TitoloBacheca titolo;
-    //gestisco todo
-    private ArrayList <ToDo> todo;
+    //gestisco to do
+    private List <ToDo> todo;
     //gestisco la relazione con utente (1)
     private Utente utente;
 
@@ -19,7 +19,7 @@ public class Bacheca implements InterfacciaBacheca {
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.utente = utente;
-        this.todo= new ArrayList<ToDo>();
+        this.todo= new ArrayList<>();
     }
 
     //GETTER E SETTER
@@ -31,10 +31,6 @@ public class Bacheca implements InterfacciaBacheca {
         this.descrizione = descrizione;
     }
 
-    public void modificaDescrizione(String nuovaDescrizione){
-        this.descrizione = nuovaDescrizione;
-    }
-
     public TitoloBacheca getTitolo() {
         return titolo;
     }
@@ -44,11 +40,11 @@ public class Bacheca implements InterfacciaBacheca {
     }
 
 
-    public ArrayList<ToDo> getTodo() {
+    public List<ToDo> getTodo() {
         return todo;
     }
 
-    public void setTodo(ArrayList<ToDo> todo) {
+    public void setTodo(List<ToDo> todo) {
         this.todo = todo;
     }
 
@@ -56,18 +52,10 @@ public class Bacheca implements InterfacciaBacheca {
         return utente;
     }
 
-    public void setUtente(Utente utente) {
-        this.utente = utente;
-    }
-
     //INTERFACCIA BACHECA
     public void aggiungiToDo(ToDo t){
         todo.add(t);
     }
-
-    //public void modificaDescrizione(Bacheca b, String nuovaDescrizione){
-    //b.modificaDescrizione(nuovaDescrizione);
-    //}
 
     public void eliminaToDo(ToDo t){ todo.remove(t); }
 
