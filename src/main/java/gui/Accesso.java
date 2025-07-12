@@ -67,7 +67,7 @@ public class  Accesso{
                     JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
 
                     SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(), username);
-                    secondGui.frameBacheca.setVisible(true);
+                    secondGui.getFrameBacheca().setVisible(true);
                     getFrameAccesso().dispose();
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
@@ -88,7 +88,7 @@ public class  Accesso{
                     JOptionPane.showMessageDialog(mainPanel, "Utente registrato");
 
                     SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(),username);
-                    secondGui.frameBacheca.setVisible(true);
+                    secondGui.getFrameBacheca().setVisible(true);
                     getFrameAccesso().dispose();
                 }
         });

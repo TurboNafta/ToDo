@@ -2,9 +2,7 @@ package controller;
 
 import model.*;
 
-
 import java.util.*;
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
@@ -22,7 +20,10 @@ public class Controller {
     // GESTIONE BACHECHE
     public List<Bacheca> getBachecaList(String titolo, String username) {
         Utente utente = getUtenteByUsername(username);
-        LOGGER.info("Utente trovato: {}"+username);
+        if(LOGGER.isLoggable(java.util.logging.Level.INFO)) {
+            LOGGER.info("Utente trovato: "+ username);
+        }
+
         ArrayList<Bacheca> bachecheUtente = new ArrayList<>();
         if (utente == null) {
             return bachecheUtente;// da gestire con eccezione pls nn dimenticarti:*
@@ -43,16 +44,12 @@ public class Controller {
 
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
         if (titoloStr == null) return null;
-        switch (titoloStr.toLowerCase()) {
-            case "universita":
-                return TitoloBacheca.UNIVERSITA;
-            case "lavoro":
-                return TitoloBacheca.LAVORO;
-            case "tempo libero":
-                return TitoloBacheca.TEMPOLIBERO;
-            default:
-                return null;
-        }
+        return switch (titoloStr.toLowerCase()) {
+            case "universita" -> TitoloBacheca.UNIVERSITA;
+            case "lavoro" -> TitoloBacheca.LAVORO;
+            case "tempo libero" -> TitoloBacheca.TEMPOLIBERO;
+            default -> null;
+        };
     }
 
 
@@ -72,12 +69,11 @@ public class Controller {
     }
 
 
-    // --- GESTIONE TODO ---
+    // --- GESTIONE TO dO ---
 
     public List<ToDo> getToDoPerBachecaUtente( Bacheca bacheca, String nomeToDo) {
-        Bacheca b = bacheca;
         ArrayList<ToDo> filtrati = new ArrayList<>();
-        ArrayList<ToDo> tuttiToDo = b.getTodo();
+        ArrayList<ToDo> tuttiToDo = bacheca.getTodo();
 
         if (nomeToDo == null || nomeToDo.isEmpty()) {
             return tuttiToDo;
@@ -106,8 +102,7 @@ public class Controller {
         // aggiungo il To Do in bacheca
         bacheca.aggiungiToDo(todo);
     }
-
-    // ToDo in scadenza oggi
+    //To do in scadenza oggi
     public List<ToDo> getToDoInScadenzaOggi(Bacheca bacheca) {
         List<ToDo> result = new ArrayList<>();
         List<ToDo> tutti = getToDoPerBachecaUtente(bacheca, "");
@@ -124,7 +119,7 @@ public class Controller {
         return result;
     }
 
-    // ToDo in scadenza entro una certa data
+    // To do in scadenza entro una certa data
     public List<ToDo> getToDoInScadenzaEntro( Bacheca bacheca, String dataLimiteStr) {
         List<ToDo> result = new ArrayList<>();
         List<ToDo> tutti = getToDoPerBachecaUtente( bacheca, "");
@@ -209,14 +204,14 @@ public class Controller {
         }
     }
 
-    //Funzione che genera i todo solamente per l'admin
+    //Funzione che genera i to do solamente per l'admin
     public void buildToDoPerBachecaUtente() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
         if (admin == null) {
             admin = new Utente(NOME_UTENTE_AMMINISTRATORE, "1111");
             this.listaUtenti.add(admin);
         }
-        //Se admin ha già bacheche coon ToDo non li ricrea
+        //Se admin ha già bacheche coon To do non li ricrea
         //Da implementare
 
         String[] titoli = {"BASKET", "STUDIO", "CUCINARE"};
@@ -227,7 +222,7 @@ public class Controller {
         String[] data = {"31/5/2025", "1/6/2025", "2/6/2025"};
         String[] image = {"foto1", "foto2", "foto3"};
 
-        //ARRAYLIST OER GESTIRE LA CONDIVISIONE DEI TODO
+        //ARRAYLIST OER GESTIRE LA CONDIVISIONE DEI To do
         ArrayList<Utente> utentiCondivisione = new ArrayList<>();
         utentiCondivisione.add(admin);
 
@@ -251,7 +246,7 @@ public class Controller {
     }
 
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
-        // Se l'autore è l'utente loggato, elimina il ToDo da tutte le bacheche condivise
+        //il To do da tutte le bacheche condivise
         if (t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
             ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
             for (Utente u : utentiCondivisi) {

@@ -20,11 +20,11 @@ public class FinestraChecklist extends JDialog {
     private JButton okButton;
 
 
-    private ArrayList<Attivita> attivita;
+    private transient ArrayList<Attivita> attivita;
     private ArrayList<JCheckBox> checkboxes;
 
     private boolean okPressed = false;
-    private ToDo todoAssociato;
+    private transient ToDo todoAssociato;
 
 
     public FinestraChecklist(List<Attivita> attivitaIniziale, ToDo todo, Frame owner) {
@@ -72,7 +72,7 @@ public class FinestraChecklist extends JDialog {
             okPressed = true;
             this.dispose();
         });
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
 

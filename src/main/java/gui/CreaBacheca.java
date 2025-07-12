@@ -10,10 +10,12 @@ import static model.TitoloBacheca.*;
 
 public class CreaBacheca {
     private JPanel panel1;
+    private JPanel contenutoPanel;
     private JRadioButton universitaRadioButton;
     private JRadioButton lavoroRadioButton;
     private JRadioButton tempoLiberoRadioButton;
     private JTextField textFieldDescrizione;
+    private JLabel descrizioneLabel;
     private JButton buttonCreazione;
     private JButton buttonAnnulla;
 

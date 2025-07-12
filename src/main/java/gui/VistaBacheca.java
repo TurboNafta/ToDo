@@ -5,8 +5,6 @@ import model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +40,7 @@ public class VistaBacheca {
         frameVista = new JFrame("Selezione ToDo");
         frameVista.setContentPane(principale);
         todoPanelris.setLayout(new BoxLayout(todoPanelris, BoxLayout.X_AXIS));
-        frameVista.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameVista.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frameVista.setSize(900, 600);
         frameVista.setLocationRelativeTo(null);
         todoPanelris.setLayout(new BoxLayout(todoPanelris, BoxLayout.Y_AXIS));
@@ -93,7 +91,7 @@ public class VistaBacheca {
         //BOTTONE CHE CREA TO DO
         creaToDoButton.addActionListener(e -> { //
             CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca,utenteLoggato);
-            quartaGui.frameCreaToDo.setVisible(true);
+            quartaGui.getFrameCreaToDo().setVisible(true);
             frameVista.setVisible(false);
         });
 
@@ -144,7 +142,7 @@ public class VistaBacheca {
         tornaAllaHomeButton.addActionListener(e -> { // Convertito in lambda
             // Crea una nuova SelezioneBacheca aggiornata
             SelezioneBacheca selez = new SelezioneBacheca(controller, null, utenteLoggato);
-            selez.frameBacheca.setVisible(true);
+            selez.getFrameBacheca().setVisible(true);
             frameVista.dispose();
         });
 
@@ -152,7 +150,7 @@ public class VistaBacheca {
         aggiornaListaToDo();
 
     }
-    // Mostra tutti i ToDo della bacheca con eventuale ordinamento
+    // Mostra tutti i To do della bacheca con eventuale ordinamento
     private void aggiornaListaToDo() {
         List<ToDo> lista = new ArrayList<>(bacheca.getTodo()); // Usare List per buona pratica
 
@@ -223,7 +221,7 @@ public class VistaBacheca {
         labelTitolo.setForeground(t.getDatascadenza().before(oggi) ? Color.RED : Color.BLACK);
         card.add(labelTitolo);
 
-        // Aggiungi dettagli ToDo
+        // Aggiungi dettagli To do
         addToDoDetailsToCard(card, t);
 
         // Aggiungi pulsanti azione se l'utente è l'autore
@@ -289,7 +287,7 @@ public class VistaBacheca {
         modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
         modificaButton.addActionListener(ev -> {
             ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
-            modificaGui.frameModificaToDo.setVisible(true);
+            modificaGui.getFrameModificaToDo().setVisible(true);
             frameVista.setVisible(false);
         });
         return modificaButton;
@@ -376,189 +374,5 @@ final class CriteriOrdinamento {
     public static final String POSIZIONE = "Posizione";
     public static final String STATO_COMPLETAMENTO = "Stato Completamento";
 }
-
-
-   /* private void mostraListaToDo(List<ToDo> lista) {
-        todoPanelris.removeAll();
-        JPanel cardsPanel = new JPanel();
-        cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
-        cardsPanel.setBackground(Color.WHITE);
-
-        if (lista.isEmpty()) {
-            cardsPanel.add(new JLabel("Nessun ToDo presente."));
-        } else {
-            for (ToDo t : lista) {
-                JPanel card = new JPanel();
-                card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-                card.setMaximumSize(new Dimension(350, Integer.MAX_VALUE));
-                card.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(new Color(90, 90, 90), 2, true),
-                        BorderFactory.createEmptyBorder(10, 15, 10, 15)
-                ));
-
-                JLabel labelTitolo = new JLabel(t.getTitolo());
-                Calendar oggi = Calendar.getInstance();
-                if (t.getDatascadenza().before(oggi)) {
-                    labelTitolo.setForeground(Color.RED);
-                } else {
-                    labelTitolo.setForeground(Color.BLACK);
-                }
-                card.add(labelTitolo);
-
-
-                // Colore sfondo dei todo
-                String colore = t.getColoresfondo();
-                if (colore != null) {
-                    switch (colore.toLowerCase()) {
-                        case "rosso":
-                            card.setBackground(new Color(255, 153, 153)); // rosso chiaro
-                            break;
-                        case "giallo":
-                            card.setBackground(new Color(255, 255, 153)); // giallo chiaro
-                            break;
-                        case "blu":
-                            card.setBackground(new Color(153, 204, 255)); // azzurro chiaro
-                            break;
-                        case "verde":
-                            card.setBackground(new Color(153, 255, 153)); // verde chiaro
-                            break;
-                        case "arancione":
-                            card.setBackground(new Color(255, 204, 153)); // arancione chiaro
-                            break;
-                        case "rosa":
-                            card.setBackground(new Color(255, 204, 229)); // rosa pastello
-                            break;
-                        case "viola":
-                            card.setBackground(new Color(204, 153, 255)); // lilla
-                            break;
-                        case "celeste":
-                            card.setBackground(new Color(204, 255, 255)); // celeste chiaro
-                            break;
-                        case "marrone":
-                            card.setBackground(new Color(210, 180, 140)); // marroncino chiaro
-                            break;
-                        default: card.setBackground(Color.LIGHT_GRAY);
-                    }
-                    card.setOpaque(true);
-                } else {
-                    card.setBackground(Color.LIGHT_GRAY);
-                }
-
-
-
-                //CARD DEL TODO
-                card.add(new JLabel("Titolo: " + t.getTitolo()));
-                card.add(new JLabel("Descrizione: " + t.getDescrizione()));
-                card.add(new JLabel("URL: " + t.getUrl()));
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                String dataString = t.getDatascadenza() != null ? sdf.format(t.getDatascadenza().getTime()) : "N/D";
-                card.add(new JLabel("Data Scadenza: " + dataString));
-                card.add(new JLabel("Immagine: " + t.getImage()));
-                card.add(new JLabel("Stato: " + t.getStatoString()));
-
-                // Pulsanti disponibili solo se autore
-                if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
-                    JButton modificaButton = new JButton("Modifica");
-                    modificaButton.setBackground(new Color(255, 200, 80));
-                    modificaButton.setForeground(Color.BLACK);
-                    modificaButton.setFocusPainted(false);
-                    modificaButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
-                    modificaButton.addActionListener(ev -> {
-                        ModificaToDo modificaGui = new ModificaToDo(controller, frameVista, bacheca, utenteLoggato, t);
-                        modificaGui.frameModificaToDo.setVisible(true);
-                        frameVista.setVisible(false);
-                    });
-                    //aggiungo a card
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(modificaButton);
-
-                    //BUTTON ELIMINA
-                    JButton eliminaButton = new JButton("Elimina");
-                    eliminaButton.setBackground(new Color(255, 80, 80));
-                    eliminaButton.setForeground(Color.BLACK);
-                    eliminaButton.setFocusPainted(false);
-                    eliminaButton.addActionListener(ev -> {
-                        int conferma = JOptionPane.showConfirmDialog(frameVista, "Vuoi eliminare questo ToDo?", "Conferma", JOptionPane.YES_NO_OPTION);
-                        if (conferma == JOptionPane.YES_OPTION) {
-                            controller.eliminaToDo(bacheca, t);
-                            aggiornaListaToDo();//buttonCerca.doClick()
-                        }
-                    });
-                    // aggiungo il bottone a card
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(eliminaButton);
-
-
-                    //BUTTON SPOSTA
-                    JButton spostaButton = new JButton("Sposta in un altra Bacheca");
-                    spostaButton.setBackground(new Color(80, 150, 255));
-                    spostaButton.setForeground(Color.BLACK);
-                    spostaButton.setFocusPainted(false);
-                    spostaButton.addActionListener(ev -> {
-                        String[] bacheche = {"Università", "Lavoro", "Tempo Libero"};
-                        String scelta = (String) JOptionPane.showInputDialog(
-                                frameVista,
-                                "Scegli bacheca di destinazione: ",
-                                "Sposta To Do",
-                                JOptionPane.PLAIN_MESSAGE,
-                                null,
-                                bacheche,
-                                bacheche[0]
-                        );
-                        if (scelta != null && !scelta.equalsIgnoreCase(bacheca.getTitolo().toString())) {
-                            Bacheca destinazione = controller.getBachecaPerUtente(utenteLoggato, scelta);
-                            if (destinazione != null) {
-                                controller.spostaToDoInAltraBacheca(t, bacheca, destinazione);
-                                aggiornaListaToDo();
-                                JOptionPane.showMessageDialog(frameVista, "ToDo spostato in'" + scelta + "'");
-                            } else {
-                                JOptionPane.showMessageDialog(frameVista, "Errore: bacheca non trovata.");
-                            }
-                        }
-                    });
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(spostaButton);
-
-                    cardsPanel.add(card);
-
-                }
-
-                //BOTTONE PER VEDERE CONDIVISIONI
-                ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
-
-                if (!utentiCondivisi.isEmpty()) {
-                    JButton condivisiButton = new JButton("Condiviso con...");
-                    condivisiButton.setBackground(new Color(120, 200, 255));
-                    condivisiButton.setForeground(Color.BLACK);
-                    condivisiButton.setFocusPainted(false);
-                    condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
-                    condivisiButton.addActionListener(ev -> {
-                        StringBuilder sb = new StringBuilder();
-
-                        //CI RIEMPIE LA LISTA DI UTENTI CHE HANNO LA CONDIVISIONE
-                        for (Utente u : utentiCondivisi) {
-                            sb.append(u.getUsername()).append("\n");
-                        }
-
-                        JOptionPane.showMessageDialog(frameVista,
-                                sb.length() > 0 ? sb.toString() : "Non condiviso con nessuno.",
-                                "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
-                    });
-                    card.add(Box.createVerticalStrut(5));
-                    card.add(condivisiButton);
-                }
-
-                //PRENDE IL COLORE IN INPUT E LO METTE COME SFONDO
-                cardsPanel.add(card);
-                cardsPanel.add(Box.createHorizontalStrut(20));
-
-            }
-        }
-
-        todoPanelris.add(cardsPanel);
-        todoPanelris.revalidate();
-        todoPanelris.repaint();
-    }*/
 
 

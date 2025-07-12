@@ -5,13 +5,13 @@ import model.Bacheca;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class SelezioneBacheca {
+    private static final Logger logger = Logger.getLogger(SelezioneBacheca.class.getName());
     private JPanel principale;
-    private JComboBox comboBox1;
+    private JComboBox <String> comboBox1;
     private JButton buttonCerca;
     private JLabel titoloLabel;
     private JPanel ricercaPanel;
@@ -48,14 +48,14 @@ public class SelezioneBacheca {
         frameBacheca = new JFrame("Selezione Bacheca");
         frameBacheca.setContentPane(principale);
         bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.X_AXIS));
-        frameBacheca.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameBacheca.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frameBacheca.setSize(900, 600);
         frameBacheca.setLocationRelativeTo(null);
         bachechePanel.setLayout(new BoxLayout(bachechePanel, BoxLayout.Y_AXIS));
         frameBacheca.setVisible(true);
 
         //Funzione che crea Bacheche per Admin
-        System.out.println(this.utentelog);
+        logger.info(this.utentelog);
 
         //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
         creaNuovaBachecaButton.addActionListener(e -> {
@@ -68,9 +68,9 @@ public class SelezioneBacheca {
         //PERMETTE DI TROVARE LE BACHECHE CREATE
         buttonCerca.addActionListener(e -> {
             String bachecaDaCercare = (String) comboBox1.getSelectedItem();
-            List<Bacheca> bachecaDaMostrare = controller.getBachecaList(bachecaDaCercare, utentelog);
+           controller.getBachecaList(bachecaDaCercare, utentelog);
 
-            aggiornaBachecaPanel(bachecaDaMostrare);
+            aggiornaBachecaPanel();
         });
 
         //BOTTONE PER TORNARE INDIETRO
@@ -80,7 +80,7 @@ public class SelezioneBacheca {
         });
     }
 
-    private void aggiornaBachecaPanel (List <Bacheca> bachecaDaMostrare) {
+    private void aggiornaBachecaPanel () {
         String tipo = (String) comboBox1.getSelectedItem();
         List<Bacheca> bacheche = controller.getBachecaList(tipo, utentelog);
 
@@ -173,7 +173,7 @@ public class SelezioneBacheca {
     }
 
     private JScrollPane creaScrollPane(JPanel cardsPanel) {
-        JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(cardsPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(null);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         return scrollPane;
