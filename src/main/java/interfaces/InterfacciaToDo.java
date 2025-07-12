@@ -2,8 +2,7 @@ package interfaces;
 
 import model.StatoToDo;
 import model.ToDo;
-import model.Bacheca;
-import java.util.*;
+
 
 // InterfacciaToDo.java
 public interface InterfacciaToDo {
