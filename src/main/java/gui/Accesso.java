@@ -4,8 +4,8 @@ import controller.Controller;
 import model.Utente;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class  Accesso{
     private JPanel mainPanel;
@@ -15,8 +15,16 @@ public class  Accesso{
     private JButton registratiButton;
 
     //Frame e controller
-    public JFrame frameAccesso;
-    private Controller controller;
+    private final JFrame frameAccesso;
+
+    public JFrame getFrameAccesso() {
+        return frameAccesso;
+    }
+
+    // Necessario come campo per accesso dai listener lambda
+    // Usato nelle lambda, ignora falso positivo SonarQube
+    private final Controller controller;
+    private static final Logger logger = Logger.getLogger(Accesso.class.getName());
 
     public static void main(String[] args) {try {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -26,7 +34,7 @@ public class  Accesso{
             }
         }
     } catch (Exception e) {
-        e.printStackTrace();
+        logger.log(Level.SEVERE, "Errore durante il caricamento del LookAndFeel", e);
     }
         Controller controller = new Controller();
         controller.buildAdmin();
@@ -42,15 +50,13 @@ public class  Accesso{
 
         frameAccesso = new JFrame("PrimaPagina");
         frameAccesso.setContentPane(mainPanel);
-        frameAccesso.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameAccesso.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frameAccesso.pack();
         frameAccesso.setLocationRelativeTo(null);
         frameAccesso.setVisible(true);
 
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        loginButton.addActionListener(e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 boolean prova = controller.esisteUtente(username, password);
@@ -60,35 +66,31 @@ public class  Accesso{
 
                     JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
 
-                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);
+                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(), username);
                     secondGui.frameBacheca.setVisible(true);
-                    frameAccesso.dispose();
+                    getFrameAccesso().dispose();
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
                 }
-            }
         });
 
-        registratiButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        registratiButton.addActionListener (e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 boolean prova = controller.esisteUtente(username, password);
                 if(password.isEmpty() && username.isEmpty()){
                     JOptionPane.showMessageDialog(mainPanel, "Inserisci un nome e una password");
-                }else if(prova == true){
+                }else if(prova){
                     JOptionPane.showMessageDialog(mainPanel, "Utente già registrato");
                 }else{
                     Utente u = new Utente(username, password);
                     controller.addUtente(u);
                     JOptionPane.showMessageDialog(mainPanel, "Utente registrato");
 
-                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameAccesso,username);
+                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(),username);
                     secondGui.frameBacheca.setVisible(true);
-                    frameAccesso.dispose();
+                    getFrameAccesso().dispose();
                 }
-            }
         });
     }
 }
