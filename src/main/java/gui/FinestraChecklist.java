@@ -6,7 +6,8 @@ import model.ToDo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 
 public class FinestraChecklist extends JDialog {
@@ -18,7 +19,7 @@ public class FinestraChecklist extends JDialog {
     private JButton aggiungiButton;
     private JButton okButton;
 
-    //private JFrame frame;
+
     private ArrayList<Attivita> attivita;
     private ArrayList<JCheckBox> checkboxes;
 
@@ -26,7 +27,7 @@ public class FinestraChecklist extends JDialog {
     private ToDo todoAssociato;
 
 
-    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale,ToDo todo, Frame owner) {
+    public FinestraChecklist(List<Attivita> attivitaIniziale, ToDo todo, Frame owner) {
         super(owner, "Checklist", true);
         attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
         checkboxes = new ArrayList<>();
@@ -73,9 +74,7 @@ public class FinestraChecklist extends JDialog {
         });
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     }
-    public FinestraChecklist(ArrayList<Attivita> attivitaIniziale) {
-        this(attivitaIniziale, null, null); // Pass null for ToDo and owner if no specific parent
-    }
+
 
     private void aggiornaChecklist() {
         checklistPanel.removeAll();
@@ -100,8 +99,7 @@ public class FinestraChecklist extends JDialog {
         return okPressed;
     }
 
-    public ArrayList<Attivita> getAttivita() {
-        //aggiornaDallaCheckBox();
+    public List<Attivita> getAttivita() {
         return attivita;
     }
 }

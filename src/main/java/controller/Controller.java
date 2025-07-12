@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 public class Controller {
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName()); // Dichiarazione del logger
     private Utente utenteLoggato; // Utente attualmente autenticato
-    private ArrayList<Utente> listaUtenti;
+    private final List<Utente> listaUtenti;
     private static final String NOME_UTENTE_AMMINISTRATORE = "admin";
 
 
@@ -25,7 +25,7 @@ public class Controller {
         LOGGER.info("Utente trovato: {}"+username);
         ArrayList<Bacheca> bachecheUtente = new ArrayList<>();
         if (utente == null) {
-            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti :*
+            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti:*
         } else {
             TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
             if (titolo == null || titolo.isEmpty()) {

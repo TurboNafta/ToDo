@@ -20,7 +20,6 @@ public class CreaBacheca {
     private JButton buttonCreazione;
     private JLabel descrizioneLabel;
     private JButton buttonAnnulla;
-    private String utentelog;
 
     public static JFrame frameCreaBacheca, frameChiamante;
     private Controller controller;
