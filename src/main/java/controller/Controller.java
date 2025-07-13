@@ -331,4 +331,19 @@ public class Controller {
 
         return null;
     }
+    public boolean isValidDate(String dateStr) {
+        if (!dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return false;
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            sdf.setLenient(false);
+            sdf.parse(dateStr);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

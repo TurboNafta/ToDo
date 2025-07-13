@@ -73,12 +73,16 @@ public class CreaToDo {
         utentiList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         addToDoButton.addActionListener(e->{
-                String dataStr = textFieldData.getText();
-                if (!dataStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
-                    JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/MM/aaaa");
-                    return;
-                }
-                try{
+            String dataStr = textFieldData.getText().trim();
+            if (!controller.isValidDate(dataStr)) {
+                JOptionPane.showMessageDialog(frameCreaToDo,
+                        "Inserisci la data nel formato gg/MM/aaaa (es: 13/07/2025)",
+                        "Errore formato data",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try{
                     // Recupera i dati dai campi di testo
                     String titolo = textFieldTitolo.getText();
                     String descrizione = textFieldDescrizione.getText();

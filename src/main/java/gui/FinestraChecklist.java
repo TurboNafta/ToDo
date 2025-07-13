@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.List;
 
 
+
 public class FinestraChecklist extends JDialog {
     private JPanel mainPanel;
     private JCheckBox checkBox1;
@@ -18,33 +19,40 @@ public class FinestraChecklist extends JDialog {
     private JTextField attivitaField;
     private JButton aggiungiButton;
     private JButton okButton;
+    private JButton xButton;
 
-
-    private transient ArrayList<Attivita> attivita;
-    private ArrayList<JCheckBox> checkboxes;
-
+    private final ArrayList<Attivita> attivita;
+    private final ArrayList<JCheckBox> checkboxes;
     private boolean okPressed = false;
-    private transient ToDo todoAssociato;
-
+    private final ToDo todoAssociato;
 
     public FinestraChecklist(List<Attivita> attivitaIniziale, ToDo todo, Frame owner) {
         super(owner, "Checklist", true);
-        attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
-        checkboxes = new ArrayList<>();
-        this.todoAssociato=todo;
+        this.attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
+        this.checkboxes = new ArrayList<>();
+        this.todoAssociato = todo;
 
+        initializeUI();
+        setupListeners();
+        aggiornaChecklist();
+    }
+
+    private void initializeUI() {
         mainPanel = new JPanel(new BorderLayout());
-
         checklistPanel = new JPanel();
         checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
-        JScrollPane scrollPane = new JScrollPane(checklistPanel);
 
+
+        checklistPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+        JScrollPane scrollPane = new JScrollPane(checklistPanel);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         attivitaField = new JTextField(20);
         aggiungiButton = new JButton("Aggiungi attività");
         okButton = new JButton("OK");
 
-        JPanel inputPanel = new JPanel();
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(attivitaField);
         inputPanel.add(aggiungiButton);
 
@@ -52,54 +60,76 @@ public class FinestraChecklist extends JDialog {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(okButton, BorderLayout.SOUTH);
 
-        this.setContentPane(mainPanel);
-        this.setSize(400, 400);
-        this.setLocationRelativeTo(owner);
-
-        aggiornaChecklist();
-
-        aggiungiButton.addActionListener(e -> {
-            String text = attivitaField.getText().trim();
-            if (!text.isEmpty()) {
-                attivita.add(new Attivita(text, StatoAttivita.NONCOMPLETATA));
-                attivitaField.setText("");
-                aggiornaChecklist();
-            }
-        });
-
-        okButton.addActionListener(e -> {
-            aggiornaDallaCheckBox();
-            okPressed = true;
-            this.dispose();
-        });
+        setContentPane(mainPanel);
+        setSize(400, 400);
+        setLocationRelativeTo(getOwner());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
+    private void setupListeners() {
+        // Listener per il campo di testo
+        attivitaField.addActionListener(e -> aggiungiAttivita());
+
+        // Listener per il pulsante Aggiungi
+        aggiungiButton.addActionListener(e -> aggiungiAttivita());
+
+        // Listener per il pulsante OK
+        okButton.addActionListener(e -> {
+            aggiornaDallaCheckBox();
+            okPressed = true;
+            dispose();
+        });
+    }
+
+    private void aggiungiAttivita() {
+        String text = attivitaField.getText().trim();
+        if (!text.isEmpty()) {
+            Attivita nuovaAttivita = new Attivita(text, StatoAttivita.NONCOMPLETATA);
+            attivita.add(nuovaAttivita);
+            attivitaField.setText("");
+            aggiornaChecklist();
+
+        }
+    }
 
     private void aggiornaChecklist() {
         checklistPanel.removeAll();
         checkboxes.clear();
+
         for (Attivita item : attivita) {
+            JPanel itemPanel = new JPanel(new BorderLayout());
             JCheckBox cb = new JCheckBox(item.getTitolo(), item.getStato() == StatoAttivita.COMPLETATA);
+
+            //  pulsante per rimuovere l'attività
+            JButton removeButton = new JButton("X");
+            removeButton.setPreferredSize(new Dimension(20, 20));
+            removeButton.addActionListener(e -> {
+                attivita.remove(item);
+                aggiornaChecklist();
+            });
+
+            itemPanel.add(cb, BorderLayout.CENTER);
+            itemPanel.add(removeButton, BorderLayout.EAST);
+
             checkboxes.add(cb);
-            checklistPanel.add(cb);
+            checklistPanel.add(itemPanel);
         }
+
         checklistPanel.revalidate();
         checklistPanel.repaint();
     }
 
     private void aggiornaDallaCheckBox() {
-        for(int i = 0; i < attivita.size(); i++){
-            attivita.get(i).setStato(checkboxes.get(i).isSelected() ? StatoAttivita.COMPLETATA : StatoAttivita.NONCOMPLETATA);
+        for (int i = 0; i < attivita.size(); i++) {
+            if (i < checkboxes.size()) {
+                attivita.get(i).setStato(
+                        checkboxes.get(i).isSelected() ? StatoAttivita.COMPLETATA : StatoAttivita.NONCOMPLETATA
+                );
+            }
         }
     }
 
-
-    public boolean isOkPressed(){
-        return okPressed;
-    }
-
     public List<Attivita> getAttivita() {
-        return attivita;
+        return new ArrayList<>(attivita); // Ritorna una copia della lista
     }
 }
