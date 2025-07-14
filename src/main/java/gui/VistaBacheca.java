@@ -447,9 +447,9 @@ public class VistaBacheca {
         condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
         condivisiButton.addActionListener(ev -> {
             StringBuilder sb = new StringBuilder();
-            List<Utente> utentiCondivisi = t.getUtentiPossessori(); // Usare List per buona pratica
+            List<Utente> utentiCondivisi = t.getUtentiPossessori();
 
-            if (utentiCondivisi.size() <= 1) {
+            if (utentiCondivisi.isEmpty() || utentiCondivisi.size() <= 1) {
                 JOptionPane.showMessageDialog(frameVista,
                         "Non condiviso con nessuno.",
                         "Nessuna Condivisione",
@@ -461,11 +461,12 @@ public class VistaBacheca {
                 sb.append(u.getUsername()).append("\n");
             }
 
-            String messaggio = sb.isEmpty() ? sb.toString() : "Non condiviso con nessuno.";
+            String messaggio = sb.length() > 0 ? sb.toString() : "Non condiviso con nessuno.";
 
             JOptionPane.showMessageDialog(frameVista,
                     messaggio,
-                    "Utenti con cui è condiviso", JOptionPane.INFORMATION_MESSAGE);
+                    "Utenti con cui è condiviso",
+                    JOptionPane.INFORMATION_MESSAGE);
         });
         return condivisiButton;
     }
