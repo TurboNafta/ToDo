@@ -2,8 +2,10 @@ package model;
 
 import interfaces.InterfacciaToDo;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ToDo implements InterfacciaToDo {
     private String titolo;
@@ -23,7 +25,7 @@ public class ToDo implements InterfacciaToDo {
 
 
     //gestisco la relazione * con condivisione
-    private List<Utente> utentiPossessori;
+    private List<Condivisione> utentiPossessori;
     private Utente autore;
     private Bacheca bacheca;
 
@@ -49,7 +51,10 @@ public class ToDo implements InterfacciaToDo {
         this.posizione = posizione;
         this.coloresfondo = coloresfondo;
 
-        this.utentiPossessori = utenti;
+        this.utentiPossessori = new ArrayList<>();
+        for(Utente u: utenti){
+            this.utentiPossessori.add(new Condivisione(this, u));
+        }
         this.autore = autore;
 
         this.checklist = new CheckList(this);
@@ -145,11 +150,28 @@ public class ToDo implements InterfacciaToDo {
     }
 
     public List<Utente> getUtentiPossessori() {
-        return utentiPossessori;
+        return utentiPossessori.stream()
+                .map(Condivisione::getUtente)
+                .collect(Collectors.toList());
     }
 
     public void setUtentiPossessori(List<Utente> utentiPossessori){
-        this.utentiPossessori = utentiPossessori;
+        this.utentiPossessori.clear();
+        for(Utente u: utentiPossessori){
+            this.utentiPossessori.add(new Condivisione(this, u));
+        }
+    }
+
+    public void aggiungiCondivisione(Utente utente) {
+        this.utentiPossessori.add(new Condivisione(this, utente));
+    }
+
+    public void rimuoviCondivisione(Utente utente) {
+        this.utentiPossessori.removeIf(c -> c.getUtente().equals(utente));
+    }
+
+    public List<Condivisione> getCondivisioni() {
+        return utentiPossessori;
     }
 
     public Utente getAutore() {
