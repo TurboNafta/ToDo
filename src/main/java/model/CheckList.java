@@ -1,22 +1,29 @@
 package model;
 
 import interfaces.InterfacciaCheckList;
-
 import java.util.*;
 
+/**
+ * Classe del model CheckList, ha come attributi il to do, e una lista di attività da completare per terminare il to do
+ */
 public class CheckList implements InterfacciaCheckList {
-
     //gestisco relazione con to do
     private ToDo todo;
 
     //gestisco aggregazione con attivita
     private List<Attivita> attivita;
+
+    /**
+     * Costruttore per creare una nuova CheckList
+     */
     public CheckList( ToDo t){
         this.todo = t;
         this.attivita=new ArrayList<>();
     }
 
-    //funzioni
+    /**
+     * Funzioni generali per la gestione degli attributi
+     */
     @Override
     public List<Attivita> getAttivita() {
         return attivita;
@@ -35,7 +42,9 @@ public class CheckList implements InterfacciaCheckList {
         this.todo = todo;
     }
 
-    //VERIFICA SE TUTTE LE ATTIVITA' SONO COMPLETATE
+    /**
+     * Funzione che scorre le attività della List e vede se tutte sono completate
+     */
     public boolean tutteCompletate(){
         if(attivita.isEmpty()){
             return false;

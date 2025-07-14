@@ -2,7 +2,6 @@ package gui;
 
 import controller.Controller;
 import model.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -11,6 +10,9 @@ import java.util.List;
 import java.util.Comparator;
 import java.util.Calendar;
 
+/**
+ * Classe GUI per la VistaBacheca, che ci permette di entrare nella bacheca selezionata e di vedere i to do contenuti all'interno
+ */
 public class VistaBacheca {
     private JPanel principale;
     private JPanel ricerca;
@@ -30,7 +32,9 @@ public class VistaBacheca {
     private String utenteLoggato;
     private Bacheca bacheca;
 
-
+    /**
+     * Costruttore della GUI VistaBacheca
+     */
     public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame, String utenteLoggato) {
         this.frameChiamante = frame;
         this.controller = controller;
@@ -51,7 +55,7 @@ public class VistaBacheca {
         ricercaComboBox = new JComboBox<>(criteri);
         textField1 = new JTextField(20); // unica barra di ricerca
 
-        // Pulisci e ricostruisci il pannello ricerca
+        // Pulisce e ricostruisce il pannello ricerca
         ricerca.removeAll();
         ricerca.setLayout(new FlowLayout(FlowLayout.LEFT));
         ricerca.add(new JLabel("Criterio:"));
@@ -88,14 +92,18 @@ public class VistaBacheca {
         //ordinamento live sulla lista generale
         comboBoxOrdina.addActionListener(e->aggiornaListaToDo());
 
-        //BOTTONE CHE CREA TO DO
+        /**
+         * Pulsante che ci permette di Creare un to do
+         */
         creaToDoButton.addActionListener(e -> { //
             CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca,utenteLoggato);
             quartaGui.getFrameCreaToDo().setVisible(true);
             frameVista.setVisible(false);
         });
 
-        //Bottone CERCA con filtro e ordinamento
+        /**
+         * Pulsante che ci permette di Cercare i to do a seconda dei criteri selezionati
+         */
         buttonCerca.addActionListener(e -> { // Convertito in lambda
 
             String criterioOrdine = (String) comboBoxOrdina.getSelectedItem();
@@ -126,7 +134,7 @@ public class VistaBacheca {
                         risultati.sort(Comparator.comparing(ToDo::getDatascadenza));
                         break;
                     case CriteriOrdinamento.POSIZIONE:
-                        risultati.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
+                        risultati.sort(Comparator.comparing(t -> ConvertiInNum(t.getPosizione())));
                         break;
                     case CriteriOrdinamento.STATO_COMPLETAMENTO:
                         risultati.sort(Comparator.comparing(ToDo::getStato));//fare qualcosa x mettere prima i nn completati
@@ -138,19 +146,22 @@ public class VistaBacheca {
             mostraListaToDo(risultati);
         });
 
-        //PERMETTE DI TORNARE ALLA HOME
+        /**
+         * Pulsante per tornare alla home
+         */
         tornaAllaHomeButton.addActionListener(e -> { // Convertito in lambda
             // Crea una nuova SelezioneBacheca aggiornata
             SelezioneBacheca selez = new SelezioneBacheca(controller, null, utenteLoggato);
             selez.getFrameBacheca().setVisible(true);
             frameVista.dispose();
         });
-
         // Mostra all'avvio
         aggiornaListaToDo();
-
     }
-    // Mostra tutti i To do della bacheca con eventuale ordinamento
+
+    /**
+     * Metodo che ci mostra la lista di to, do ordinati o meno.
+     */
     private void aggiornaListaToDo() {
         List<ToDo> lista = new ArrayList<>(bacheca.getTodo()); // Usare List per buona pratica
 
@@ -164,7 +175,7 @@ public class VistaBacheca {
                     lista.sort(Comparator.comparing(ToDo::getDatascadenza));
                     break;
                 case CriteriOrdinamento.POSIZIONE: // Usate le costanti
-                    lista.sort(Comparator.comparing(t -> parseIntSafe(t.getPosizione())));
+                    lista.sort(Comparator.comparing(t -> ConvertiInNum(t.getPosizione())));
                     break;
                 case CriteriOrdinamento.STATO_COMPLETAMENTO: // Usate le costanti
                     lista.sort(Comparator.comparing(ToDo::getStato));
@@ -176,14 +187,21 @@ public class VistaBacheca {
         }
         mostraListaToDo(lista);
     }
-    // Converte posizione, gestendo errori
-    private int parseIntSafe(String s) {
+
+    /**
+     * Metodo che ci converte la posizione in un numero
+     */
+    private int ConvertiInNum(String s) {
         try {
             return Integer.parseInt(s);
         } catch (NumberFormatException _) {
             return 0;
         }
     }
+
+    /**
+     * Metodo che ci permette di vedere la lista dei to do
+     */
     private void mostraListaToDo(List<ToDo> lista) { // Usare List per buona pratica
         todoPanelris.removeAll();
         JPanel cardsPanel = new JPanel();
@@ -242,7 +260,9 @@ public class VistaBacheca {
         return card;
     }
 
-    // Nuovo metodo: Imposta il colore di sfondo della card
+    /**
+     * Metodo per impostare il colore dello sfondo delle bacheche
+     */
     private void setCardBackgroundColor(JPanel card, String colore) {
         if (colore != null) {
             Color backgroundColor;
@@ -265,7 +285,9 @@ public class VistaBacheca {
         }
     }
 
-    // Nuovo metodo: Aggiunge i dettagli del ToDo alla card
+    /**
+     * Metodo che aggiunge le informazioni della bacheca al Panel
+     */
     private void addToDoDetailsToCard(JPanel card, ToDo t) {
         card.add(new JLabel("Titolo: " + t.getTitolo()));
         card.add(new JLabel("Descrizione: " + t.getDescrizione()));
@@ -278,7 +300,9 @@ public class VistaBacheca {
         card.add(new JLabel("Stato: " + t.getStatoString()));
     }
 
-    // Metodi per creare i bottoni
+    /**
+     * Metodo per creare il pulsante per modificare il to do
+     */
     private JButton createModificaButton(ToDo t) {
         JButton modificaButton = new JButton("Modifica");
         modificaButton.setBackground(new Color(255, 200, 80));
@@ -293,6 +317,9 @@ public class VistaBacheca {
         return modificaButton;
     }
 
+    /**
+     * Metodo per creare il pulsante per eliminare il to do
+     */
     private JButton createEliminaButton(ToDo t) {
         JButton eliminaButton = new JButton("Elimina");
         eliminaButton.setBackground(new Color(255, 80, 80));
@@ -308,6 +335,9 @@ public class VistaBacheca {
         return eliminaButton;
     }
 
+    /**
+     * Metodo per creare il pulsante per spostare il to do in un'altra bacheca
+     */
     private JButton createSpostaButton(ToDo t) {
         JButton spostaButton = new JButton("Sposta in un'altra Bacheca");
         styleButton(spostaButton);
@@ -315,12 +345,19 @@ public class VistaBacheca {
         return spostaButton;
     }
 
+    /**
+     * Metodo per stile del bottone
+     */
     private void styleButton(JButton button) {
         button.setBackground(new Color(80, 150, 255));
         button.setForeground(Color.BLACK);
         button.setFocusPainted(false);
     }
 
+    /**
+     * Metodo che ci permette di scegliere dove spostare quel to do, a seconda del titolo e della descrizione della
+     * nuova bacheca
+     */
     private void gestisciSpostamento(ToDo t) {
         Utente utente = verificaUtente();
         if (utente == null) return;
@@ -338,6 +375,9 @@ public class VistaBacheca {
         }
     }
 
+    /**
+     * Metodo che ci permette di recuperare l'utente loggato
+     */
     private Utente verificaUtente() {
         Utente utente = controller.getUtenteByUsername(utenteLoggato);
         if (utente == null) {
@@ -349,6 +389,9 @@ public class VistaBacheca {
         return utente;
     }
 
+    /**
+     * Metodo che ci recupera i titoli delle bacheche
+     */
     private String[] getTitoliBacheche(List<Bacheca> bacheche) {
         return bacheche.stream()
                 .filter(b -> !(b.getTitolo().equals(bacheca.getTitolo()) &&
@@ -358,6 +401,9 @@ public class VistaBacheca {
                 .toArray(String[]::new);
     }
 
+    /**
+     * Ci restituisce il messaggio che nessuna bacheca è disponibile
+     */
     private void mostraMessaggioNessunaBacheca() {
         JOptionPane.showMessageDialog(frameVista,
                 "Non ci sono altre bacheche disponibili.",
@@ -365,6 +411,9 @@ public class VistaBacheca {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Metodo che ci chiede in quale bacheca fare lo spostamento, per titolo
+     */
     private String richiediTitoloBacheca(String[] titoliBacheca) {
         return (String) JOptionPane.showInputDialog(
                 frameVista,
@@ -377,6 +426,9 @@ public class VistaBacheca {
         );
     }
 
+    /**
+     * Metodo che ci verifica i dati inseriti e completa lo spostamento
+     */
     private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titolo) {
         String[] descrizioni = getDescrizioniBacheca(bacheche, titolo);
         if (descrizioni.length == 0) {
@@ -390,6 +442,9 @@ public class VistaBacheca {
         }
     }
 
+    /**
+     * Metodo che prende le descrizioni di tutte le bacheche
+     */
     private String[] getDescrizioniBacheca(List<Bacheca> bacheche, String titolo) {
         return bacheche.stream()
                 .filter(b -> b.getTitolo().toString().equals(titolo))
@@ -397,6 +452,9 @@ public class VistaBacheca {
                 .toArray(String[]::new);
     }
 
+    /**
+     * Metodo che ci da errore nessuna bacheca trovata con quel titolo
+     */
     private void mostraMessaggioNessunaBachecaTrovata() {
         JOptionPane.showMessageDialog(frameVista,
                 "Nessuna bacheca trovata con questo titolo",
@@ -404,6 +462,9 @@ public class VistaBacheca {
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Metodo che ci permette di inserire la descrizione della bacheca a cui si vuole effettuare lo spostamento
+     */
     private String richiediDescrizioneBacheca(String[] descrizioni) {
         return (String) JOptionPane.showInputDialog(
                 frameVista,
@@ -416,6 +477,9 @@ public class VistaBacheca {
         );
     }
 
+    /**
+     * Metodo che ci completa lo spostamento e ci restituisce un messaggio come avviso
+     */
     private void completaSpostamento(ToDo t, String titolo, String descrizione) {
         Bacheca bachecaDestinazione = controller.getBachecaPerTitoloEDescrizione(
                 utenteLoggato,
@@ -430,6 +494,9 @@ public class VistaBacheca {
         }
     }
 
+    /**
+     * Mostra il messaggio dopo aver effettuato lo spostamento con successo
+     */
     private void mostraMessaggioSuccesso() {
         JOptionPane.showMessageDialog(
                 frameVista,
@@ -439,6 +506,9 @@ public class VistaBacheca {
         );
     }
 
+    /**
+     * Pulsante che ci permette di vedere le condivisioni con altri utenti
+     */
     private JButton createCondivisiConButton(ToDo t) {
         JButton condivisiButton = new JButton("Condiviso con...");
         condivisiButton.setBackground(new Color(120, 200, 255));

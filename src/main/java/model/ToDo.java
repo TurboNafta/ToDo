@@ -7,33 +7,36 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Classe del model To do, è formata da titolo, descrizione, url, datascandeza, image, posizione, colore sfondo, e Stato.
+ * Ogni To Do può essere condiviso tra più utenti, perciò contiene una List per le condivisioni, di cui si salva l'autore e la bacheca
+ * Il to do può avere una checklist di attività da completare per completare automaticamente lo stesso
+ */
 public class ToDo implements InterfacciaToDo {
     private String titolo;
     private String descrizione;
     private String url;
 
-    //GESTISCO DATA E IMMAGINE COME STRINGHE, NON SO COME FARE AL MOMENTO
     private GregorianCalendar datascadenza;
     private String image;
 
     private String posizione;
     private String coloresfondo;
 
-
     //gestisco l'enumerazione
     private StatoToDo stato = StatoToDo.NONCOMPLETATO;
-
 
     //gestisco la relazione * con condivisione
     private List<Condivisione> utentiPossessori;
     private Utente autore;
     private Bacheca bacheca;
 
-
     //gestisco la checklist
     private CheckList checklist;
 
-    //costruttore
+    /**
+     * Costruttore per creare un nuovo to do
+     */
     public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, List<Utente> utenti, Utente autore){
         this.titolo = titolo;
         this.descrizione = descrizione;
@@ -60,7 +63,9 @@ public class ToDo implements InterfacciaToDo {
         this.checklist = new CheckList(this);
     }
 
-
+    /**
+     * Funzioni generali per la gestione degli attributi
+     */
     public String getTitolo() {
         return titolo;
     }
@@ -178,7 +183,10 @@ public class ToDo implements InterfacciaToDo {
         return autore;
     }
 
-    //INTERFACCIA TO DO
+    /**
+     * Funzione che prende in ingresso to do, titolo, descrizione, data scadenza, img, posizione, url, colore e stato,
+     * e modifica i dati relativi a quel to do, con i nuovi dati
+     */
     public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;

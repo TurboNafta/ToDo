@@ -1,11 +1,12 @@
 package gui;
 import controller.Controller;
 import model.*;
-
 import javax.swing.*;
 import java.util.*;
 
-
+/**
+ * Classe per la creazione di un nuovo to do all'interno della bacheca selezionata
+ */
 public class CreaToDo {
     private JPanel panel1;
     private JLabel TitoloLabel;
@@ -41,6 +42,9 @@ public class CreaToDo {
     private JButton buttonAnnulla;
     private CheckList checklistTemp = new CheckList(null);  // ci servirà per accumulare dati
 
+    /**
+     * Costruttore della classe GUI CreaToDo
+     */
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
         this.bacheca=bacheca;
@@ -54,7 +58,9 @@ public class CreaToDo {
         frameCreaToDo.setLocationRelativeTo(null);
         frameCreaToDo.setVisible(true);
 
-        //BOTTONE CHE APRE FINESTRACHECKLIST
+        /**
+         * Pulsante che ci permette di aprire la pagina per la checklist ed inserire attività
+         */
         checklistButton.addActionListener(e->{
             // Lancia la finestra checklist passando la lista attività attuale, e passo null perchè il to do deve ancora essere creato
             FinestraChecklist checklist = new FinestraChecklist(checklistTemp.getAttivita(),null,frameCreaToDo);
@@ -72,12 +78,31 @@ public class CreaToDo {
         utentiList.setModel(utentiModel);
         utentiList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
+        /**
+         * Pulsante che ci aggiunge il to do in quella bacheca
+         */
         addToDoButton.addActionListener(e->{
             String dataStr = textFieldData.getText().trim();
             if (!controller.isValidDate(dataStr)) {
                 JOptionPane.showMessageDialog(frameCreaToDo,
                         "Inserisci la data nel formato gg/MM/aaaa (es: 13/07/2025)",
                         "Errore formato data",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String posizioneStr = textFieldPosizione.getText().trim();
+            if (!controller.isValidPosition(posizioneStr)) {
+                JOptionPane.showMessageDialog(frameCreaToDo,
+                        "La posizione deve essere un numero intero positivo",
+                        "Errore formato posizione",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String coloreStr = textFieldColore.getText().trim();
+            if (!controller.isValidColor(coloreStr)) {
+                JOptionPane.showMessageDialog(frameCreaToDo,
+                        "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone",
+                        "Errore formato colore",
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -114,7 +139,6 @@ public class CreaToDo {
                         nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
                     }
 
-
                     for (Utente u : utenti) {
                         Bacheca bachecaUtente = controller.getOrCreateBacheca(
                                 bacheca.getTitolo(),
@@ -133,6 +157,9 @@ public class CreaToDo {
                 }
         });
 
+        /**
+         * Pulsante che ci permette di annullare l'operazione di inserimento
+         */
         buttonAnnulla.addActionListener(e-> {
             VistaBacheca secondGui = new VistaBacheca(bacheca, controller, frameChiamante, utente);
             secondGui.frameVista.setVisible(true);

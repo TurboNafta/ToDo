@@ -2,12 +2,14 @@ package gui;
 
 import controller.Controller;
 import model.*;
-
 import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.GregorianCalendar;
 
+/**
+ * Classe per la GUI di ModificaToDo, ci permette di andare a vedere i dati del to do e di modificarli
+ */
 public class ModificaToDo {
     private JPanel panel1;
     private JPanel imgLabel;
@@ -39,13 +41,6 @@ public class ModificaToDo {
     private String url;
     private String colore;
     private StatoToDo stato;
-
-    public JFrame getFrameModificaToDo() {
-        return frameModificaToDo;
-    }
-    public JFrame getFrameChiamante() {
-        return frameChiamante;
-    }
     private Controller controller;
     private Bacheca bacheca;
     private String utente;
@@ -54,6 +49,9 @@ public class ModificaToDo {
     private JLabel CondivisiPanel;
     private JButton checklistButton;
 
+    /**
+     * Costruttore per creare la gui ModificaToDo
+     */
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
         this.bacheca = bacheca;
@@ -68,15 +66,22 @@ public class ModificaToDo {
         inizializzaChecklistListener();
         inizializzaModificaListener();
     }
-        private void initUI() {
 
+    /**
+     * Metodo per la visualizzazione del Frame
+     */
+    private void initUI() {
             frameModificaToDo.setContentPane(panel1);
             frameModificaToDo.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frameModificaToDo.pack();
             frameModificaToDo.setLocationRelativeTo(null);
             frameModificaToDo.setVisible(true);
         }
-        private void popolaCampiTextField() {
+
+    /**
+     * Metodo che ci permette di popolare i dati per la modifica con i dati attualmente presenti
+     */
+    private void popolaCampiTextField() {
             textFieldTitolo.setText(toDo.getTitolo());
             textFieldDescrizione.setText(toDo.getDescrizione());
 
@@ -90,11 +95,15 @@ public class ModificaToDo {
             textFieldUrl.setText(toDo.getUrl());
             textFieldColore.setText(toDo.getColoresfondo());
         }
-        private void popolaListaUtenti() {
+
+    /**
+     * Metodo che ci popola la lista degli utenti che condividono quel to do
+     */
+    private void popolaListaUtenti() {
             //Serve a popolare la list per le condivisioni dei To do
             DefaultListModel<String> utentiModel = new DefaultListModel<>();
             for (Utente u : controller.getListaUtenti()) {
-                if (!u.getUsername().equals(utente)) // non aggiungere l'autore
+                if (!u.getUsername().equals(utente))
                     utentiModel.addElement(u.getUsername());
             }
             utentiList.setModel(utentiModel);
@@ -112,12 +121,22 @@ public class ModificaToDo {
                     .toArray();
             utentiList.setSelectedIndices(indices);
         }
-        private void impostaStatoToDoRadio() {
+
+    /**
+     * Metodo che imposta lo stato del to do a completato se abbiamo selezionato il RadioButton
+     */
+    private void impostaStatoToDoRadio() {
             completatoRadioButton.setSelected(toDo.getStato() == StatoToDo.COMPLETATO);
         }
-        private void inizializzaChecklistListener() {
-            //BOTTONE CHE APRE FINESTRACHECKLIST
-            checklistButton.addActionListener(e -> {
+
+    /**
+     * Metodo che ci permette di creare una checklist all'interno del to do
+     */
+    private void inizializzaChecklistListener() {
+        /**
+         * Pulsante che ci permette di passare alla pagina per aggiungere attività alla checklsit
+         */
+        checklistButton.addActionListener(e -> {
                 FinestraChecklist checklist = new FinestraChecklist(toDo.getChecklist().getAttivita(), toDo, frameModificaToDo);
                 checklist.setVisible(true);
                 //quando FinestraChecklist viene chiusa, aggiorno To do
@@ -135,41 +154,63 @@ public class ModificaToDo {
             });
         }
 
-        private void inizializzaModificaListener() {
-            buttonModifica.addActionListener(e -> {
-                try {
-                    if (!isValidDate(textFieldData.getText())) {
-                        JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
-                        return;
-                    }
-                    // PRENDE VECCHI POSSESSORI
-                    ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
-                    // Recupera i dati dai campi di testo
-                    String titolo = textFieldTitolo.getText();
-                    String descrizione = textFieldDescrizione.getText();
-                    String dataScadenza = textFieldData.getText();
-                    String img = textFieldImg.getText();
-                    String posizione = textFieldPosizione.getText();
-                    String url = textFieldUrl.getText();
-                    String colore = textFieldColore.getText();
-                    StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
-
-                    // COSTRUISCE NUOVA LISTA POSSESSORI
-                    ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
-
-                    // MODIFICA TO do
-                    modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
-
-                    // AGGIORNA BACHECHE
-                    aggiornaBacheche(vecchiPossessori, nuoviPossessori);
-                    chiudiEApriVista();
-
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(frameModificaToDo, "Errore: " + ex.getMessage());
+    /**
+     * Metodo che ci permette di modificare effettivamente i dati del to do
+     */
+    private void inizializzaModificaListener() {
+        buttonModifica.addActionListener(e -> {
+            try {
+                if (!isValidDate(textFieldData.getText())) {
+                    JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
+                    return;
                 }
-            });
-        }
+                String posizioneStr = textFieldPosizione.getText().trim();
+                if (!controller.isValidPosition(posizioneStr)) {
+                    JOptionPane.showMessageDialog(frameModificaToDo,
+                            "La posizione deve essere un numero intero positivo",
+                                   "Errore formato posizione",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String coloreStr = textFieldColore.getText().trim();
+                if (!controller.isValidColor(coloreStr)) {
+                    JOptionPane.showMessageDialog(frameModificaToDo,
+                            "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone",
+                            "Errore formato colore",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
+                // PRENDE VECCHI POSSESSORI
+                ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
+                // Recupera i dati dai campi di testo
+                String titolo = textFieldTitolo.getText();
+                String descrizione = textFieldDescrizione.getText();
+                String dataScadenza = textFieldData.getText();
+                String img = textFieldImg.getText();
+                String posizione = textFieldPosizione.getText();
+                String url = textFieldUrl.getText();
+                String colore = textFieldColore.getText();
+                StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
+
+                // COSTRUISCE NUOVA LISTA POSSESSORI
+                ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
+
+                // MODIFICA TO do
+                modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
+
+                // AGGIORNA BACHECHE
+                aggiornaBacheche(vecchiPossessori, nuoviPossessori);
+                chiudiEApriVista();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frameModificaToDo, "Errore: " + ex.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Funzione che controlla se la data è inserita nel formato corretto
+     */
     private boolean isValidDate(String dateStr) {
         if( !dateStr.matches("\\d{2}/\\d{2}/\\d{4}")){
             return false;
@@ -186,6 +227,9 @@ public class ModificaToDo {
 
     }
 
+    /**
+     * Metodo che prende i possessori del to do dopo le modifiche
+     */
     private ArrayList<Utente> getNuoviPossessori() {
         ArrayList<Utente> nuoviPossessori = new ArrayList<>();
         nuoviPossessori.add(controller.getUtenteByUsername(utente));
@@ -195,6 +239,9 @@ public class ModificaToDo {
         return nuoviPossessori;
     }
 
+    /**
+     * Metodo che passa i dati alla funzione modificaToDo
+     */
     private void modificaToDo(String titolo, String descrizione, String dataScadenza, String img,
                               String posizione, String url, String colore, StatoToDo stato,
                               ArrayList<Utente> nuoviPossessori) {
@@ -210,6 +257,9 @@ public class ModificaToDo {
         toDo.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
     }
 
+    /**
+     * Metodo che aggiorna le bacheche degli utenti che posseggono quel to do dopo la modifica
+     */
     private void aggiornaBacheche(ArrayList<Utente> vecchiPossessori, ArrayList<Utente> nuoviPossessori) {
         for (Utente u : nuoviPossessori) {
             Bacheca bachecaUtente = controller.getOrCreateBacheca(
@@ -234,6 +284,9 @@ public class ModificaToDo {
         }
     }
 
+    /**
+     * Metodo per tornare all'interno della bacheca
+     */
     private void chiudiEApriVista() {
         frameModificaToDo.dispose();
         List<Bacheca> bacheche = controller.getBachecaList(bacheca.getTitolo().toString(), utente);
@@ -243,5 +296,11 @@ public class ModificaToDo {
         } else {
             new VistaBacheca(bacheca, controller, frameChiamante, utente);
         }
+    }
+    public JFrame getFrameModificaToDo() {
+        return frameModificaToDo;
+    }
+    public JFrame getFrameChiamante() {
+        return frameChiamante;
     }
 }

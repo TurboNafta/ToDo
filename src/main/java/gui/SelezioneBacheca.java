@@ -2,12 +2,15 @@ package gui;
 
 import controller.Controller;
 import model.Bacheca;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Classe per la GUI di SelezioneBacheca, una volta aver effettuato l'accesso/registrazione, si entra in questa pagina,
+ * dov'è possibile cercare e/o selezionare la bacheca sulla quale si vuole interagire
+ */
 public class SelezioneBacheca {
     private static final Logger logger = Logger.getLogger(SelezioneBacheca.class.getName());
     private JPanel principale;
@@ -35,6 +38,9 @@ public class SelezioneBacheca {
 
     private final String utentelog;
 
+    /**
+     * Costruttore per creare la gui SelezioneBacheca
+     */
     public SelezioneBacheca(Controller controller, JFrame frame, String utentelog) {
         this.controller = controller;
         frameChiamante = frame;
@@ -57,7 +63,9 @@ public class SelezioneBacheca {
         //Funzione che crea Bacheche per Admin
         logger.info(this.utentelog);
 
-        //PERMETTE DI APRIRE LA PAGINA PER CREARE UNA BACHECA
+        /**
+         * Pulsante che permette di passare alla pagina per la Creazione di una nuova Bacheca
+         */
         creaNuovaBachecaButton.addActionListener(e -> {
             CreaBacheca terzaGui = new CreaBacheca(controller, getFrameBacheca(), utentelog);
 
@@ -65,7 +73,9 @@ public class SelezioneBacheca {
             getFrameBacheca().dispose();
         });
 
-        //PERMETTE DI TROVARE LE BACHECHE CREATE
+        /**
+         * Pulsante che permette di Cercare una nuova Bacheca a seconda dei dati inseriti
+         */
         buttonCerca.addActionListener(e -> {
             String bachecaDaCercare = (String) comboBox1.getSelectedItem();
            controller.getBachecaList(bachecaDaCercare, utentelog);
@@ -73,13 +83,18 @@ public class SelezioneBacheca {
             aggiornaBachecaPanel();
         });
 
-        //BOTTONE PER TORNARE INDIETRO
+        /**
+         * Pulsante che permette di passare alla pagina per il login
+         */
         buttonIndietro.addActionListener(e -> {
             new Accesso(controller);
             frameBacheca.dispose();
         });
     }
 
+    /**
+     * Metodo che aggiorna le bacheche dopo aver effettuato delle modifiche
+     */
     private void aggiornaBachecaPanel () {
         String tipo = (String) comboBox1.getSelectedItem();
         List<Bacheca> bacheche = controller.getBachecaList(tipo, utentelog);
@@ -92,6 +107,11 @@ public class SelezioneBacheca {
         bachechePanel.repaint();
     }
 
+    /**
+     * Metodo che ci permette di creare in modo dinamico dei panel per ogni Bacheca dell'utente,
+     * ogni nuovo card, ovvero il panel per ogni bacheca, conterrà: le informazioni che riguardano la bacheca
+     * e dei pulsanti che ci permettono di interagire con le stesse
+     */
     private JPanel creaCardsPanel (List<Bacheca> bacheche) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20)); // orizzontale, con margini tra le card
         panel.setBackground(Color.WHITE);// sfondo bianco per un aspetto moderno
@@ -127,7 +147,9 @@ public class SelezioneBacheca {
         card.add(descr);
         card.add(Box.createVerticalGlue());
 
-        //BOTTONE PER APRIRE LA BACHECA
+        /**
+         * Pulsante che ci permette di aprire la bacheca e vedere i to do contenuti al suo interno
+         */
         JButton apriButton = new JButton("Apri");
         styleButton(apriButton, new Color(80, 150, 255), Color.WHITE);
         apriButton.addActionListener(ev -> {
@@ -141,7 +163,9 @@ public class SelezioneBacheca {
         card.add(Box.createVerticalStrut(5));
         card.add(apriButton);
 
-        //BOTTONE PER MODIFICARE LA DESCRIZIONE
+        /**
+         * Pulsante che ci permette di modificare la descrizione della bacheca in questione
+         */
         JButton modificaButton = new JButton("Modifica");
         styleButton(modificaButton, new Color(255, 200, 80), Color.BLACK);
         modificaButton.addActionListener(ev -> {
@@ -155,7 +179,9 @@ public class SelezioneBacheca {
         card.add(Box.createVerticalStrut(5));
         card.add(modificaButton);
 
-        //BOTTONE PRE ELIMINARE LA BACHECA
+        /**
+         * Pulsante che ci permette di eliminare la bacheca in questione
+         */
         JButton eliminaButton = new JButton("Elimina");
         styleButton(eliminaButton, new Color(255, 80, 80), Color.WHITE);
         eliminaButton.addActionListener(ev -> {
@@ -172,13 +198,15 @@ public class SelezioneBacheca {
         return card;
     }
 
+    /**
+     * Metodi per l'estetica della pagina
+     */
     private JScrollPane creaScrollPane(JPanel cardsPanel) {
         JScrollPane scrollPane = new JScrollPane(cardsPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setBorder(null);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
         return scrollPane;
     }
-
     private void styleButton(JButton button, Color bg, Color fg) {
         button.setBackground(bg);
         button.setForeground(fg);

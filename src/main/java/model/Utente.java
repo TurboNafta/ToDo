@@ -6,7 +6,8 @@ import java.util.*;
 
 
 /**
- * The type Utente.
+ * Classe del model Utente, serve ad identificare ogni Utente, tramite username e password
+ * Un utente può avere più bacheche, gestisco quindi implementando una List di bacheche
  */
 public class Utente implements InterfacciaUtente {
     private final String username;
@@ -16,14 +17,18 @@ public class Utente implements InterfacciaUtente {
     //serve a gestire la relazione 3..* con Bacheca
     private List<Bacheca> bacheca;
 
-    //costruttore
+    /**
+     * Costruttore per creare un nuovo Utente
+     */
     public Utente(String username, String password){
         this.username = username;
         this.password = password;
         this.bacheca = new ArrayList<>();
     }
 
-
+    /**
+     * Funzioni generali per gestione attributi
+     */
     public String getPassword() {
         return password;
     }

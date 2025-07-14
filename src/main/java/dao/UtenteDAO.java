@@ -1,13 +1,14 @@
 package dao;
 
+import InterfacceDAO.InterfacciaUtenteDAO;
 import model.Utente;
 import database.ConnessioneDatabase;
 
 import java.sql.*;
 import java.util.*;
 
-public class UtenteDAO {
-
+public class UtenteDAO implements InterfacciaUtenteDAO {
+    @Override
     public void inserisci(Utente utente) throws SQLException {
         String sql = "INSERT INTO utente (username, password) VALUES (?, ?)";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -18,6 +19,7 @@ public class UtenteDAO {
         }
     }
 
+    @Override
     public Utente getUtente(String username) throws SQLException {
         String sql = "SELECT * FROM utente WHERE username = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -31,6 +33,7 @@ public class UtenteDAO {
         return null;
     }
 
+    @Override
     public void aggiornaPassword(String username, String nuovaPassword) throws SQLException {
         String sql = "UPDATE utente SET password = ? WHERE username = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -41,6 +44,7 @@ public class UtenteDAO {
         }
     }
 
+    @Override
     public void elimina(String username) throws SQLException {
         String sql = "DELETE FROM utente WHERE username = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();

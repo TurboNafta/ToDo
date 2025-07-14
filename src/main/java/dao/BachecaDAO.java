@@ -1,5 +1,6 @@
 package dao;
 
+import InterfacceDAO.InterfacciaBachecaDAO;
 import model.Bacheca;
 import model.TitoloBacheca;
 import model.Utente;
@@ -9,8 +10,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BachecaDAO {
-
+public class BachecaDAO implements InterfacciaBachecaDAO {
+    @Override
     public void inserisci(Bacheca bacheca) throws SQLException {
         String sql = "INSERT INTO bacheca (descrizione, titolo, utente_username) VALUES (?, ?, ?)";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -22,6 +23,7 @@ public class BachecaDAO {
         }
     }
 
+    @Override
     public List<Bacheca> getBachecheByUtente(String username) throws SQLException {
         String sql = "SELECT * FROM bacheca WHERE utente_username = ?";
         List<Bacheca> bacheche = new ArrayList<>();
@@ -39,6 +41,7 @@ public class BachecaDAO {
         return bacheche;
     }
 
+    @Override
     public void elimina(int id) throws SQLException {
         String sql = "DELETE FROM bacheca WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();

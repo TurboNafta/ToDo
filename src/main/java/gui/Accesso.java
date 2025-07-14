@@ -2,11 +2,13 @@ package gui;
 
 import controller.Controller;
 import model.Utente;
-
 import javax.swing.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+/**
+ * Classe GUI per l'accesso dell'utente
+ */
 public class  Accesso{
     private JPanel mainPanel;
     private JTextField usernameField;
@@ -44,7 +46,9 @@ public class  Accesso{
        new Accesso(controller);
     }
 
-
+    /**
+     * Costruttore per creare la GUI Accesso
+     */
     public Accesso(Controller controller) {
         this.controller = controller;
 
@@ -55,7 +59,9 @@ public class  Accesso{
         frameAccesso.setLocationRelativeTo(null);
         frameAccesso.setVisible(true);
 
-
+        /**
+         * Pulsante per il login
+         */
         loginButton.addActionListener(e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
@@ -74,6 +80,9 @@ public class  Accesso{
                 }
         });
 
+        /**
+         * Pulsante per la registrazione, verifica inoltre se quell'utente è già registrato, così da fargli fare l'accesso
+         */
         registratiButton.addActionListener (e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());

@@ -1,14 +1,14 @@
 package dao;
 
+import InterfacceDAO.InterfacciaAttivitaDAO;
 import database.ConnessioneDatabase;
 import model.StatoAttivita;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class AttivitaDAO {
-
+public class AttivitaDAO implements InterfacciaAttivitaDAO {
+    @Override
     public void inserisci(int todoId, String titolo, StatoAttivita stato) throws SQLException {
         String sql = "INSERT INTO attivita (todo_id, titolo, stato) VALUES (?, ?, ?)";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -20,6 +20,7 @@ public class AttivitaDAO {
         }
     }
 
+    @Override
     public void elimina(int todoId) throws SQLException {
         String sql = "DELETE FROM attivita WHERE todo_id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();

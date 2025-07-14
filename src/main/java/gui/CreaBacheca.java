@@ -3,11 +3,12 @@ package gui;
 import controller.Controller;
 import model.TitoloBacheca;
 import model.Utente;
-
 import javax.swing.*;
-
 import static model.TitoloBacheca.*;
 
+/**
+ * Classe GUI per la creazione di una nuova bacheca
+ */
 public class CreaBacheca {
     private JPanel panel1;
     private JPanel contenutoPanel;
@@ -33,6 +34,9 @@ public class CreaBacheca {
     private static final String ERRORE_BACHECA_NON_AGGIUNTA = "Bacheca non aggiunta";
     private static final String TITOLO_ERRORE_BACHECA = "Errore nella creazione della bacheca";
 
+    /**
+     * Costruttore che ci permette di creare la gui CreaBacheca
+     */
     public CreaBacheca(Controller controller, JFrame callframe, String utentelog) {
         this.controller = controller;
         this.frameChiamante = callframe;
@@ -52,6 +56,9 @@ public class CreaBacheca {
         tipoBacheca.add(lavoroRadioButton);
         tipoBacheca.add(tempoLiberoRadioButton);
 
+        /**
+         * Pulsante che ci permette di creare la bacheca per l'utente loggato
+         */
         buttonCreazione.addActionListener(e-> {
                 if(universitaRadioButton.isSelected()){
                     try{
@@ -85,12 +92,14 @@ public class CreaBacheca {
                         JOptionPane.showMessageDialog(frameCreaBacheca, ERRORE_BACHECA_NON_AGGIUNTA, TITOLO_ERRORE_BACHECA, JOptionPane.ERROR_MESSAGE);
                     }
                 }
-
                 else {
                     JOptionPane.showMessageDialog(frameCreaBacheca, "Scegli il titolo della bacheca", "Errore nella creazione del bacheca", JOptionPane.ERROR_MESSAGE);
                 }
         });
 
+        /**
+         * Pulsante per annullare l'operazione di creazione
+         */
         buttonAnnulla.addActionListener(e-> {
                 SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameCreaBacheca, utentelog);
                 secondGui.getFrameBacheca().setVisible(true);

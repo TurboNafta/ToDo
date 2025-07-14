@@ -1,5 +1,6 @@
 package dao;
 
+import InterfacceDAO.InterfacciaToDoDAO;
 import model.*;
 import database.ConnessioneDatabase;
 
@@ -8,8 +9,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class ToDoDAO {
-
+public class ToDoDAO implements InterfacciaToDoDAO {
+    @Override
     public void inserisci(ToDo todo, String autoreUsername, int bachecaId) throws SQLException {
         String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, stato, autore_username, bacheca_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -30,6 +31,7 @@ public class ToDoDAO {
         }
     }
 
+    @Override
     public List<ToDo> getToDoByUtente(String username) throws SQLException {
         String sql = "SELECT * FROM todo WHERE autore_username = ?";
         List<ToDo> todos = new ArrayList<>();
@@ -56,6 +58,7 @@ public class ToDoDAO {
         return todos;
     }
 
+    @Override
     public void elimina(int id) throws SQLException {
         String sql = "DELETE FROM todo WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();

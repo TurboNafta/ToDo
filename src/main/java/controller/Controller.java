@@ -1,23 +1,32 @@
 package controller;
 
 import model.*;
-
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
+/**
+ * Classe controller con cui si gestiscono varie operazioni come la ricerca delle bacheche per un utente, la creazione di una nuova
+ * bacheca, ecc.
+ */
 public class Controller {
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName()); // Dichiarazione del logger
     private Utente utenteLoggato; // Utente attualmente autenticato
     private final List<Utente> listaUtenti;
     private static final String NOME_UTENTE_AMMINISTRATORE = "admin";
 
-
+    /**
+     * Costruttore del Controller
+     */
     public Controller() {
         this.listaUtenti = new ArrayList<>();
     }
 
     // GESTIONE BACHECHE
+
+    /**
+     * Metodo che ci restituisce le bacheche a seconda del titolo e dell'utente loggato
+     */
     public List<Bacheca> getBachecaList(String titolo, String username) {
         Utente utente = getUtenteByUsername(username);
         if(LOGGER.isLoggable(java.util.logging.Level.INFO)) {
@@ -42,6 +51,9 @@ public class Controller {
 
     }
 
+    /**
+     * Metodo che ci permette di convertire il titolo da string all'enumeration
+     */
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
         if (titoloStr == null) return null;
         return switch (titoloStr.toLowerCase()) {
@@ -52,7 +64,9 @@ public class Controller {
         };
     }
 
-
+    /**
+     * Metodo che ci aggiunge la bacheca alla lista delle bacheche dell'utente
+     */
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
         Utente u = getUtenteByUsername(username);
         if (u != null) {
@@ -63,14 +77,19 @@ public class Controller {
         }
     }
 
-    public void setUtenteLoggato(Utente utente) {//dovrebbe stare in utente
-
+    /**
+     * Metodo che ci setta l'utente loggato
+     */
+    public void setUtenteLoggato(Utente utente) {
         this.utenteLoggato = utente;
     }
 
 
     // --- GESTIONE TO dO ---
 
+    /**
+     * Metodo che ci recupera i to do contenuti in quella bacheca dell'utente
+     */
     public List<ToDo> getToDoPerBachecaUtente( Bacheca bacheca, String nomeToDo) {
         List<ToDo> filtrati = new ArrayList<>();
         List<ToDo> tuttiToDo = bacheca.getTodo();
@@ -87,6 +106,9 @@ public class Controller {
         return filtrati;
     }
 
+    /**
+     * Metodo che ci aggiunge un to do alla bacheca di quell'utente
+     */
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
         Utente u = getUtenteByUsername(username);
         if (u != null) {
@@ -102,7 +124,10 @@ public class Controller {
         // aggiungo il To Do in bacheca
         bacheca.aggiungiToDo(todo);
     }
-    //To do in scadenza oggi
+
+    /**
+     * Metodo che ci da i to do in scadenza oggi
+     */
     public List<ToDo> getToDoInScadenzaOggi(Bacheca bacheca) {
         List<ToDo> result = new ArrayList<>();
         List<ToDo> tutti = getToDoPerBachecaUtente(bacheca, "");
@@ -119,7 +144,9 @@ public class Controller {
         return result;
     }
 
-    // To do in scadenza entro una certa data
+    /**
+     * Metodo che ci da i to do in scadenza entro la data presa in input dall'utente
+     */
     public List<ToDo> getToDoInScadenzaEntro( Bacheca bacheca, String dataLimiteStr) {
         List<ToDo> result = new ArrayList<>();
         List<ToDo> tutti = getToDoPerBachecaUtente( bacheca, "");
@@ -139,8 +166,9 @@ public class Controller {
     }
 
     // ----- GESTIONE UTENTI -----
-    // possono essere lasciati nel Controller se la lista utenti è solo lì, ma se vuoi che ogni utente si gestisca, vanno in Utente/interfaccia.
-    // cerco utente nella lista di utenti
+    /**
+     * Metodo che ci prende l'utente in base all'username
+     */
     public Utente getUtenteByUsername(String username) {
         for (Utente u : listaUtenti) {
             if (u.getUsername().equals(username)) {
@@ -150,13 +178,16 @@ public class Controller {
         return null;// se non va nel if restituisce null
     }
 
-
-    //Aggiunge un utente alla lista degli utenti contenuti nel controller
+    /**
+     * Metodo che aggiunge l'utente alla lista di utenti registrati
+     */
     public void addUtente(Utente utente) {
         this.listaUtenti.add(utente);
     }
 
-    //Funzione che verifica l'esistenza dell'utente
+    /**
+     * Metodo che verifica l'esistenza di un utente
+     */
     public boolean esisteUtente(String username, String password) {
         for (Utente u : listaUtenti) {
             if (password.equals(u.getPassword()) && u.getUsername().equals(username)) {
@@ -166,12 +197,16 @@ public class Controller {
         return false;
     }
 
-    //Ci da la lista degli utenti
+    /**
+     * Metodo che ci restituisce la lista degli utenti registrati
+     */
     public List<Utente> getListaUtenti() {
         return listaUtenti;
     }
 
-    //Funzione che genera l'admin
+    /**
+     * Metodo che ci genera l'utente admin
+     */
     public void buildAdmin() {
         // Controlla se admin esiste già tra gli utenti
         for (Utente u : listaUtenti) {
@@ -185,7 +220,9 @@ public class Controller {
         listaUtenti.add(admin);
     }
 
-    //Funzione che genera bacheche solamente per l'admin
+    /**
+     * Metodo che genera delle bacheche di prova solo per admin
+     */
     public void buildBacheche() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
         if (admin == null) {
@@ -204,7 +241,9 @@ public class Controller {
         }
     }
 
-    //Funzione che genera i to do solamente per l'admin
+    /**
+     * Metodo che genera per l'admin dei to do per le bacheche precedentemente create
+     */
     public void buildToDoPerBachecaUtente() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
         if (admin == null) {
@@ -245,6 +284,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Metodo che ci elimina il to do dalla bacheca dell'utente
+     */
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
         //il To do da tutte le bacheche condivise
         if (t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
@@ -264,10 +306,17 @@ public class Controller {
         }
     }
 
+    /**
+     * Metodo che ci restituisce tutti gli utenti
+     * @return
+     */
     public Utente[] getTuttiUtenti() {
         return listaUtenti.toArray(new Utente[0]);
     }
 
+    /**
+     * Metodo che prende la bacheca con titolo e descrizione inseriti dall'utente, e se manca, la crea
+     */
     public Bacheca creaBachecaSeManca(TitoloBacheca titolo, String descrizione, String username) {
         Utente utente = getUtenteByUsername(username);
         if (utente == null) throw new IllegalArgumentException("Utente non trovato: " + username);
@@ -284,6 +333,9 @@ public class Controller {
         return nuova;
     }
 
+    /**
+     * Metodo che in coppia con creaBachecaSeManca
+     */
     public Bacheca getOrCreateBacheca(TitoloBacheca titolo, String descrizione, String username) {
         List<Bacheca> bList = getBachecaList(titolo.toString(), username);
         for (Bacheca b : bList) {
@@ -295,23 +347,18 @@ public class Controller {
         return creaBachecaSeManca(titolo, descrizione, username);
     }
 
+    /**
+     * Metodo che ci serve a spostare quel to do in un'altra bacheca scelta dall'utente
+     */
     public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {
         bachecaOrigine.eliminaToDo(todo);
         todo.setPosizione(String.valueOf(bachecaDestinazione.getTodo().size() + 1));
         bachecaDestinazione.aggiungiToDo(todo);
     }
 
-    public Bacheca getBachecaPerUtente(String username, String titoloBacheca) {
-        Utente utente = getUtenteByUsername(username);
-        if (utente == null) return null;
-
-        TitoloBacheca titolo = stringToTitoloBacheca(titoloBacheca);
-        for (Bacheca b : utente.getBacheca()) {
-            if (b.getTitolo() == titolo) return b;
-        }
-        return null;
-    }
-
+    /**
+     * Metodo che ci restituisce la bacheca secondo titolo e descrizione
+     */
     public Bacheca getBachecaPerTitoloEDescrizione(String utenteLoggato, String titolo, String descrizione) {
         if (utenteLoggato == null || titolo == null || descrizione == null) {
             return null;
@@ -331,6 +378,10 @@ public class Controller {
 
         return null;
     }
+
+    /**
+     * Metodo che ci verifica se la data inserita è nel formato corretto
+     */
     public boolean isValidDate(String dateStr) {
         if (!dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
             return false;
@@ -344,6 +395,34 @@ public class Controller {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Metodo che ci verifica se la posizione inserita è un numero positivo
+     */
+    public boolean isValidPosition(String posizioneStr) {
+        try {
+            int posizione = Integer.parseInt(posizioneStr);
+            return posizione > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Verifica se il colore specificato è valido
+     */
+    public boolean isValidColor(String colore) {
+        if (colore == null || colore.trim().isEmpty()) {
+            return false;
+        }
+
+        String[] coloriValidi = {
+                "rosso", "giallo", "blu", "verde", "arancione",
+                "rosa", "viola", "celeste", "marrone"
+        };
+
+        return Arrays.asList(coloriValidi).contains(colore.toLowerCase().trim());
     }
 
 }

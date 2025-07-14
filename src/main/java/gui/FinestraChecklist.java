@@ -3,14 +3,15 @@ package gui;
 import model.Attivita;
 import model.StatoAttivita;
 import model.ToDo;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-
-
+/**
+ * Classe per la GUI di finestrachecklist, ci permette di aggiungere delle attività alla checklist, e di spuntarle per indicare che
+ * sono completate
+ */
 public class FinestraChecklist extends JDialog {
     private JPanel mainPanel;
     private JCheckBox checkBox1;
@@ -26,6 +27,9 @@ public class FinestraChecklist extends JDialog {
     private boolean okPressed = false;
     private final ToDo todoAssociato;
 
+    /**
+     * Costruttore la gui FinestraCheckList
+     */
     public FinestraChecklist(List<Attivita> attivitaIniziale, ToDo todo, Frame owner) {
         super(owner, "Checklist", true);
         this.attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
@@ -37,11 +41,13 @@ public class FinestraChecklist extends JDialog {
         aggiornaChecklist();
     }
 
+    /**
+     * Metodo per inizializzare la GUI
+     */
     private void initializeUI() {
         mainPanel = new JPanel(new BorderLayout());
         checklistPanel = new JPanel();
         checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
-
 
         checklistPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
@@ -66,6 +72,9 @@ public class FinestraChecklist extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
+    /**
+     * Setup dei pulsanti per aggiungere le attività e salvarle
+     */
     private void setupListeners() {
         // Listener per il campo di testo
         attivitaField.addActionListener(e -> aggiungiAttivita());
@@ -81,6 +90,9 @@ public class FinestraChecklist extends JDialog {
         });
     }
 
+    /**
+     * Metodo che ci aggiunge l'attività alla checklist
+     */
     private void aggiungiAttivita() {
         String text = attivitaField.getText().trim();
         if (!text.isEmpty()) {
@@ -92,6 +104,9 @@ public class FinestraChecklist extends JDialog {
         }
     }
 
+    /**
+     * Metodo che aggiorna la checklist a seconda delle attività e del relativo stato
+     */
     private void aggiornaChecklist() {
         checklistPanel.removeAll();
         checkboxes.clear();

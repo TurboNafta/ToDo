@@ -1,13 +1,14 @@
 package dao;
 
+import InterfacceDAO.InterfacciaCheckListDAO;
 import database.ConnessioneDatabase;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class CheckListDAO {
-
+public class CheckListDAO implements InterfacciaCheckListDAO {
+    @Override
     public void crea(int todoId) throws SQLException {
         String sql = "INSERT INTO checklist (todo_id) VALUES (?)";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -17,6 +18,7 @@ public class CheckListDAO {
         }
     }
 
+    @Override
     public void elimina(int todoId) throws SQLException {
         String sql = "DELETE FROM checklist WHERE todo_id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
