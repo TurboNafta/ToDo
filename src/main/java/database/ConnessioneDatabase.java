@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnessioneDatabase {
-    private static final String URL = "jdbc:postgresql://localhost:5432/DBTodo";
-    private static final String USER = "gls";
+    private static final String URL = "jdbc:postgresql://localhost:5432/DBToDo";
+    private static final String USER = "GLS";
     private static final String PASSWORD = "1234";
     private static Connection connection;
 
