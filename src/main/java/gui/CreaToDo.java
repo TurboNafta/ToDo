@@ -148,7 +148,7 @@ public class CreaToDo {
                     nuovoToDo.setChecklist(checklistTemp);
                 }
 
-                // Aggiunge il ToDo alla bacheca
+                // Aggiunge il To Do alla bacheca
                 controller.addToDo(bacheca, nuovoToDo, utente);
 
                 // Chiude la finestra e torna alla vista bacheca

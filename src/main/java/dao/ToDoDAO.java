@@ -13,28 +13,30 @@ import java.util.List;
 public class ToDoDAO implements InterfacciaToDoDAO {
     @Override
     public int inserisci(ToDo todo, String username, int bachecaId) throws SQLException {
-        String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, autore_username, bacheca_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, stato, autore_username, bacheca_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnessioneDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement istr = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, todo.getTitolo());
-            stmt.setString(2, todo.getDescrizione());
-            stmt.setString(3, todo.getUrl());
+            istr.setString(1, todo.getTitolo());
+            istr.setString(2, todo.getDescrizione());
+            istr.setString(3, todo.getUrl());
             // Convertiamo la data in formato SQL
             java.sql.Date sqlDate = new java.sql.Date(todo.getDatascadenza().getTime().getTime());
-            stmt.setDate(4, sqlDate);
-            stmt.setString(5, todo.getImage());
-            stmt.setString(6, todo.getPosizione());
-            stmt.setString(7, todo.getColoresfondo());
-            stmt.setString(8, username);
-            stmt.setInt(9, bachecaId);
+            istr.setDate(4, sqlDate);
+            istr.setString(5, todo.getImage());
+            istr.setString(6, todo.getPosizione());
+            istr.setString(7, todo.getColoresfondo());
+            // Imposta lo stato (deve essere COMPELTATO o NONCOMPLETATO, mai null!)
+            istr.setString(8, todo.getStato().name()); // Assicurati che getStato() non ritorni null!
+            istr.setString(9, username);
+            istr.setInt(10, bachecaId);
 
-            stmt.executeUpdate();
+            istr.executeUpdate();
 
             // Ottieni l'ID generato
-            try (ResultSet rs = stmt.getGeneratedKeys()) {
+            try (ResultSet rs = istr.getGeneratedKeys()) {
                 if (rs.next()) {
                     int todoId = rs.getInt(1);
                     // Inserisci i possessori
@@ -74,24 +76,31 @@ public class ToDoDAO implements InterfacciaToDoDAO {
 
     @Override
     public void modifica(ToDo todo) throws SQLException {
-        String sql = "UPDATE todo SET titolo = ?, descrizione = ?, url = ?, datascadenza = ?, " +
-                "image = ?, posizione = ?, coloresfondo = ?, stato = ? " +
+        String sql = "UPDATE todo SET " +
+                "titolo = ?, " +
+                "descrizione = ?, " +
+                "url = ?, " +
+                "datascadenza = ?, " +
+                "image = ?, " +
+                "posizione = ?, " +
+                "coloresfondo = ?, " +
+                "stato = ? " +
                 "WHERE id = ?";
 
         try (Connection conn = ConnessioneDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement istr = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, todo.getTitolo());
-            stmt.setString(2, todo.getDescrizione());
-            stmt.setString(3, todo.getUrl());
-            stmt.setDate(4, new Date(todo.getDatascadenza().getTimeInMillis()));
-            stmt.setString(5, todo.getImage());
-            stmt.setString(6, todo.getPosizione());
-            stmt.setString(7, todo.getColoresfondo());
-            stmt.setString(8, todo.getStato().name());
-            stmt.setInt(9, todo.getTodoId());
+            istr.setString(1, todo.getTitolo());
+            istr.setString(2, todo.getDescrizione());
+            istr.setString(3, todo.getUrl());
+            istr.setDate(4, new java.sql.Date(todo.getDatascadenza().getTime().getTime()));
+            istr.setString(5, todo.getImage());
+            istr.setString(6, todo.getPosizione());
+            istr.setString(7, todo.getColoresfondo());
+            istr.setString(8, todo.getStato().name()); // Enum: COMPLETATO/NONCOMPLETATO
+            istr.setInt(9, todo.getTodoId());
 
-            stmt.executeUpdate();
+            istr.executeUpdate();
         }
     }
 
