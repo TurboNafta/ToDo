@@ -65,18 +65,24 @@ public class  Accesso{
         loginButton.addActionListener(e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
-                boolean prova = controller.esisteUtente(username, password);
-                if(prova){
-                    Utente utente = controller.getUtenteByUsername(username);
-                    controller.setUtenteLoggato(utente);
 
-                    JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
+                try {
+                    boolean prova = controller.esisteUtente(username, password);
+                    if (prova) {
+                        Utente utente = controller.getUtenteByUsername(username);
+                        controller.setUtenteLoggato(utente);
 
-                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(), username);
-                    secondGui.getFrameBacheca().setVisible(true);
-                    getFrameAccesso().dispose();
-                } else {
-                    JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
+                        JOptionPane.showMessageDialog(mainPanel, "Accesso con successo");
+
+                        SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(), username);
+                        secondGui.getFrameBacheca().setVisible(true);
+                        getFrameAccesso().dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(mainPanel, "Credenziali errate");
+                    }
+                } catch (Exception ex){
+                    logger.log(Level.SEVERE, "Errore durante il caricamento del Login", ex);
+                    JOptionPane.showMessageDialog(mainPanel, "Errore durante il login" + ex.getMessage());
                 }
         });
 
@@ -86,19 +92,27 @@ public class  Accesso{
         registratiButton.addActionListener (e-> {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
-                boolean prova = controller.esisteUtente(username, password);
+
                 if(password.isEmpty() && username.isEmpty()){
                     JOptionPane.showMessageDialog(mainPanel, "Inserisci un nome e una password");
-                }else if(prova){
-                    JOptionPane.showMessageDialog(mainPanel, "Utente già registrato");
-                }else{
-                    Utente u = new Utente(username, password);
-                    controller.addUtente(u);
-                    JOptionPane.showMessageDialog(mainPanel, "Utente registrato");
+                }else {
+                    try {
+                        boolean prova = controller.esisteUtente(username, password);
+                        if (prova) {
+                            JOptionPane.showMessageDialog(mainPanel, "Utente già registrato");
+                        } else {
+                            Utente u = new Utente(username, password);
+                            controller.addUtente(u);
+                            JOptionPane.showMessageDialog(mainPanel, "Utente registrato");
 
-                    SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(),username);
-                    secondGui.getFrameBacheca().setVisible(true);
-                    getFrameAccesso().dispose();
+                            SelezioneBacheca secondGui = new SelezioneBacheca(controller, getFrameAccesso(), username);
+                            secondGui.getFrameBacheca().setVisible(true);
+                            getFrameAccesso().dispose();
+                        }
+                    } catch (Exception ex) {
+                        logger.log(Level.SEVERE, "Errore durante la registrazione", ex);
+                        JOptionPane.showMessageDialog(mainPanel, "Errore durante la registrazione");
+                    }
                 }
         });
     }

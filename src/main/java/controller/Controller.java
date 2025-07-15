@@ -1,6 +1,9 @@
 package controller;
 
+import dao.*;
 import model.*;
+
+import java.sql.SQLException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
@@ -14,6 +17,9 @@ public class Controller {
     private Utente utenteLoggato; // Utente attualmente autenticato
     private final List<Utente> listaUtenti;
     private static final String NOME_UTENTE_AMMINISTRATORE = "admin";
+    private final UtenteDAO utenteDAO = new UtenteDAO();
+    private final BachecaDAO bachecaDAO = new BachecaDAO();
+    private final ToDoDAO toDoDAO = new ToDoDAO();
 
     /**
      * Costruttore del Controller
@@ -68,12 +74,14 @@ public class Controller {
      * Metodo che ci aggiunge la bacheca alla lista delle bacheche dell'utente
      */
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
-        Utente u = getUtenteByUsername(username);
-        if (u != null) {
+        try {
+            Utente u = getUtenteByUsername(username);
+            if (u == null) throw new IllegalArgumentException("Utente non trovato");
             Bacheca nuova = new Bacheca(titolo, descrizione, u);
-            u.aggiungiBacheca(nuova);
-        } else {
-            throw new IllegalStateException("Nessun utente loggato");
+            bachecaDAO.inserisci(nuova);
+            u.aggiungiBacheca(nuova); // aggiorna struttura in memoria
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore inserimento bacheca: " + e.getMessage(), e);
         }
     }
 
@@ -110,19 +118,20 @@ public class Controller {
      * Metodo che ci aggiunge un to do alla bacheca di quell'utente
      */
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
-        Utente u = getUtenteByUsername(username);
-        if (u != null) {
-            List<Utente> utenti = todo.getUtentiPossessori();
-            if (utenti == null)
-                utenti = new ArrayList<>();
-            if (!utenti.contains(u)) {
-                utenti.add(u);
+        try {
+            toDoDAO.inserisci(todo, username, bacheca.getId());
+            bacheca.aggiungiToDo(todo);
+            if (todo.getUtentiPossessori() == null) {
+                todo.setUtentiPossessori(new ArrayList<>());
             }
-            todo.setUtentiPossessori(utenti);
+            Utente utente = getUtenteByUsername(username);
+            if (utente != null && !todo.getUtentiPossessori().contains(utente)) {
+                todo.getUtentiPossessori().add(utente);
+            }
 
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore inserimento ToDo: " + e.getMessage(), e);
         }
-        // aggiungo il To Do in bacheca
-        bacheca.aggiungiToDo(todo);
     }
 
     /**
@@ -170,31 +179,35 @@ public class Controller {
      * Metodo che ci prende l'utente in base all'username
      */
     public Utente getUtenteByUsername(String username) {
-        for (Utente u : listaUtenti) {
-            if (u.getUsername().equals(username)) {
-                return u;
-            }
+        try {
+            return utenteDAO.getUtenteByUsername(username);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return null;// se non va nel if restituisce null
     }
 
     /**
      * Metodo che aggiunge l'utente alla lista di utenti registrati
      */
-    public void addUtente(Utente utente) {
-        this.listaUtenti.add(utente);
+    public void addUtente(Utente utente){
+        try {
+            utenteDAO.inserisci(utente);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore inserimento utente: " + e.getMessage());
+        }
     }
 
     /**
      * Metodo che verifica l'esistenza di un utente
      */
     public boolean esisteUtente(String username, String password) {
-        for (Utente u : listaUtenti) {
-            if (password.equals(u.getPassword()) && u.getUsername().equals(username)) {
-                return true;
-            }
+        try {
+           Utente u = utenteDAO.login(username, password);
+           return u != null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore recupero utente: " + e.getMessage(), e);
         }
-        return false;
     }
 
     /**
@@ -226,8 +239,7 @@ public class Controller {
     public void buildBacheche() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
         if (admin == null) {
-            buildAdmin();
-            admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
+            throw new IllegalArgumentException("Utente admin non trovato");
         }
         //SE CI SONO BACHECHE NON FACCIO NIENTE
         if (!admin.getBacheca().isEmpty()) {

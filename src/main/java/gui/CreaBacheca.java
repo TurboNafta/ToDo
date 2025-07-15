@@ -60,41 +60,33 @@ public class CreaBacheca {
          * Pulsante che ci permette di creare la bacheca per l'utente loggato
          */
         buttonCreazione.addActionListener(e-> {
-                if(universitaRadioButton.isSelected()){
-                    try{
-                        TitoloBacheca tipo = UNIVERSITÀ;
-                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
-                        frameChiamante.setVisible(true);
-                        frameCreaBacheca.setVisible(false);
-                        frameCreaBacheca.dispose();
-                    }catch(IllegalArgumentException | IllegalStateException _){
-                        JOptionPane.showMessageDialog(frameCreaBacheca, ERRORE_BACHECA_NON_AGGIUNTA, TITOLO_ERRORE_BACHECA, JOptionPane.ERROR_MESSAGE);
-                    }
+            try {
+                TitoloBacheca tipo = null;
+                if (universitaRadioButton.isSelected()) {
+                    tipo = TitoloBacheca.UNIVERSITÀ;
                 } else if (lavoroRadioButton.isSelected()) {
-                    try{
-                        TitoloBacheca tipo = LAVORO;
-                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
-                        frameChiamante.setVisible(true);
-                        frameCreaBacheca.setVisible(false);
-                        frameCreaBacheca.dispose();
-                    }catch(IllegalArgumentException | IllegalStateException _){
-                        JOptionPane.showMessageDialog(frameCreaBacheca, ERRORE_BACHECA_NON_AGGIUNTA, TITOLO_ERRORE_BACHECA, JOptionPane.ERROR_MESSAGE);
-                    }
+                    tipo = TitoloBacheca.LAVORO;
                 } else if (tempoLiberoRadioButton.isSelected()) {
-                    try{
-                        TitoloBacheca tipo = TEMPOLIBERO;
-                        controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
-                        frameChiamante.setVisible(true);
+                    tipo = TitoloBacheca.TEMPOLIBERO;
+                } else {
+                    JOptionPane.showMessageDialog(frameCreaBacheca,
+                            "Scegli il titolo della bacheca",
+                            "Errore nella creazione della bacheca",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-                        frameCreaBacheca.setVisible(false);
-                        frameCreaBacheca.dispose();
-                    }catch(IllegalArgumentException | IllegalStateException _){
-                        JOptionPane.showMessageDialog(frameCreaBacheca, ERRORE_BACHECA_NON_AGGIUNTA, TITOLO_ERRORE_BACHECA, JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                else {
-                    JOptionPane.showMessageDialog(frameCreaBacheca, "Scegli il titolo della bacheca", "Errore nella creazione del bacheca", JOptionPane.ERROR_MESSAGE);
-                }
+                controller.addBacheca(tipo, textFieldDescrizione.getText(), utentelog);
+                frameChiamante.setVisible(true);
+                frameCreaBacheca.setVisible(false);
+                frameCreaBacheca.dispose();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frameCreaBacheca,
+                        "Errore: " + ex.getMessage(),
+                        "Errore nella creazione della bacheca",
+                        JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
         });
 
         /**

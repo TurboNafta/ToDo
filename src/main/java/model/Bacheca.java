@@ -15,16 +15,22 @@ public class Bacheca implements InterfacciaBacheca {
     private List <ToDo> todo;
     //gestisco la relazione con utente (1)
     private Utente utente;
+    private int id;
 
 
     /**
-     * Costruttore per creare una nuova bacheca
+     * Costruttore con id (per oggetti caricati del DB)
      */
-    public Bacheca(TitoloBacheca titolo, String descrizione, Utente utente) {
+    public Bacheca(int id, TitoloBacheca titolo, String descrizione, Utente utente) {
         this.titolo = titolo;
         this.descrizione = descrizione;
         this.utente = utente;
         this.todo= new ArrayList<>();
+    }
+
+    // Costruttore senza id (per nuove bacheche prima di salvarle)
+    public Bacheca(TitoloBacheca titolo, String descrizione, Utente utente) {
+        this(0, titolo, descrizione, utente);
     }
 
     /**
@@ -56,5 +62,13 @@ public class Bacheca implements InterfacciaBacheca {
     }
     public void eliminaToDo(ToDo t){
         todo.remove(t);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

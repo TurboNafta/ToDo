@@ -53,4 +53,34 @@ public class UtenteDAO implements InterfacciaUtenteDAO {
             stmt.executeUpdate();
         }
     }
+
+    public Utente login (String username, String password) throws SQLException {
+        String sql = "SELECT * FROM utente WHERE username = ? AND password = ?";
+        try(Connection conn = ConnessioneDatabase.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return new Utente(rs.getString("username"), rs.getString("password"));
+            }
+        }
+        return null;
+    }
+
+    public Utente getUtenteByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM utente WHERE username = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                // crea e ritorna l’oggetto Utente con i dati dal result set
+                return new Utente(rs.getString("username"), rs.getString("password"));
+            }
+            return null; // utente non trovato
+        }
+    }
 }
