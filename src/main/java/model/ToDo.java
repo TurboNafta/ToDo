@@ -1,7 +1,9 @@
 package model;
 
+import dao.ToDoDAO;
 import interfaces.InterfacciaToDo;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -33,6 +35,38 @@ public class ToDo implements InterfacciaToDo {
 
     //gestisco la checklist
     private CheckList checklist;
+
+    private int todoId;
+
+    /**
+     * Costruttore per DB
+     */
+    public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, List<Utente> utenti, Utente autore, int todoId, int bachecaId){
+        this.titolo = titolo;
+        this.descrizione = descrizione;
+        this.url = url;
+
+        String[] dataSplit = date.split("/");
+        int anno = Integer.parseInt(dataSplit[2]);
+        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
+        int mese = Integer.parseInt(dataSplit[1])-1;
+        int gg = Integer.parseInt(dataSplit[0]);
+        GregorianCalendar dataScadenza = new GregorianCalendar(anno, mese, gg);
+        this.datascadenza = dataScadenza;
+        this.image = img;
+
+        this.posizione = posizione;
+        this.coloresfondo = coloresfondo;
+
+        this.utentiPossessori = new ArrayList<>();
+        for(Utente u: utenti){
+            this.utentiPossessori.add(new Condivisione(this, u));
+        }
+        this.autore = autore;
+
+        this.checklist = new CheckList(this);
+
+    }
 
     /**
      * Costruttore per creare un nuovo to do
@@ -187,26 +221,50 @@ public class ToDo implements InterfacciaToDo {
      * Funzione che prende in ingresso to do, titolo, descrizione, data scadenza, img, posizione, url, colore e stato,
      * e modifica i dati relativi a quel to do, con i nuovi dati
      */
-    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza, String img, String posizione, String url, String colore, StatoToDo stato) {
+    @Override
+    public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza,
+                             String img, String posizione, String url, String colore, StatoToDo stato) {
         if (todo == null) {
             return;
         }
+
+        // Aggiorna i dati nell'oggetto
         if (titolo != null) todo.setTitolo(titolo);
         if (descrizione != null) todo.setDescrizione(descrizione);
         if (url != null) todo.setUrl(url);
 
-        String[] dataSplit = dataScadenza.split("/");
-        int anno = Integer.parseInt(dataSplit[2]);
-        //Gregorian salva partendo da 0, quindi devo fare così per salvare, quando stampo +1
-        int mese = Integer.parseInt(dataSplit[1])-1;
-        int gg = Integer.parseInt(dataSplit[0]);
-        GregorianCalendar dataScadenza2 = new GregorianCalendar(anno, mese, gg);
-        todo.setDatascadenza(dataScadenza2);
+        if (dataScadenza != null) {
+            String[] dataSplit = dataScadenza.split("/");
+            int anno = Integer.parseInt(dataSplit[2]);
+            int mese = Integer.parseInt(dataSplit[1])-1;
+            int gg = Integer.parseInt(dataSplit[0]);
+            GregorianCalendar dataScadenza2 = new GregorianCalendar(anno, mese, gg);
+            todo.setDatascadenza(dataScadenza2);
+        }
 
         if (img != null) todo.setImage(img);
         if (posizione != null) todo.setPosizione(posizione);
         if (colore != null) todo.setColoresfondo(colore);
-        if(stato!=null) todo.setStato(stato);
+        if (stato != null) todo.setStato(stato);
+
+        // Aggiorna il database
+        try {
+            ToDoDAO todoDAO = new ToDoDAO();
+            todoDAO.modifica(todo);
+        } catch (SQLException e) {
+            // Gestisci l'errore in modo appropriato
+            throw new RuntimeException("Errore durante il salvataggio delle modifiche nel database", e);
+        }
     }
-    
+    private void salvaModificheNelDatabase(ToDo todo) throws SQLException {
+        ToDoDAO todoDAO = new ToDoDAO();
+        todoDAO.modifica(todo);
+    }
+
+    public int getTodoId() {
+        return todoId;
+    }
+    public void setTodoId(int todoId) {
+        this.todoId = todoId;
+    }
 }

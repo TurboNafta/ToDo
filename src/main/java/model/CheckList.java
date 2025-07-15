@@ -13,6 +13,16 @@ public class CheckList implements InterfacciaCheckList {
     //gestisco aggregazione con attivita
     private List<Attivita> attivita;
 
+    private int id;
+
+    /**
+     * Costruttore con id per DB
+     */
+    public CheckList(ToDo t, int id){
+        this.todo = t;
+        this.attivita=new ArrayList<>();
+    }
+
     /**
      * Costruttore per creare una nuova CheckList
      */
@@ -55,5 +65,11 @@ public class CheckList implements InterfacciaCheckList {
             }
         }
         return true;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 }

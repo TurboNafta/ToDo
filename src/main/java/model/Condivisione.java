@@ -1,11 +1,27 @@
 package model;
 
+import java.util.List;
+
 /**
  * Classe del model condivisione, questa contiene il to do e l'utente
  */
 public class Condivisione {
     private ToDo todo;
     private Utente utente;
+
+    private int id;
+    private int todoId;
+    private List<Integer> utentiId;
+
+    /**
+     * Costruttore per DB
+     */
+    public Condivisione(ToDo todo, Utente utente, int id, int todoId, List<Integer> utentiId){
+        this.todo = todo;
+        this.utente = utente;
+        this.todoId = todoId;
+        this.utentiId = utentiId;
+    }
 
     /**
      * Costruttore per creare una nuova condivisione

@@ -13,9 +13,19 @@ public class Utente implements InterfacciaUtente {
     private final String username;
     private String password;
 
-
     //serve a gestire la relazione 3..* con Bacheca
     private List<Bacheca> bacheca;
+
+    private int id;
+
+    /**
+     * Costruttore per DB
+     */
+    public Utente(String username, String password, int id){
+        this.username = username;
+        this.password = password;
+        this.bacheca = new ArrayList<>();
+    }
 
     /**
      * Costruttore per creare un nuovo Utente
@@ -54,5 +64,11 @@ public class Utente implements InterfacciaUtente {
     @Override
     public void eliminaBacheca(Bacheca b){
         bacheca.remove(b);
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 }

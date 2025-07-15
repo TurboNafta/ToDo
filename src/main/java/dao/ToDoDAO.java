@@ -59,6 +59,29 @@ public class ToDoDAO implements InterfacciaToDoDAO {
     }
 
     @Override
+    public void modifica(ToDo todo) throws SQLException {
+        String sql = "UPDATE todo SET titolo = ?, descrizione = ?, url = ?, datascadenza = ?, " +
+                "image = ?, posizione = ?, coloresfondo = ?, stato = ? " +
+                "WHERE id = ?";
+
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, todo.getTitolo());
+            stmt.setString(2, todo.getDescrizione());
+            stmt.setString(3, todo.getUrl());
+            stmt.setDate(4, new Date(todo.getDatascadenza().getTimeInMillis()));
+            stmt.setString(5, todo.getImage());
+            stmt.setString(6, todo.getPosizione());
+            stmt.setString(7, todo.getColoresfondo());
+            stmt.setString(8, todo.getStato().name());
+            stmt.setInt(9, todo.getTodoId());
+
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
     public void elimina(int id) throws SQLException {
         String sql = "DELETE FROM todo WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
