@@ -6,7 +6,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface InterfacciaBachecaDAO {
-    public void inserisci(Bacheca bacheca) throws SQLException;
-    public List<Bacheca> getBachecheByUtente(String username) throws SQLException;
-    public void elimina(int id) throws SQLException;
+    int inserisci(Bacheca bacheca) throws SQLException;
+    void elimina(int id) throws SQLException;
+    void modifica(Bacheca bacheca) throws SQLException;
+    List<Bacheca> getBachecheByUtente(String username) throws SQLException;
+    boolean esisteBacheca(String username, String titolo, String descrizione) throws SQLException;
 }
+

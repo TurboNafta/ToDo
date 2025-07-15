@@ -4,6 +4,7 @@ import controller.Controller;
 import model.*;
 import javax.swing.*;
 import java.awt.*;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -163,30 +164,46 @@ public class VistaBacheca {
      * Metodo che ci mostra la lista di to, do ordinati o meno.
      */
     private void aggiornaListaToDo() {
-        List<ToDo> lista = new ArrayList<>(bacheca.getTodo()); // Usare List per buona pratica
+        try {
+            // Prima ricarica i ToDo dal database
+            List<ToDo> todoFromDB = controller.getToDoByBacheca(bacheca.getId());
+            bacheca.setTodo(todoFromDB);
 
-        String criterio = (String) comboBoxOrdina.getSelectedItem();
-        if (criterio != null) {
-            switch (criterio) {
-                case CriteriOrdinamento.TITOLO_AZ: // Usate le costanti
-                    lista.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
-                    break;
-                case CriteriOrdinamento.DATA_SCADENZA: // Usate le costanti
-                    lista.sort(Comparator.comparing(ToDo::getDatascadenza));
-                    break;
-                case CriteriOrdinamento.POSIZIONE: // Usate le costanti
-                    lista.sort(Comparator.comparing(t -> ConvertiInNum(t.getPosizione())));
-                    break;
-                case CriteriOrdinamento.STATO_COMPLETAMENTO: // Usate le costanti
-                    lista.sort(Comparator.comparing(ToDo::getStato));
-                    break;
-                case CriteriOrdinamento.NESSUN_ORDINAMENTO:
-                default:
-                    break;
+            // Crea una nuova lista per l'ordinamento
+            List<ToDo> lista = new ArrayList<>(bacheca.getTodo());
+
+            // Applica i criteri di ordinamento
+            String criterio = (String) comboBoxOrdina.getSelectedItem();
+            if (criterio != null) {
+                switch (criterio) {
+                    case CriteriOrdinamento.TITOLO_AZ:
+                        lista.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
+                        break;
+                    case CriteriOrdinamento.DATA_SCADENZA:
+                        lista.sort(Comparator.comparing(ToDo::getDatascadenza));
+                        break;
+                    case CriteriOrdinamento.POSIZIONE:
+                        lista.sort(Comparator.comparing(t -> ConvertiInNum(t.getPosizione())));
+                        break;
+                    case CriteriOrdinamento.STATO_COMPLETAMENTO:
+                        lista.sort(Comparator.comparing(ToDo::getStato));
+                        break;
+                    case CriteriOrdinamento.NESSUN_ORDINAMENTO:
+                    default:
+                        break;
+                }
             }
+
+            // Mostra la lista ordinata
+            mostraListaToDo(lista);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(frameVista,
+                    "Errore durante il caricamento dei ToDo: " + e.getMessage(),
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        mostraListaToDo(lista);
     }
+
 
     /**
      * Metodo che ci converte la posizione in un numero

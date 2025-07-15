@@ -81,7 +81,7 @@ public class CreaToDo {
         /**
          * Pulsante che ci aggiunge il to do in quella bacheca
          */
-        addToDoButton.addActionListener(e->{
+        addToDoButton.addActionListener(e -> {
             String dataStr = textFieldData.getText().trim();
             if (!controller.isValidDate(dataStr)) {
                 JOptionPane.showMessageDialog(frameCreaToDo,
@@ -107,63 +107,71 @@ public class CreaToDo {
                 return;
             }
 
-            try{
-                    // Recupera i dati dai campi di testo
-                    String titolo = textFieldTitolo.getText();
-                    String descrizione = textFieldDescrizione.getText();
-                    String dataScadenza = textFieldData.getText();
-                    String img = textFieldImg.getText();
-                    String posizione = textFieldPosizione.getText();
-                    String url = textFieldUrl.getText();
-                    String colore = textFieldColore.getText();
+            try {
+                // Recupera i dati dai campi di testo
+                String titolo = textFieldTitolo.getText().trim();
+                String descrizione = textFieldDescrizione.getText().trim();
+                String dataScadenza = textFieldData.getText().trim();
+                String img = textFieldImg.getText().trim();
+                String posizione = textFieldPosizione.getText().trim();
+                String url = textFieldUrl.getText().trim();
+                String colore = textFieldColore.getText().trim();
 
-                    // recupera l'utente loggato
-                    ArrayList<Utente> utenti = new ArrayList<>();
-                    utenti.add(controller.getUtenteByUsername(utente));
-
-                    for (String u : utentiList.getSelectedValuesList()) {
-                        utenti.add(controller.getUtenteByUsername(u));
-                    }
-
-                    //Crea To Do
-                    ToDo nuovoToDo=new ToDo(titolo, descrizione,url,dataScadenza,img,posizione,colore,utenti, controller.getUtenteByUsername(utente));
-                   //Setto la checklist per il nuovo To do,
-                    nuovoToDo.setChecklist(checklistTemp);
-                    // associo il To Do con la sua checklist
-                    checklistTemp.setTodo(nuovoToDo);
-
-                    //controllo se tutte le attività sono complete e setto lo stato del To Do
-                    if(checklistTemp.tutteCompletate()&& !checklistTemp.getAttivita().isEmpty()) {
-                        nuovoToDo.setStato(StatoToDo.COMPLETATO);
-                    }else{
-                        nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
-                    }
-
-                    for (Utente u : utenti) {
-                        Bacheca bachecaUtente = controller.getOrCreateBacheca(
-                                bacheca.getTitolo(),
-                                bacheca.getDescrizione(),
-                                u.getUsername()
-                        );
-                        controller.addToDo(bachecaUtente, nuovoToDo, u.getUsername());
-                    }
-
-                    frameCreaToDo.dispose();
-                    VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
-                    vistaBacheca.frameVista.setVisible(true);
-
-                }catch(Exception ex){
-                    JOptionPane.showMessageDialog(frameCreaToDo,"Errore: "+ ex.getMessage());
+                // Verifica campi obbligatori
+                if (titolo.isEmpty() || descrizione.isEmpty() || dataScadenza.isEmpty() || posizione.isEmpty()) {
+                    JOptionPane.showMessageDialog(frameCreaToDo,
+                            "I campi Titolo, Descrizione, Data Scadenza e Posizione sono obbligatori",
+                            "Campi mancanti",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
+
+                // recupera l'utente loggato e crea la lista degli utenti possessori
+                ArrayList<Utente> utenti = new ArrayList<>();
+                Utente utenteCreatore = controller.getUtenteByUsername(utente);
+                utenti.add(utenteCreatore);
+
+                // Aggiungi gli utenti selezionati dalla lista
+                for (String username : utentiList.getSelectedValuesList()) {
+                    Utente u = controller.getUtenteByUsername(username);
+                    if (u != null) {
+                        utenti.add(u);
+                    }
+                }
+
+                // Crea il nuovo ToDo
+                ToDo nuovoToDo = new ToDo(titolo, descrizione, url, dataScadenza, img,
+                        posizione, colore, utenti, utenteCreatore);
+
+                // Imposta la checklist se presente
+                if (checklistTemp != null && !checklistTemp.getAttivita().isEmpty()) {
+                    nuovoToDo.setChecklist(checklistTemp);
+                }
+
+                // Aggiunge il ToDo alla bacheca
+                controller.addToDo(bacheca, nuovoToDo, utente);
+
+                // Chiude la finestra e torna alla vista bacheca
+                frameCreaToDo.dispose();
+                VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
+                vistaBacheca.frameVista.setVisible(true);
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frameCreaToDo,
+                        "Errore durante la creazione del ToDo: " + ex.getMessage(),
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         /**
          * Pulsante che ci permette di annullare l'operazione di inserimento
          */
-        buttonAnnulla.addActionListener(e-> {
-            VistaBacheca secondGui = new VistaBacheca(bacheca, controller, frameChiamante, utente);
-            secondGui.frameVista.setVisible(true);
+        buttonAnnulla.addActionListener(e -> {
             frameCreaToDo.dispose();
+            VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
+            vistaBacheca.frameVista.setVisible(true);
         });
+
     }
 }

@@ -23,8 +23,7 @@ public class  Accesso{
         return frameAccesso;
     }
 
-    // Necessario come campo per accesso dai listener lambda
-    // Usato nelle lambda, ignora falso positivo SonarQube
+
     private final Controller controller;
     private static final Logger logger = Logger.getLogger(Accesso.class.getName());
 

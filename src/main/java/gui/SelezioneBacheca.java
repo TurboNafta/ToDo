@@ -95,36 +95,70 @@ public class SelezioneBacheca {
     /**
      * Metodo che aggiorna le bacheche dopo aver effettuato delle modifiche
      */
-    private void aggiornaBachecaPanel () {
+    private void aggiornaBachecaPanel() {
         String tipo = (String) comboBox1.getSelectedItem();
         List<Bacheca> bacheche = controller.getBachecaList(tipo, utentelog);
 
         bachechePanel.removeAll();
-        JScrollPane scrollPane=creaScrollPane(creaCardsPanel(bacheche));
+        JPanel contentPanel = creaCardsPanel(bacheche);
+
+        // Creiamo uno scroll pane che permette lo scorrimento in entrambe le direzioni
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         bachechePanel.setLayout(new BorderLayout());
         bachechePanel.add(scrollPane, BorderLayout.CENTER);
         bachechePanel.revalidate();
         bachechePanel.repaint();
     }
 
+
     /**
      * Metodo che ci permette di creare in modo dinamico dei panel per ogni Bacheca dell'utente,
      * ogni nuovo card, ovvero il panel per ogni bacheca, conterrà: le informazioni che riguardano la bacheca
      * e dei pulsanti che ci permettono di interagire con le stesse
      */
-    private JPanel creaCardsPanel (List<Bacheca> bacheche) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 20)); // orizzontale, con margini tra le card
-        panel.setBackground(Color.WHITE);// sfondo bianco per un aspetto moderno
+    private JPanel creaCardsPanel(List<Bacheca> bacheche) {
+        // Creiamo un panel principale con GridBagLayout
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Color.WHITE);
 
-        if(bacheche.isEmpty()) {
+        if (bacheche.isEmpty()) {
             panel.add(new JLabel("Nessuna bacheca trovata."));
-        } else {
-            for(Bacheca b : bacheche) {
-                panel.add(creaCard(b));
+            return panel;
+        }
+
+        // Calcoliamo quante colonne vogliamo in base alla larghezza della finestra
+        int numeroColonne = 3; // Puoi modificare questo numero per cambiare il numero di colonne
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10); // Spazio tra le card
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        int riga = 0;
+        int colonna = 0;
+
+        for (Bacheca b : bacheche) {
+            gbc.gridx = colonna;
+            gbc.gridy = riga;
+
+            panel.add(creaCard(b), gbc);
+
+            colonna++;
+            if (colonna >= numeroColonne) {
+                colonna = 0;
+                riga++;
             }
         }
+
         return panel;
     }
+
+
 
     private JPanel creaCard (Bacheca b){
         JPanel card = new JPanel();
@@ -169,12 +203,23 @@ public class SelezioneBacheca {
         JButton modificaButton = new JButton("Modifica");
         styleButton(modificaButton, new Color(255, 200, 80), Color.BLACK);
         modificaButton.addActionListener(ev -> {
-            String nuovaDescrizione = JOptionPane.showInputDialog(frameBacheca, "Inserisci nuova descrizione:", b.getDescrizione());
+            String nuovaDescrizione = JOptionPane.showInputDialog(frameBacheca,
+                    "Inserisci nuova descrizione:",
+                    b.getDescrizione());
             if (nuovaDescrizione != null && !nuovaDescrizione.trim().isEmpty()) {
-                b.setDescrizione(nuovaDescrizione);
-                buttonCerca.doClick(); // aggiorna la lista
+                try {
+                    controller.modificaBacheca(b, nuovaDescrizione.trim());
+                    aggiornaBachecaPanel();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(frameBacheca,
+                            "Errore durante la modifica: " + e.getMessage(),
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
         //AGGIUNGO IL BOTTONE A CARD
         card.add(Box.createVerticalStrut(5));
         card.add(modificaButton);
@@ -185,12 +230,27 @@ public class SelezioneBacheca {
         JButton eliminaButton = new JButton("Elimina");
         styleButton(eliminaButton, new Color(255, 80, 80), Color.WHITE);
         eliminaButton.addActionListener(ev -> {
-            int conferma = JOptionPane.showConfirmDialog(frameBacheca, "Vuoi eliminare questa bacheca?", "Conferma", JOptionPane.YES_NO_OPTION);
+            int conferma = JOptionPane.showConfirmDialog(frameBacheca,
+                    "Sei sicuro di voler eliminare questa bacheca?\n" +
+                            "Verranno eliminati anche tutti i ToDo associati.",
+                    "Conferma eliminazione",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
             if (conferma == JOptionPane.YES_OPTION) {
-                b.getUtente().eliminaBacheca(b);
-                buttonCerca.doClick(); // aggiorna la lista
+                try {
+                    controller.eliminaBacheca(b);
+                    aggiornaBachecaPanel();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(frameBacheca,
+                            "Errore durante l'eliminazione: " + e.getMessage(),
+                            "Errore",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
         //AGGIUNGO IL BOTTONE A CARD
         card.add(Box.createVerticalStrut(5));
         card.add(eliminaButton);

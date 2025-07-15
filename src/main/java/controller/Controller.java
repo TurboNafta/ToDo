@@ -34,28 +34,41 @@ public class Controller {
      * Metodo che ci restituisce le bacheche a seconda del titolo e dell'utente loggato
      */
     public List<Bacheca> getBachecaList(String titolo, String username) {
-        Utente utente = getUtenteByUsername(username);
-        if(LOGGER.isLoggable(java.util.logging.Level.INFO)) {
-            LOGGER.info("Utente trovato: "+ username);
-        }
-
-        ArrayList<Bacheca> bachecheUtente = new ArrayList<>();
-        if (utente == null) {
-            return bachecheUtente;// da gestire con eccezione pls nn dimenticarti:*
-        } else {
-            TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
-            if (titolo == null || titolo.isEmpty()) {
-                return utente.getBacheca();
+        try {
+            // Recupera l'utente
+            Utente utente = getUtenteByUsername(username);
+            if (utente == null) {
+                throw new IllegalArgumentException("Utente non trovato: " + username);
             }
-            for (Bacheca b : utente.getBacheca()) {
-                if (b.getTitolo().equals(titoloBacheca)) {
-                    bachecheUtente.add(b);
+
+            // Recupera tutte le bacheche dal database
+            List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(username);
+
+            // Aggiorna la lista delle bacheche dell'utente in memoria
+            utente.setBacheca(bachecheDalDB);
+
+            // Se non è specificato un titolo, restituisce tutte le bacheche
+            if (titolo == null || titolo.isEmpty()) {
+                return bachecheDalDB;
+            }
+
+            // Filtra per titolo se specificato
+            List<Bacheca> bachecheFiltered = new ArrayList<>();
+            TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
+            if (titoloBacheca != null) {
+                for (Bacheca b : bachecheDalDB) {
+                    if (b.getTitolo().equals(titoloBacheca)) {
+                        bachecheFiltered.add(b);
+                    }
                 }
             }
-        }
-        return bachecheUtente;
+            return bachecheFiltered;
 
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore nel recupero delle bacheche: " + e.getMessage(), e);
+        }
     }
+
 
     /**
      * Metodo che ci permette di convertire il titolo da string all'enumeration
@@ -76,14 +89,39 @@ public class Controller {
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
         try {
             Utente u = getUtenteByUsername(username);
-            if (u == null) throw new IllegalArgumentException("Utente non trovato");
+            if (u == null) {
+                throw new IllegalArgumentException("Utente non trovato");
+            }
+
+            // Verifica se esiste già una bacheca con lo stesso titolo e descrizione
+            if (bachecaDAO.esisteBacheca(username, titolo.toString(), descrizione)) {
+                throw new IllegalArgumentException("Esiste già una bacheca con questo titolo e descrizione");
+            }
+
+            // Crea la nuova bacheca
             Bacheca nuova = new Bacheca(titolo, descrizione, u);
-            bachecaDAO.inserisci(nuova);
-            u.aggiungiBacheca(nuova); // aggiorna struttura in memoria
+
+            // Salva nel database e ottiene l'id generato
+            int idBacheca = bachecaDAO.inserisci(nuova);
+
+            // Debug
+            System.out.println("Nuova bacheca creata - ID: " + idBacheca);
+
+            // Aggiorna la struttura in memoria
+            nuova.setId(idBacheca);
+            u.aggiungiBacheca(nuova);
+
+            // Ricarica le bacheche
+            List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(username);
+            u.setBacheca(bachecheDalDB);
+
         } catch (SQLException e) {
             throw new RuntimeException("Errore inserimento bacheca: " + e.getMessage(), e);
         }
     }
+
+
+
 
     /**
      * Metodo che ci setta l'utente loggato
@@ -119,20 +157,44 @@ public class Controller {
      */
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
         try {
-            toDoDAO.inserisci(todo, username, bacheca.getId());
+            // Prima salva il To Do nel database e ottieni l'ID generato
+            int todoId = toDoDAO.inserisci(todo, username, bacheca.getId());
+            todo.setTodoId(todoId); // Importante: imposta l'ID del to do
+
+            // Imposta la bacheca nel to do
+            todo.setBacheca(bacheca);
+
+            // Aggiorna la struttura in memoria
             bacheca.aggiungiToDo(todo);
+
+            // Gestisci i possessori
             if (todo.getUtentiPossessori() == null) {
                 todo.setUtentiPossessori(new ArrayList<>());
             }
+
+            // Aggiungi l'utente creatore se non è già presente
             Utente utente = getUtenteByUsername(username);
             if (utente != null && !todo.getUtentiPossessori().contains(utente)) {
                 todo.getUtentiPossessori().add(utente);
+            }
+
+            // Aggiorna le bacheche degli altri utenti possessori
+            for (Utente possessore : todo.getUtentiPossessori()) {
+                if (!possessore.getUsername().equals(username)) {
+                    Bacheca bachecaPossessore = getOrCreateBacheca(
+                            bacheca.getTitolo(),
+                            bacheca.getDescrizione(),
+                            possessore.getUsername()
+                    );
+                    bachecaPossessore.aggiungiToDo(todo);
+                }
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("Errore inserimento ToDo: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Metodo che ci da i to do in scadenza oggi
@@ -221,17 +283,25 @@ public class Controller {
      * Metodo che ci genera l'utente admin
      */
     public void buildAdmin() {
-        // Controlla se admin esiste già tra gli utenti
-        for (Utente u : listaUtenti) {
-            if (u.getUsername().equals(NOME_UTENTE_AMMINISTRATORE)) {
-                // Già esiste, non fare nulla
+        try {
+            // Controlla se admin esiste già nel database
+            Utente adminEsistente = utenteDAO.getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
+            if (adminEsistente != null) {
+                // Admin già esiste, aggiungi alla lista in memoria se non presente
+                if (!listaUtenti.contains(adminEsistente)) {
+                    listaUtenti.add(adminEsistente);
+                }
                 return;
             }
+            // Se non esiste, crea l'admin
+            Utente admin = new Utente(NOME_UTENTE_AMMINISTRATORE, "1111");
+            utenteDAO.inserisci(admin); // Salva nel database
+            listaUtenti.add(admin);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante la creazione dell'admin: " + e.getMessage(), e);
         }
-        // Se non esiste, crea l’admin
-        Utente admin = new Utente(NOME_UTENTE_AMMINISTRATORE, "1111");
-        listaUtenti.add(admin);
     }
+
 
     /**
      * Metodo che genera delle bacheche di prova solo per admin
@@ -404,7 +474,7 @@ public class Controller {
             sdf.setLenient(false);
             sdf.parse(dateStr);
             return true;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
     }
@@ -416,7 +486,7 @@ public class Controller {
         try {
             int posizione = Integer.parseInt(posizioneStr);
             return posizione > 0;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
             return false;
         }
     }
@@ -436,5 +506,54 @@ public class Controller {
 
         return Arrays.asList(coloriValidi).contains(colore.toLowerCase().trim());
     }
+    /**
+     * Metodo per modificare la descrizione di una bacheca
+     */
+    public void modificaBacheca(Bacheca bacheca, String nuovaDescrizione) {
+        try {
+            // Aggiorna l'oggetto in memoria
+            bacheca.setDescrizione(nuovaDescrizione);
+
+            // Aggiorna il database
+            bachecaDAO.modifica(bacheca);
+
+            // Ricarica le bacheche per l'utente per mantenere la sincronizzazione
+            List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(bacheca.getUtente().getUsername());
+            bacheca.getUtente().setBacheca(bachecheDalDB);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante la modifica della bacheca: " + e.getMessage(), e);
+        }
+    }
+
+
+    /**
+     * Metodo per eliminare una bacheca
+     */
+    public void eliminaBacheca(Bacheca bacheca) {
+        try {
+            // Elimina dal database
+            bachecaDAO.elimina(bacheca.getId());
+
+            // Elimina dalla memoria
+            Utente utente = bacheca.getUtente();
+            utente.eliminaBacheca(bacheca);
+
+            // Ricarica le bacheche per l'utente per mantenere la sincronizzazione
+            List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(utente.getUsername());
+            utente.setBacheca(bachecheDalDB);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante l'eliminazione della bacheca: " + e.getMessage(), e);
+        }
+    }
+    /**
+     * Recupera tutti i ToDo associati a una bacheca dal database
+     * @param bachecaId L'ID della bacheca
+     * @return Lista dei ToDo appartenenti alla bacheca
+     * @throws SQLException in caso di errori di accesso al database
+     */
+    public List<ToDo> getToDoByBacheca(int bachecaId) throws SQLException {
+        return toDoDAO.getToDoByBacheca(bachecaId);
+    }
+
 
 }

@@ -26,6 +26,7 @@ public class Bacheca implements InterfacciaBacheca {
         this.descrizione = descrizione;
         this.utente = utente;
         this.todo= new ArrayList<>();
+        this.id=id;
     }
 
     // Costruttore senza id (per nuove bacheche prima di salvarle)
