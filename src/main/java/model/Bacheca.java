@@ -31,7 +31,7 @@ public class Bacheca implements InterfacciaBacheca {
 
     // Costruttore senza id (per nuove bacheche prima di salvarle)
     public Bacheca(TitoloBacheca titolo, String descrizione, Utente utente) {
-        this(0,titolo, descrizione, utente);
+        this(0, titolo, descrizione, utente);
     }
 
     /**
