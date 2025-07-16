@@ -39,8 +39,15 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             try (ResultSet rs = istr.getGeneratedKeys()) {
                 if (rs.next()) {
                     int todoId = rs.getInt(1);
+                    //id sull'oggetto to do in memoria
+                    todo.setTodoId(todoId);
                     // Inserisci i possessori
                     inserisciPossessori(todoId, todo.getUtentiPossessori(), conn);
+
+                    //inserisci le attività della checklist se presenti
+                    if(todo.getChecklist() != null && !todo.getChecklist().getAttivita().isEmpty()){
+                        inserisciChecklist(todoId, todo.getChecklist(), conn);
+                    }
                     return todoId;
                 }
             }
@@ -60,7 +67,7 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         }
     }
     private void inserisciChecklist(int todoId, CheckList checklist, Connection conn) throws SQLException {
-        String query = "INSERT INTO attivita_checklist (todo_id, descrizione, completata) VALUES (?, ?, ?)";
+        String query = "INSERT INTO attivita (titolo, stato, checklist_id) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             for (Attivita attivita : checklist.getAttivita()) {
                 stmt.setInt(1, todoId);
@@ -115,9 +122,11 @@ public class ToDoDAO implements InterfacciaToDoDAO {
     }
     @Override
     public List<ToDo> getToDoByBacheca(int bachecaId) throws SQLException {
-        String sql = "SELECT t.*, u.username FROM todo t " +
+        String sql = "SELECT t.*, u.username " +
+                "FROM todo t " +
                 "JOIN utente u ON t.autore_username = u.username " +
                 "WHERE t.bacheca_id = ?";
+
         List<ToDo> todos = new ArrayList<>();
 
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -127,10 +136,14 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                int todoId = rs.getInt("id");
+
                 GregorianCalendar data = new GregorianCalendar();
                 if (rs.getDate("datascadenza") != null) {
                     data.setTime(rs.getDate("datascadenza"));
                 }
+
+                Utente autore = new Utente(rs.getString("username"), "");
 
                 ToDo todo = new ToDo(
                         rs.getString("titolo"),
@@ -141,9 +154,47 @@ public class ToDoDAO implements InterfacciaToDoDAO {
                         rs.getString("posizione"),
                         rs.getString("coloresfondo"),
                         new ArrayList<>(),
-                        new Utente(rs.getString("username"), "")
+                        autore
                 );
                 todo.setTodoId(rs.getInt("id"));
+                todo.setStato(StatoToDo.valueOf(rs.getString("stato")));
+                todo.setBacheca(new Bacheca(bachecaId, null, null, null));
+
+                CheckList checklist = new CheckList(todo);
+                todo.setChecklist(checklist);
+
+                //Recupera i possessori per il To do corrente
+                String sqlSelectPossessori = "SELECT utente_username FROM condivisione WHERE todo_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(sqlSelectPossessori)) {
+                    pstmt.setInt(1, todoId);
+                    ResultSet rsP = pstmt.executeQuery();
+                    while(rsP.next()) {
+                        String usernamePossessore = rsP.getString("utente_username");
+                        todo.getUtentiPossessori().add(new Utente(usernamePossessore, ""));
+                    }
+                }
+                //Recupera le attività della checklist per il To do corrente
+                String sqlSelectChecklist = "SELECT id, titolo, stato, checklist_id FROM attivita WHERE checklist_id = ?";
+                try (PreparedStatement stmtChecklist = conn.prepareStatement(sqlSelectChecklist)) {
+                    stmtChecklist.setInt(1, todoId);
+                    ResultSet rsChecklist = stmtChecklist.executeQuery();
+                    List<Attivita> attivitaList = new ArrayList<>();
+                    while (rsChecklist.next()) {
+                        int attivitaId = rsChecklist.getInt("id");
+                        String attivitaTitolo = rsChecklist.getString("titolo");
+                        boolean attivitaStato = rsChecklist.getBoolean("stato");
+                        int checklistIdFromDb = rsChecklist.getInt("checklist_id");
+
+                        Attivita attivita = new Attivita(attivitaId, checklistIdFromDb, attivitaTitolo, StatoAttivita.NONCOMPLETATA); // stato iniziale
+                        if (attivitaStato) {
+                            attivita.setStato(StatoAttivita.COMPLETATA);
+                        } else {
+                            attivita.setStato(StatoAttivita.NONCOMPLETATA);
+                        }
+                        attivitaList.add(attivita);
+                    }
+                    todo.getChecklist().setAttivita(attivitaList);
+                }
                 todos.add(todo);
             }
         }

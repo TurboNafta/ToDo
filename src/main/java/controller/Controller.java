@@ -171,25 +171,6 @@ public class Controller {
             if (todo.getUtentiPossessori() == null) {
                 todo.setUtentiPossessori(new ArrayList<>());
             }
-
-            // Aggiungi l'utente creatore se non è già presente
-            Utente utente = getUtenteByUsername(username);
-            if (utente != null && !todo.getUtentiPossessori().contains(utente)) {
-                todo.getUtentiPossessori().add(utente);
-            }
-
-            // Aggiorna le bacheche degli altri utenti possessori
-            for (Utente possessore : todo.getUtentiPossessori()) {
-                if (!possessore.getUsername().equals(username)) {
-                    Bacheca bachecaPossessore = getOrCreateBacheca(
-                            bacheca.getTitolo(),
-                            bacheca.getDescrizione(),
-                            possessore.getUsername()
-                    );
-                    bachecaPossessore.aggiungiToDo(todo);
-                }
-            }
-
         } catch (SQLException e) {
             throw new RuntimeException("Errore inserimento ToDo: " + e.getMessage(), e);
         }

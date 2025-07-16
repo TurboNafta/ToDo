@@ -31,6 +31,7 @@ public class CheckList implements InterfacciaCheckList {
         this.attivita=new ArrayList<>();
     }
 
+
     /**
      * Funzioni generali per la gestione degli attributi
      */

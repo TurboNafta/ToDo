@@ -18,6 +18,7 @@ public class Attivita {
         this.checklistId = checklistId;
         this.titolo = titolo;
         this.stato = stato;
+        this.id = id;
     }
 
     /**
