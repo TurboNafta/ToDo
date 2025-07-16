@@ -409,9 +409,15 @@ public class Controller {
                 return b;
             }
         }
-        // Se manca, la crea
+        // Se manca, la crea, e la salva nel db
         Bacheca nuova = new Bacheca(titolo, descrizione, utente);
-        utente.aggiungiBacheca(nuova);
+        try {
+            int idBacheca = bachecaDAO.inserisci(nuova);
+            nuova.setId(idBacheca);
+            utente.aggiungiBacheca(nuova);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore creazione bacheca: " + e.getMessage(), e);
+        }
         return nuova;
     }
 

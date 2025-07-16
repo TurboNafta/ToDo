@@ -50,7 +50,7 @@ public class ToDoDAO implements InterfacciaToDoDAO {
 
     @Override
     public void inserisciPossessori(int todoId, List<Utente> possessori, Connection conn) throws SQLException {
-        String query = "INSERT INTO todo_utente (todo_id, utente_username) VALUES (?, ?)";
+        String query = "INSERT INTO condivisone (todo_id, utente_username) VALUES (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             for (Utente utente : possessori) {
                 stmt.setInt(1, todoId);
