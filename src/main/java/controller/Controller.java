@@ -370,21 +370,11 @@ public class Controller {
      * Metodo che ci elimina il to do dalla bacheca dell'utente
      */
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
-        //il To do da tutte le bacheche condivise
-        if (t.getAutore() != null && utenteLoggato != null && t.getAutore().getUsername().equals(utenteLoggato.getUsername())) {
-            ArrayList<Utente> utentiCondivisi = new ArrayList<>(t.getUtentiPossessori());
-            for (Utente u : utentiCondivisi) {
-                // Cerca la bacheca giusta per ogni utente
-                List<Bacheca> bachecheUtente = getBachecaList(bacheca.getTitolo().toString(), u.getUsername());
-                for (Bacheca b : bachecheUtente) {
-                    if (b.getDescrizione().equals(bacheca.getDescrizione())) {
-                        b.getTodo().remove(t);
-                    }
-                }
-            }
-        } else {
-            // Altrimenti elimina solo dalla propria bacheca
+        try {
             bacheca.getTodo().remove(t);
+            toDoDAO.elimina(t.getTodoId());
+        } catch (SQLException ex) {
+            throw new RuntimeException("Errore durante l'eliminazione del ToDo del database: " + ex.getMessage(), ex);
         }
     }
 
