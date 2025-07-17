@@ -225,5 +225,20 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             }
         }
         return utentiCondivisi;
+    };
+
+    public void aggiornaBachecaToDo(int todoId, int nuovaBachecaId, String nuovaPosizione) throws SQLException {
+        System.out.println("DEBUG: Chiamata aggiornaBachecaToDo con todoId=" + todoId
+                + ", nuovaBachecaId=" + nuovaBachecaId + ", nuovaPosizione=" + nuovaPosizione);
+
+        String sql = "UPDATE todo SET bacheca_id = ?, posizione = ? WHERE id = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, nuovaBachecaId);
+            stmt.setString(2, nuovaPosizione);
+            stmt.setInt(3, todoId);
+            int updated = stmt.executeUpdate();
+            System.out.println("DEBUG: Rows updated: " + updated);
+        }
     }
 }

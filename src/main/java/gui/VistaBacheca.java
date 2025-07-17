@@ -165,7 +165,7 @@ public class VistaBacheca {
      */
     private void aggiornaListaToDo() {
         try {
-            // Prima ricarica i ToDo dal database
+            // Prima ricarica i To do dal database
             List<ToDo> todoFromDB = controller.getToDoByBacheca(bacheca.getId());
             bacheca.setTodo(todoFromDB);
 
@@ -394,10 +394,16 @@ public class VistaBacheca {
      * nuova bacheca
      */
     private void gestisciSpostamento(ToDo t) {
-        Utente utente = verificaUtente();
+        Utente utente = controller.getUtenteByUsername(utenteLoggato);
         if (utente == null) return;
 
+        utente.setBacheca(controller.getBachecaList("", utenteLoggato));
+
         List<Bacheca> bacheche = utente.getBacheca();
+        System.out.println("DEBUG: Bacheche disponibili per l'utente:");
+        for (Bacheca b : bacheche) {
+            System.out.println(" - Titolo: '" + b.getTitolo() + "' (id=" + b.getId() + ")");
+        }
         String[] titoliBacheca = getTitoliBacheche(bacheche);
         if (titoliBacheca.length == 0) {
             mostraMessaggioNessunaBacheca();
@@ -405,6 +411,9 @@ public class VistaBacheca {
         }
 
         String titolo = richiediTitoloBacheca(titoliBacheca);
+        // DEBUG: stampa il titolo selezionato
+        System.out.println("DEBUG: Titolo bacheca selezionato: '" + titolo + "'");
+
         if (titolo != null) {
             gestisciSelezioneBacheca(t, bacheche, titolo);
         }
@@ -429,8 +438,7 @@ public class VistaBacheca {
      */
     private String[] getTitoliBacheche(List<Bacheca> bacheche) {
         return bacheche.stream()
-                .filter(b -> !(b.getTitolo().equals(bacheca.getTitolo()) &&
-                        b.getDescrizione().equals(bacheca.getDescrizione())))
+                .filter(b -> b.getId() != bacheca.getId())
                 .map(b -> b.getTitolo().toString())
                 .distinct()
                 .toArray(String[]::new);
@@ -464,17 +472,39 @@ public class VistaBacheca {
     /**
      * Metodo che ci verifica i dati inseriti e completa lo spostamento
      */
-    private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titolo) {
-        String[] descrizioni = getDescrizioniBacheca(bacheche, titolo);
-        if (descrizioni.length == 0) {
-            mostraMessaggioNessunaBachecaTrovata();
+    private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titoloDestinazione) {
+        if (titoloDestinazione == null) return;
+        List<Bacheca> bachecheCorrispondenti = new ArrayList<>();
+        for (Bacheca b : bacheche) {
+            String titoloBacheca = b.getTitolo() != null ? b.getTitolo().toString() : null;
+            if (titoloBacheca != null &&
+                    titoloBacheca.trim().equalsIgnoreCase(titoloDestinazione.trim())) {
+                bachecheCorrispondenti.add(b);
+            }
+        }
+        Bacheca bachecaDestinazione = null;
+        if (bachecheCorrispondenti.size() == 1) {
+            bachecaDestinazione = bachecheCorrispondenti.get(0);
+        } else if (bachecheCorrispondenti.size() > 1) {
+            String[] descrizioni = new String[bachecheCorrispondenti.size()];
+            for (int i = 0; i < bachecheCorrispondenti.size(); i++) {
+                descrizioni[i] = bachecheCorrispondenti.get(i).getDescrizione();
+            }
+            String descScelta = richiediDescrizioneBacheca(descrizioni); // Da implementare!
+            for (Bacheca b : bachecheCorrispondenti) {
+                if (b.getDescrizione().equals(descScelta)) {
+                    bachecaDestinazione = b;
+                    break;
+                }
+            }
+        }
+        if (bachecaDestinazione == null) {
+            // Mostra messaggio errore
             return;
         }
-
-        String descrizione = richiediDescrizioneBacheca(descrizioni);
-        if (descrizione != null) {
-            completaSpostamento(t, titolo, descrizione);
-        }
+        Bacheca bachecaOrigine = t.getBacheca();
+        controller.spostaToDoInAltraBacheca(t, bachecaOrigine, bachecaDestinazione);
+        aggiornaListaToDo();
     }
 
     /**
@@ -522,8 +552,13 @@ public class VistaBacheca {
                 descrizione
         );
 
-        if (bachecaDestinazione != null) {
+        if (bachecaDestinazione != null ) {
             controller.spostaToDoInAltraBacheca(t, bacheca, bachecaDestinazione);
+           try {
+               bacheca.setTodo(controller.getToDoByBacheca(bacheca.getId()));
+           } catch (SQLException e){
+               e.printStackTrace();
+           }
             aggiornaListaToDo();
             mostraMessaggioSuccesso();
         }
