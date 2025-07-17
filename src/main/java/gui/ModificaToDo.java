@@ -180,6 +180,16 @@ public class ModificaToDo {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+                String nuovaPosizione = textFieldPosizione.getText().trim();
+                for (ToDo t : bacheca.getTodo()) {
+                    if (!t.equals(toDo) && t.getPosizione().equals(nuovaPosizione)) {
+                        JOptionPane.showMessageDialog(frameModificaToDo,
+                                "Esiste già un altro ToDo con questa posizione nella bacheca.",
+                                "Errore posizione duplicata",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
 
                 // PRENDE VECCHI POSSESSORI
                 ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());

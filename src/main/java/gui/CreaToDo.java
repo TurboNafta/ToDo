@@ -138,6 +138,23 @@ public class CreaToDo {
                         utenti.add(u);
                     }
                 }
+                // Controlla che la posizione non sia già occupata
+                boolean posizioneOccupata = false;
+                for (ToDo t : bacheca.getTodo()) {
+                    if (t.getPosizione().equals(posizione)) {
+                        posizioneOccupata = true;
+                        break;
+                    }
+                }
+
+                if (posizioneOccupata) {
+                    JOptionPane.showMessageDialog(frameCreaToDo,
+                            "Esiste già un ToDo in quella posizione nella bacheca.",
+                            "Errore posizione duplicata",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
 
                 // Crea il nuovo ToDo
                 ToDo nuovoToDo = new ToDo(titolo, descrizione, url, dataScadenza, img,
