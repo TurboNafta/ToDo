@@ -457,17 +457,32 @@ public class VistaBacheca {
      */
     private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titoloDestinazione) {
         if (titoloDestinazione == null) return;
-        Bacheca bachecaDestinazione = null;
+        List<Bacheca> bachecheCorrispondenti = new ArrayList<>();
         for (Bacheca b : bacheche) {
             String titoloBacheca = b.getTitolo() != null ? b.getTitolo().toString() : null;
             if (titoloBacheca != null &&
                     titoloBacheca.trim().equalsIgnoreCase(titoloDestinazione.trim())) {
-                bachecaDestinazione = b;
-                break;
+                bachecheCorrispondenti.add(b);
+            }
+        }
+        Bacheca bachecaDestinazione = null;
+        if (bachecheCorrispondenti.size() == 1) {
+            bachecaDestinazione = bachecheCorrispondenti.get(0);
+        } else if (bachecheCorrispondenti.size() > 1) {
+            String[] descrizioni = new String[bachecheCorrispondenti.size()];
+            for (int i = 0; i < bachecheCorrispondenti.size(); i++) {
+                descrizioni[i] = bachecheCorrispondenti.get(i).getDescrizione();
+            }
+            String descScelta = richiediDescrizioneBacheca(descrizioni); // Da implementare!
+            for (Bacheca b : bachecheCorrispondenti) {
+                if (b.getDescrizione().equals(descScelta)) {
+                    bachecaDestinazione = b;
+                    break;
+                }
             }
         }
         if (bachecaDestinazione == null) {
-            // Eventuale messaggio di errore
+            // Mostra messaggio errore
             return;
         }
         Bacheca bachecaOrigine = t.getBacheca();
