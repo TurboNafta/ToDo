@@ -209,4 +209,21 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         return todos;
     }
 
+    public List<Utente> getUtentiCondivisiByToDoId(int todoId) throws SQLException {
+        List<Utente> utentiCondivisi = new ArrayList<>();
+        String sql = "SELECT utente_username FROM condivisione WHERE todo_id = ?";
+
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, todoId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    String usernamePossessore = rs.getString("utente_username");
+                    utentiCondivisi.add(new Utente(usernamePossessore, "")); // Assumi che Utente abbia un costruttore che accetta solo username o un setter per la password
+                }
+            }
+        }
+        return utentiCondivisi;
+    }
 }

@@ -3,6 +3,9 @@ package gui;
 import controller.Controller;
 import model.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.GregorianCalendar;
@@ -48,6 +51,7 @@ public class ModificaToDo {
     private JList<String> utentiList;
     private JLabel CondivisiPanel;
     private JButton checklistButton;
+    private JButton buttonAnnulla;
 
     /**
      * Costruttore per creare la gui ModificaToDo
@@ -65,6 +69,15 @@ public class ModificaToDo {
         impostaStatoToDoRadio();
         inizializzaChecklistListener();
         inizializzaModificaListener();
+
+        buttonAnnulla.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frameModificaToDo.dispose();
+                VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
+                vistaBacheca.frameVista.setVisible(true);
+            }
+        });
     }
 
     /**
@@ -100,27 +113,32 @@ public class ModificaToDo {
      * Metodo che ci popola la lista degli utenti che condividono quel to do
      */
     private void popolaListaUtenti() {
-            //Serve a popolare la list per le condivisioni dei To do
-            DefaultListModel<String> utentiModel = new DefaultListModel<>();
-            for (Utente u : controller.getListaUtenti()) {
-                if (!u.getUsername().equals(utente))
-                    utentiModel.addElement(u.getUsername());
-            }
-            utentiList.setModel(utentiModel);
-            utentiList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-            // PRENDE UTENTI GIA POSSESSORI
-            ArrayList<String> utentiPossessori = new ArrayList<>();
-            for (Utente u : toDo.getUtentiPossessori()) {
-                if (!u.getUsername().equals(utente))
-                    utentiPossessori.add(u.getUsername());
-            }
-            int[] indices = utentiPossessori.stream()
-                    .mapToInt(utentiModel::indexOf)
-                    .filter(i -> i >= 0)
-                    .toArray();
-            utentiList.setSelectedIndices(indices);
+        //Serve a popolare la list per le condivisioni dei To do
+        DefaultListModel<String> utentiModel = new DefaultListModel<>();
+        for (Utente u : controller.getTuttiUtentiFromDB()) {
+            if (!u.getUsername().equals(utente))
+                utentiModel.addElement(u.getUsername());
         }
+        utentiList.setModel(utentiModel);
+        List<Utente> utentiAttualiCondivisi = toDo.getUtentiPossessori();
+        List<Integer> indicesToSelect = new ArrayList<>();
+
+        for (int i = 0; i < utentiModel.getSize(); i++) {
+            String usernameInList = utentiModel.getElementAt(i);
+            for (Utente utenteCondiviso : utentiAttualiCondivisi) {
+                if (usernameInList.equals(utenteCondiviso.getUsername())) {
+                    indicesToSelect.add(i);
+                    break;
+                }
+            }
+        }
+
+        int[] selectedIndicesArray = new int[indicesToSelect.size()];
+        for (int i = 0; i < indicesToSelect.size(); i++) {
+            selectedIndicesArray[i] = indicesToSelect.get(i);
+        }
+        utentiList.setSelectedIndices(selectedIndicesArray);
+    }
 
     /**
      * Metodo che imposta lo stato del to do a completato se abbiamo selezionato il RadioButton
@@ -185,36 +203,69 @@ public class ModificaToDo {
                     return;
                 }
 
+                int nuovaPosizioneInt = Integer.parseInt(posizioneStr);
+
                 for (ToDo t : bacheca.getTodo()) {
-                    if (!t.equals(toDo) && Integer.parseInt(t.getPosizione()) == Integer.parseInt(posizioneStr)) {
-                        JOptionPane.showMessageDialog(frameModificaToDo,
-                                "Esiste già un altro ToDo con questa posizione nella bacheca.",
-                                "Errore posizione duplicata",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
+                    if (!t.equals(toDo)) {
+                        if (t.getPosizione() != null && controller.isValidPosition(t.getPosizione())) {
+                            int existingPosizioneInt = Integer.parseInt(t.getPosizione());
+                            if (existingPosizioneInt == nuovaPosizioneInt) {
+                                JOptionPane.showMessageDialog(frameModificaToDo,
+                                        "Esiste già un altro ToDo con questa posizione nella bacheca.",
+                                        "Errore posizione duplicata",
+                                        JOptionPane.ERROR_MESSAGE);
+                                return;
+                            }
+                        }
                     }
                 }
 
                 ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
+
                 String titolo = textFieldTitolo.getText();
                 String descrizione = textFieldDescrizione.getText();
-                String dataScadenza = dataStr;
                 String img = textFieldImg.getText();
-                String posizione = posizioneStr;
                 String url = textFieldUrl.getText();
-                String colore = coloreStr;
+                String[] dataSplit = dataStr.split("/");
+                int anno = Integer.parseInt(dataSplit[2]);
+                int mese = Integer.parseInt(dataSplit[1])-1;
+                int gg = Integer.parseInt(dataSplit[0]);
+                GregorianCalendar data = new GregorianCalendar(anno, mese, gg);
+
                 StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
                 ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
 
-                modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
+                this.toDo.setTitolo(titolo);
+                this.toDo.setDescrizione(descrizione);
+                this.toDo.setDatascadenza(data);
+                this.toDo.setImage(img);
+                this.toDo.setPosizione(posizioneStr);
+                this.toDo.setUrl(url);
+                this.toDo.setColoresfondo(coloreStr);
+                this.toDo.setStato(stato);
+                this.toDo.setUtentiPossessori(nuoviPossessori);
+
+                controller.updateToDoAndSharesInDB(this.bacheca, this.toDo, this.utente);
                 aggiornaBacheche(vecchiPossessori, nuoviPossessori);
+
+                JOptionPane.showMessageDialog(frameModificaToDo,
+                        "ToDo aggiornato con successo!",
+                        "Modifica Completata",
+                        JOptionPane.INFORMATION_MESSAGE);
+
                 chiudiEApriVista();
 
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(frameModificaToDo,
+                        "Errore del database durante l'aggiornamento del ToDo: " + ex.getMessage(),
+                        "Errore Database",
+                        JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frameModificaToDo,
-                        "Errore: " + ex.getMessage(),
-                        "Errore durante la modifica",
+                        "Si è verificato un errore inatteso: " + ex.getMessage(),
+                        "Errore Generico",
                         JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
             }
         });
     }
@@ -242,12 +293,24 @@ public class ModificaToDo {
      * Metodo che prende i possessori del to do dopo le modifiche
      */
     private ArrayList<Utente> getNuoviPossessori() {
-        ArrayList<Utente> nuoviPossessori = new ArrayList<>();
-        nuoviPossessori.add(controller.getUtenteByUsername(utente));
-        for(String nome: utentiList.getSelectedValuesList()) {
-            nuoviPossessori.add(controller.getUtenteByUsername(nome));
+        Set<String> selectedUsernames = new HashSet<>();
+
+        if (utentiList != null) {
+            for (String username : utentiList.getSelectedValuesList()) {
+                selectedUsernames.add(username);
+            }
         }
-        return nuoviPossessori;
+
+        selectedUsernames.add(this.utente);
+
+        ArrayList<Utente> nuoviPossessoriList = new ArrayList<>();
+        for (String username : selectedUsernames) {
+            Utente u = controller.getUtenteByUsername(username);
+            if (u != null) {
+                nuoviPossessoriList.add(u);
+            }
+        }
+        return nuoviPossessoriList;
     }
 
     /**
@@ -279,7 +342,6 @@ public class ModificaToDo {
                     u.getUsername()
             );
             if (!bachecaUtente.getTodo().contains(toDo)) {
-                // Se il ToDo è nuovo (ID = 0), lo aggiungo
                 if (toDo.getTodoId() == 0) {
                     controller.addToDo(bachecaUtente, toDo, u.getUsername());
                 } else {
@@ -287,7 +349,6 @@ public class ModificaToDo {
                     bachecaUtente.getTodo().add(toDo);
                 }
             }
-
         }
 
         for (Utente u : vecchiPossessori) {

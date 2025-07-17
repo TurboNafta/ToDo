@@ -18,7 +18,7 @@ public class VistaBacheca {
     private JPanel principale;
     private JPanel ricerca;
     private JTextField textField1;
-    private JComboBox <String> comboBoxOrdina;
+    private JComboBox<String> comboBoxOrdina;
     private JButton tornaAllaHomeButton;
     private JButton creaToDoButton;
     private JButton buttonCerca;
@@ -36,7 +36,7 @@ public class VistaBacheca {
     /**
      * Costruttore della GUI VistaBacheca
      */
-    public VistaBacheca(Bacheca bacheca,Controller controller,JFrame frame, String utenteLoggato) {
+    public VistaBacheca(Bacheca bacheca, Controller controller, JFrame frame, String utenteLoggato) {
         this.frameChiamante = frame;
         this.controller = controller;
         this.utenteLoggato = utenteLoggato;
@@ -91,13 +91,13 @@ public class VistaBacheca {
         textField1.setEnabled(true);
 
         //ordinamento live sulla lista generale
-        comboBoxOrdina.addActionListener(e->aggiornaListaToDo());
+        comboBoxOrdina.addActionListener(e -> aggiornaListaToDo());
 
         /**
          * Pulsante che ci permette di Creare un to do
          */
         creaToDoButton.addActionListener(e -> { //
-            CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca,utenteLoggato);
+            CreaToDo quartaGui = new CreaToDo(controller, frameChiamante, bacheca, utenteLoggato);
             quartaGui.getFrameCreaToDo().setVisible(true);
             frameVista.setVisible(false);
         });
@@ -115,7 +115,7 @@ public class VistaBacheca {
             //RICERCA PER TITOLO
             try {
                 if (CriteriRicerca.TITOLO.equals(criterioRicerca)) {
-                    risultati = controller.getToDoPerBachecaUtente(bacheca,testo);
+                    risultati = controller.getToDoPerBachecaUtente(bacheca, testo);
                 } else if (CriteriRicerca.SCADENZA_OGGI.equals(criterioRicerca)) {
                     risultati = controller.getToDoInScadenzaOggi(bacheca);
                 } else if (CriteriRicerca.IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
@@ -238,6 +238,7 @@ public class VistaBacheca {
         todoPanelris.revalidate();
         todoPanelris.repaint();
     }
+
     private JPanel createToDoCard(ToDo t) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -269,10 +270,8 @@ public class VistaBacheca {
         }
 
         // Aggiungi pulsante per vedere condivisioni
-        if (!t.getUtentiPossessori().isEmpty()) { // Usare .isEmpty() per StringBuilder
-            card.add(Box.createVerticalStrut(5));
-            card.add(createCondivisiConButton(t));
-        }
+        card.add(Box.createVerticalStrut(5));
+        card.add(createCondivisiConButton(t));
 
         return card;
     }
@@ -284,16 +283,35 @@ public class VistaBacheca {
         if (colore != null) {
             Color backgroundColor;
             switch (colore.toLowerCase()) {
-                case "rosso": backgroundColor = new Color(255, 153, 153); break;
-                case "giallo": backgroundColor = new Color(255, 255, 153); break;
-                case "blu": backgroundColor = new Color(153, 204, 255); break;
-                case "verde": backgroundColor = new Color(153, 255, 153); break;
-                case "arancione": backgroundColor = new Color(255, 204, 153); break;
-                case "rosa": backgroundColor = new Color(255, 204, 229); break;
-                case "viola": backgroundColor = new Color(204, 153, 255); break;
-                case "celeste": backgroundColor = new Color(204, 255, 255); break;
-                case "marrone": backgroundColor = new Color(210, 180, 140); break;
-                default: backgroundColor = Color.LIGHT_GRAY;
+                case "rosso":
+                    backgroundColor = new Color(255, 153, 153);
+                    break;
+                case "giallo":
+                    backgroundColor = new Color(255, 255, 153);
+                    break;
+                case "blu":
+                    backgroundColor = new Color(153, 204, 255);
+                    break;
+                case "verde":
+                    backgroundColor = new Color(153, 255, 153);
+                    break;
+                case "arancione":
+                    backgroundColor = new Color(255, 204, 153);
+                    break;
+                case "rosa":
+                    backgroundColor = new Color(255, 204, 229);
+                    break;
+                case "viola":
+                    backgroundColor = new Color(204, 153, 255);
+                    break;
+                case "celeste":
+                    backgroundColor = new Color(204, 255, 255);
+                    break;
+                case "marrone":
+                    backgroundColor = new Color(210, 180, 140);
+                    break;
+                default:
+                    backgroundColor = Color.LIGHT_GRAY;
             }
             card.setBackground(backgroundColor);
             card.setOpaque(true);
@@ -534,9 +552,19 @@ public class VistaBacheca {
         condivisiButton.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
         condivisiButton.addActionListener(ev -> {
             StringBuilder sb = new StringBuilder();
-            List<Utente> utentiCondivisi = t.getUtentiPossessori();
+            List<Utente> utentiCondivisi = new ArrayList<>(); // Inizializza una lista vuota
 
-            if (utentiCondivisi.isEmpty() || utentiCondivisi.size() <= 1) {
+            try {
+                utentiCondivisi = controller.getToDoDAO().getUtentiCondivisiByToDoId(t.getTodoId());
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(frameVista,
+                        "Errore durante il recupero delle condivisioni dal database: " + ex.getMessage(),
+                        "Errore Database",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (utentiCondivisi.isEmpty()) {
                 JOptionPane.showMessageDialog(frameVista,
                         "Non condiviso con nessuno.",
                         "Nessuna Condivisione",

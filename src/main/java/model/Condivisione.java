@@ -9,7 +9,6 @@ public class Condivisione {
     private ToDo todo;
     private Utente utente;
 
-    private int id;
     private int todoId;
     private List<Integer> utentiId;
 
@@ -45,5 +44,21 @@ public class Condivisione {
     }
     public void setUtente(Utente utente) {
         this.utente = utente;
+    }
+
+    public int getTodoId() {
+        return todoId;
+    }
+
+    public void setTodoId(int todoId) {
+        this.todoId = todoId;
+    }
+
+    public List<Integer> getUtentiId() {
+        return utentiId;
+    }
+
+    public void setUtentiId(List<Integer> utentiId) {
+        this.utentiId = utentiId;
     }
 }

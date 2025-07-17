@@ -2,6 +2,7 @@ package gui;
 import controller.Controller;
 import model.*;
 import javax.swing.*;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -71,7 +72,7 @@ public class CreaToDo {
 
         //Serve a popolare la list per le condivisioni dei To do
         DefaultListModel<String> utentiModel = new DefaultListModel<>();
-        for (Utente u : controller.getTuttiUtenti()) {
+        for (Utente u : controller.getTuttiUtentiFromDB()) {
             if (!u.getUsername().equals(utente))
                 utentiModel.addElement(u.getUsername());
         }
@@ -126,24 +127,16 @@ public class CreaToDo {
                     return;
                 }
 
-                // recupera l'utente loggato e crea la lista degli utenti possessori
-                ArrayList<Utente> utenti = new ArrayList<>();
-                Utente utenteCreatore = controller.getUtenteByUsername(utente);
-                utenti.add(utenteCreatore);
+                int nuovaPosizioneInt = Integer.parseInt(posizione);
 
-                // Aggiungi gli utenti selezionati dalla lista
-                for (String username : utentiList.getSelectedValuesList()) {
-                    Utente u = controller.getUtenteByUsername(username);
-                    if (u != null) {
-                        utenti.add(u);
-                    }
-                }
-                // Controlla che la posizione non sia già occupata
                 boolean posizioneOccupata = false;
                 for (ToDo t : bacheca.getTodo()) {
-                    if (t.getPosizione().equals(posizione)) {
-                        posizioneOccupata = true;
-                        break;
+                    if (t.getPosizione() != null && controller.isValidPosition(t.getPosizione())) {
+                        int existingPosizioneInt = Integer.parseInt(t.getPosizione());
+                        if (existingPosizioneInt == nuovaPosizioneInt) {
+                            posizioneOccupata = true;
+                            break;
+                        }
                     }
                 }
 
@@ -156,7 +149,33 @@ public class CreaToDo {
                 }
 
 
-                // Crea il nuovo ToDo
+                String[] dataSplit = dataStr.split("/");
+                int anno = Integer.parseInt(dataSplit[2]);
+                int mese = Integer.parseInt(dataSplit[1])-1;
+                int gg = Integer.parseInt(dataSplit[0]);
+                GregorianCalendar data = new GregorianCalendar(anno, mese, gg);
+                if (data == null) {
+                    JOptionPane.showMessageDialog(frameCreaToDo,
+                            "Formato data non valido dopo la validazione iniziale. Riprova.",
+                            "Errore Interno Data",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // recupera l'utente loggato e crea la lista degli utenti possessori
+                ArrayList<Utente> utenti = new ArrayList<>();
+                Utente utenteCreatore = controller.getUtenteByUsername(utente);
+                utenti.add(utenteCreatore);
+
+                // Aggiungi gli utenti selezionati dalla lista
+                for (String username : utentiList.getSelectedValuesList()) {
+                    Utente u = controller.getUtenteByUsername(username);
+                    if (u != null) {
+                        utenti.add(u);
+                    }
+                }
+
+                // Crea il nuovo To Do (in memoria)
                 ToDo nuovoToDo = new ToDo(titolo, descrizione, url, dataScadenza, img,
                         posizione, colore, utenti, utenteCreatore);
                 nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
@@ -166,15 +185,20 @@ public class CreaToDo {
                     nuovoToDo.setChecklist(checklistTemp);
                 }
 
-                // Aggiunge il ToDo alla bacheca
-                controller.addToDo(bacheca, nuovoToDo, utente);
+                controller.inserisciToDoECondividiNelDB(bacheca, nuovoToDo, utenteCreatore.getUsername());
 
                 // Chiude la finestra e torna alla vista bacheca
                 frameCreaToDo.dispose();
                 VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
                 vistaBacheca.frameVista.setVisible(true);
 
-            } catch (Exception ex) {
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(frameCreaToDo,
+                        "Errore del database durante la creazione del ToDo: " + ex.getMessage(),
+                        "Errore Database",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception ex) {
                 JOptionPane.showMessageDialog(frameCreaToDo,
                         "Errore durante la creazione del ToDo: " + ex.getMessage(),
                         "Errore",
