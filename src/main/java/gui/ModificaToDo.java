@@ -160,19 +160,23 @@ public class ModificaToDo {
     private void inizializzaModificaListener() {
         buttonModifica.addActionListener(e -> {
             try {
-                if (!isValidDate(textFieldData.getText())) {
+                String posizioneStr = textFieldPosizione.getText().trim();
+                String coloreStr = textFieldColore.getText().trim();
+                String dataStr = textFieldData.getText().trim();
+
+                if (!isValidDate(dataStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
                     return;
                 }
-                String posizioneStr = textFieldPosizione.getText().trim();
+
                 if (!controller.isValidPosition(posizioneStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo,
                             "La posizione deve essere un numero intero positivo",
-                                   "Errore formato posizione",
+                            "Errore formato posizione",
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                String coloreStr = textFieldColore.getText().trim();
+
                 if (!controller.isValidColor(coloreStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo,
                             "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone",
@@ -180,9 +184,9 @@ public class ModificaToDo {
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                String nuovaPosizione = textFieldPosizione.getText().trim();
+
                 for (ToDo t : bacheca.getTodo()) {
-                    if (!t.equals(toDo) && t.getPosizione().equals(nuovaPosizione)) {
+                    if (!t.equals(toDo) && Integer.parseInt(t.getPosizione()) == Integer.parseInt(posizioneStr)) {
                         JOptionPane.showMessageDialog(frameModificaToDo,
                                 "Esiste già un altro ToDo con questa posizione nella bacheca.",
                                 "Errore posizione duplicata",
@@ -191,29 +195,26 @@ public class ModificaToDo {
                     }
                 }
 
-                // PRENDE VECCHI POSSESSORI
                 ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
-                // Recupera i dati dai campi di testo
                 String titolo = textFieldTitolo.getText();
                 String descrizione = textFieldDescrizione.getText();
-                String dataScadenza = textFieldData.getText();
+                String dataScadenza = dataStr;
                 String img = textFieldImg.getText();
-                String posizione = textFieldPosizione.getText();
+                String posizione = posizioneStr;
                 String url = textFieldUrl.getText();
-                String colore = textFieldColore.getText();
+                String colore = coloreStr;
                 StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
-
-                // COSTRUISCE NUOVA LISTA POSSESSORI
                 ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
 
-                // MODIFICA TO do
                 modificaToDo(titolo, descrizione, dataScadenza, img, posizione, url, colore, stato, nuoviPossessori);
-
-                // AGGIORNA BACHECHE
                 aggiornaBacheche(vecchiPossessori, nuoviPossessori);
                 chiudiEApriVista();
+
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frameModificaToDo, "Errore: " + ex.getMessage());
+                JOptionPane.showMessageDialog(frameModificaToDo,
+                        "Errore: " + ex.getMessage(),
+                        "Errore durante la modifica",
+                        JOptionPane.ERROR_MESSAGE);
             }
         });
     }
