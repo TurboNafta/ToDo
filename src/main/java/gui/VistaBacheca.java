@@ -165,7 +165,7 @@ public class VistaBacheca {
      */
     private void aggiornaListaToDo() {
         try {
-            // Prima ricarica i ToDo dal database
+            // Prima ricarica i To do dal database
             List<ToDo> todoFromDB = controller.getToDoByBacheca(bacheca.getId());
             bacheca.setTodo(todoFromDB);
 
@@ -238,6 +238,7 @@ public class VistaBacheca {
         todoPanelris.revalidate();
         todoPanelris.repaint();
     }
+
     private JPanel createToDoCard(ToDo t) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -376,10 +377,16 @@ public class VistaBacheca {
      * nuova bacheca
      */
     private void gestisciSpostamento(ToDo t) {
-        Utente utente = verificaUtente();
+        Utente utente = controller.getUtenteByUsername(utenteLoggato);
         if (utente == null) return;
 
+        utente.setBacheca(controller.getBachecaList("", utenteLoggato));
+
         List<Bacheca> bacheche = utente.getBacheca();
+        System.out.println("DEBUG: Bacheche disponibili per l'utente:");
+        for (Bacheca b : bacheche) {
+            System.out.println(" - Titolo: '" + b.getTitolo() + "' (id=" + b.getId() + ")");
+        }
         String[] titoliBacheca = getTitoliBacheche(bacheche);
         if (titoliBacheca.length == 0) {
             mostraMessaggioNessunaBacheca();
@@ -387,6 +394,9 @@ public class VistaBacheca {
         }
 
         String titolo = richiediTitoloBacheca(titoliBacheca);
+        // DEBUG: stampa il titolo selezionato
+        System.out.println("DEBUG: Titolo bacheca selezionato: '" + titolo + "'");
+
         if (titolo != null) {
             gestisciSelezioneBacheca(t, bacheche, titolo);
         }
@@ -411,8 +421,7 @@ public class VistaBacheca {
      */
     private String[] getTitoliBacheche(List<Bacheca> bacheche) {
         return bacheche.stream()
-                .filter(b -> !(b.getTitolo().equals(bacheca.getTitolo()) &&
-                        b.getDescrizione().equals(bacheca.getDescrizione())))
+                .filter(b -> b.getId() != bacheca.getId())
                 .map(b -> b.getTitolo().toString())
                 .distinct()
                 .toArray(String[]::new);
@@ -446,17 +455,24 @@ public class VistaBacheca {
     /**
      * Metodo che ci verifica i dati inseriti e completa lo spostamento
      */
-    private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titolo) {
-        String[] descrizioni = getDescrizioniBacheca(bacheche, titolo);
-        if (descrizioni.length == 0) {
-            mostraMessaggioNessunaBachecaTrovata();
+    private void gestisciSelezioneBacheca(ToDo t, List<Bacheca> bacheche, String titoloDestinazione) {
+        if (titoloDestinazione == null) return;
+        Bacheca bachecaDestinazione = null;
+        for (Bacheca b : bacheche) {
+            String titoloBacheca = b.getTitolo() != null ? b.getTitolo().toString() : null;
+            if (titoloBacheca != null &&
+                    titoloBacheca.trim().equalsIgnoreCase(titoloDestinazione.trim())) {
+                bachecaDestinazione = b;
+                break;
+            }
+        }
+        if (bachecaDestinazione == null) {
+            // Eventuale messaggio di errore
             return;
         }
-
-        String descrizione = richiediDescrizioneBacheca(descrizioni);
-        if (descrizione != null) {
-            completaSpostamento(t, titolo, descrizione);
-        }
+        Bacheca bachecaOrigine = t.getBacheca();
+        controller.spostaToDoInAltraBacheca(t, bachecaOrigine, bachecaDestinazione);
+        aggiornaListaToDo();
     }
 
     /**
@@ -504,8 +520,13 @@ public class VistaBacheca {
                 descrizione
         );
 
-        if (bachecaDestinazione != null) {
+        if (bachecaDestinazione != null ) {
             controller.spostaToDoInAltraBacheca(t, bacheca, bachecaDestinazione);
+           try {
+               bacheca.setTodo(controller.getToDoByBacheca(bacheca.getId()));
+           } catch (SQLException e){
+               e.printStackTrace();
+           }
             aggiornaListaToDo();
             mostraMessaggioSuccesso();
         }

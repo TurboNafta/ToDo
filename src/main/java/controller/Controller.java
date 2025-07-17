@@ -404,9 +404,25 @@ public class Controller {
      * Metodo che ci serve a spostare quel to do in un'altra bacheca scelta dall'utente
      */
     public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {
-        bachecaOrigine.eliminaToDo(todo);
-        todo.setPosizione(String.valueOf(bachecaDestinazione.getTodo().size() + 1));
-        bachecaDestinazione.aggiungiToDo(todo);
+        System.out.println("DEBUG: Sposto ToDo id=" + todo.getTodoId()
+                + " da bacheca " + bachecaOrigine.getId()
+                + " a bacheca " + bachecaDestinazione.getId());
+
+        try {
+            // Aggiorna DB
+            String nuovaPosizione = String.valueOf(bachecaDestinazione.getTodo().size() + 1);
+            toDoDAO.aggiornaBachecaToDo(todo.getTodoId(), bachecaDestinazione.getId(), nuovaPosizione);
+
+            // Aggiorna oggetti in memoria
+            bachecaOrigine.setTodo(toDoDAO.getToDoByBacheca(bachecaOrigine.getId()));
+            bachecaDestinazione.setTodo(toDoDAO.getToDoByBacheca(bachecaDestinazione.getId()));
+
+            todo.setBacheca(bachecaDestinazione);
+            todo.setPosizione(nuovaPosizione);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante lo spostamento del ToDo: " + e.getMessage(), e);
+        }
     }
 
     /**
