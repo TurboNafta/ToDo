@@ -268,8 +268,15 @@ public class ModificaToDo {
                     u.getUsername()
             );
             if (!bachecaUtente.getTodo().contains(toDo)) {
-                controller.addToDo(bachecaUtente, toDo, u.getUsername());
+                // Se il ToDo è nuovo (ID = 0), lo aggiungo
+                if (toDo.getTodoId() == 0) {
+                    controller.addToDo(bachecaUtente, toDo, u.getUsername());
+                } else {
+                    // Se esiste già, lo aggiungo solo in memoria senza creare un duplicato nel DB
+                    bachecaUtente.getTodo().add(toDo);
+                }
             }
+
         }
 
         for (Utente u : vecchiPossessori) {

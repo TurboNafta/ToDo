@@ -13,8 +13,8 @@ import java.util.List;
 public class ToDoDAO implements InterfacciaToDoDAO {
     @Override
     public int inserisci(ToDo todo, String username, int bachecaId) throws SQLException {
-        String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, autore_username, bacheca_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, stato, autore_username, bacheca_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -28,8 +28,9 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             stmt.setString(5, todo.getImage());
             stmt.setString(6, todo.getPosizione());
             stmt.setString(7, todo.getColoresfondo());
-            stmt.setString(8, username);
-            stmt.setInt(9, bachecaId);
+            stmt.setString(8, todo.getStato().name());
+            stmt.setString(9, username);
+            stmt.setInt(10, bachecaId);
 
             stmt.executeUpdate();
 
@@ -64,19 +65,35 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             }
         }
     }
+
     private void inserisciChecklist(int todoId, CheckList checklist, Connection conn) throws SQLException {
-        String query = "INSERT INTO attivita (titolo, stato, checklist_id) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        // 1. Inserisci la checklist
+        String insertChecklistSql = "INSERT INTO checklist (todo_id) VALUES (?)";
+        int checklistId;
+
+        try (PreparedStatement stmtChecklist = conn.prepareStatement(insertChecklistSql, Statement.RETURN_GENERATED_KEYS)) {
+            stmtChecklist.setInt(1, todoId);
+            stmtChecklist.executeUpdate();
+            try (ResultSet generatedKeys = stmtChecklist.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    checklistId = generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Inserimento checklist fallito, nessun ID ottenuto.");
+                }
+            }
+        }
+
+        // 2. Inserisci le attività col checklist_id ottenuto
+        String insertAttivitaSql = "INSERT INTO attivita (titolo, stato, checklist_id) VALUES (?, ?, ?)";
+        try (PreparedStatement stmtAttivita = conn.prepareStatement(insertAttivitaSql)) {
             for (Attivita attivita : checklist.getAttivita()) {
-                stmt.setInt(1, todoId);
-                stmt.setString(2, attivita.getTitolo());
-                stmt.setBoolean(3, attivita.getStato() == StatoAttivita.COMPLETATA);
-                stmt.executeUpdate();
+                stmtAttivita.setString(1, attivita.getTitolo());
+                stmtAttivita.setString(2, attivita.getStato().name()); // usa "COMPLETATO" o "NONCOMPLETATO"
+                stmtAttivita.setInt(3, checklistId);
+                stmtAttivita.executeUpdate();
             }
         }
     }
-
-
 
 
     @Override

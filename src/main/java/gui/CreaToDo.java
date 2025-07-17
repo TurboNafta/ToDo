@@ -142,6 +142,7 @@ public class CreaToDo {
                 // Crea il nuovo ToDo
                 ToDo nuovoToDo = new ToDo(titolo, descrizione, url, dataScadenza, img,
                         posizione, colore, utenti, utenteCreatore);
+                nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
 
                 // Imposta la checklist se presente
                 if (checklistTemp != null && !checklistTemp.getAttivita().isEmpty()) {
