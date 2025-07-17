@@ -166,7 +166,7 @@ public class VistaBacheca {
     private void aggiornaListaToDo() {
         try {
             // Prima ricarica i To do dal database
-            List<ToDo> todoFromDB = controller.getToDoByBacheca(bacheca.getId());
+            List<ToDo> todoFromDB = controller.getToDoByBachecaAndUtente(bacheca.getId(), utenteLoggato);
             bacheca.setTodo(todoFromDB);
 
             // Crea una nuova lista per l'ordinamento

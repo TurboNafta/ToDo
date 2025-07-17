@@ -241,4 +241,205 @@ public class ToDoDAO implements InterfacciaToDoDAO {
             System.out.println("DEBUG: Rows updated: " + updated);
         }
     }
+
+    public List<ToDo> getToDoCondivisiConUtente(String username) throws SQLException {
+        String sql = "SELECT t.* FROM todo t " +
+                "JOIN condivisione c ON t.id = c.todo_id " +
+                "WHERE c.utente_username = ? AND t.autore_username <> ?";
+        List<ToDo> condivisi = new ArrayList<>();
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, username);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int todoId = rs.getInt("id");
+                GregorianCalendar data = new GregorianCalendar();
+                if (rs.getDate("datascadenza") != null) {
+                    data.setTime(rs.getDate("datascadenza"));
+                }
+
+                // Costruisci autore (puoi anche recuperare altri campi se vuoi)
+                Utente autore = new Utente(rs.getString("autore_username"), "");
+
+                // Istanzia il To Do
+                ToDo todo = new ToDo(
+                        rs.getString("titolo"),
+                        rs.getString("descrizione"),
+                        rs.getString("url"),
+                        new SimpleDateFormat("dd/MM/yyyy").format(data.getTime()),
+                        rs.getString("image"),
+                        rs.getString("posizione"),
+                        rs.getString("coloresfondo"),
+                        new ArrayList<>(),
+                        autore
+                );
+                todo.setTodoId(todoId);
+                todo.setStato(StatoToDo.valueOf(rs.getString("stato")));
+                todo.setBacheca(new Bacheca(rs.getInt("bacheca_id"), null, null, null));
+
+                String sqlSelectPossessori = "SELECT utente_username FROM condivisione WHERE todo_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(sqlSelectPossessori)) {
+                    pstmt.setInt(1, todoId);
+                    ResultSet rsP = pstmt.executeQuery();
+                    while(rsP.next()) {
+                        String usernamePossessore = rsP.getString("utente_username");
+                        todo.getUtentiPossessori().add(new Utente(usernamePossessore, ""));
+                    }
+                }
+                condivisi.add(todo);
+            }
+        }
+        return condivisi;
+    }
+
+    public List<ToDo> getToDoByBachecaAndUtente(int bachecaId, String username) throws SQLException {
+        List<ToDo> result = new ArrayList<>();
+
+        // 1. To Do propri dell'utente in questa bacheca
+        String sqlPropri = "SELECT t.* FROM todo t WHERE t.bacheca_id = ? AND t.autore_username = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlPropri)) {
+            stmt.setInt(1, bachecaId);
+            stmt.setString(2, username);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int todoId = rs.getInt("id");
+
+                GregorianCalendar data = new GregorianCalendar();
+                if (rs.getDate("datascadenza") != null) {
+                    data.setTime(rs.getDate("datascadenza"));
+                }
+
+                Utente autore = new Utente(rs.getString("autore_username"), "");
+
+                ToDo todo = new ToDo(
+                        rs.getString("titolo"),
+                        rs.getString("descrizione"),
+                        rs.getString("url"),
+                        new SimpleDateFormat("dd/MM/yyyy").format(data.getTime()),
+                        rs.getString("image"),
+                        rs.getString("posizione"),
+                        rs.getString("coloresfondo"),
+                        new ArrayList<>(),
+                        autore
+                );
+                todo.setTodoId(todoId);
+                todo.setStato(StatoToDo.valueOf(rs.getString("stato")));
+                todo.setBacheca(new Bacheca(bachecaId, null, null, null));
+
+                CheckList checklist = new CheckList(todo);
+                todo.setChecklist(checklist);
+
+                //Recupera i possessori per il To do corrente
+                String sqlSelectPossessori = "SELECT utente_username FROM condivisione WHERE todo_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(sqlSelectPossessori)) {
+                    pstmt.setInt(1, todoId);
+                    ResultSet rsP = pstmt.executeQuery();
+                    while(rsP.next()) {
+                        String usernamePossessore = rsP.getString("utente_username");
+                        todo.getUtentiPossessori().add(new Utente(usernamePossessore, ""));
+                    }
+                }
+                //Recupera le attività della checklist per il To do corrente
+                String sqlSelectChecklist = "SELECT id, titolo, stato, checklist_id FROM attivita WHERE checklist_id = ?";
+                try (PreparedStatement stmtChecklist = conn.prepareStatement(sqlSelectChecklist)) {
+                    stmtChecklist.setInt(1, todoId);
+                    ResultSet rsChecklist = stmtChecklist.executeQuery();
+                    List<Attivita> attivitaList = new ArrayList<>();
+                    while (rsChecklist.next()) {
+                        int attivitaId = rsChecklist.getInt("id");
+                        String attivitaTitolo = rsChecklist.getString("titolo");
+                        boolean attivitaStato = rsChecklist.getBoolean("stato");
+                        int checklistIdFromDb = rsChecklist.getInt("checklist_id");
+
+                        Attivita attivita = new Attivita(attivitaId, checklistIdFromDb, attivitaTitolo, StatoAttivita.NONCOMPLETATA);
+                        if (attivitaStato) {
+                            attivita.setStato(StatoAttivita.COMPLETATA);
+                        } else {
+                            attivita.setStato(StatoAttivita.NONCOMPLETATA);
+                        }
+                        attivitaList.add(attivita);
+                    }
+                    todo.getChecklist().setAttivita(attivitaList);
+                }
+                result.add(todo);
+            }
+        }
+
+        // 2. To Do condivisi (tramite tabella condivisione)
+        String sqlCondivisi = "SELECT t.* FROM todo t " +
+                "JOIN condivisione c ON t.id = c.todo_id " +
+                "WHERE t.bacheca_id = ? AND c.utente_username = ? AND t.autore_username <> ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sqlCondivisi)) {
+            stmt.setInt(1, bachecaId);
+            stmt.setString(2, username);
+            stmt.setString(3, username);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int todoId = rs.getInt("id");
+
+                GregorianCalendar data = new GregorianCalendar();
+                if (rs.getDate("datascadenza") != null) {
+                    data.setTime(rs.getDate("datascadenza"));
+                }
+
+                Utente autore = new Utente(rs.getString("autore_username"), "");
+
+                ToDo todo = new ToDo(
+                        rs.getString("titolo"),
+                        rs.getString("descrizione"),
+                        rs.getString("url"),
+                        new SimpleDateFormat("dd/MM/yyyy").format(data.getTime()),
+                        rs.getString("image"),
+                        rs.getString("posizione"),
+                        rs.getString("coloresfondo"),
+                        new ArrayList<>(),
+                        autore
+                );
+                todo.setTodoId(todoId);
+                todo.setStato(StatoToDo.valueOf(rs.getString("stato")));
+                todo.setBacheca(new Bacheca(bachecaId, null, null, null));
+
+                CheckList checklist = new CheckList(todo);
+                todo.setChecklist(checklist);
+
+                //Recupera i possessori per il To do corrente
+                String sqlSelectPossessori = "SELECT utente_username FROM condivisione WHERE todo_id = ?";
+                try (PreparedStatement pstmt = conn.prepareStatement(sqlSelectPossessori)) {
+                    pstmt.setInt(1, todoId);
+                    ResultSet rsP = pstmt.executeQuery();
+                    while(rsP.next()) {
+                        String usernamePossessore = rsP.getString("utente_username");
+                        todo.getUtentiPossessori().add(new Utente(usernamePossessore, ""));
+                    }
+                }
+                //Recupera le attività della checklist per il To do corrente
+                String sqlSelectChecklist = "SELECT id, titolo, stato, checklist_id FROM attivita WHERE checklist_id = ?";
+                try (PreparedStatement stmtChecklist = conn.prepareStatement(sqlSelectChecklist)) {
+                    stmtChecklist.setInt(1, todoId);
+                    ResultSet rsChecklist = stmtChecklist.executeQuery();
+                    List<Attivita> attivitaList = new ArrayList<>();
+                    while (rsChecklist.next()) {
+                        int attivitaId = rsChecklist.getInt("id");
+                        String attivitaTitolo = rsChecklist.getString("titolo");
+                        boolean attivitaStato = rsChecklist.getBoolean("stato");
+                        int checklistIdFromDb = rsChecklist.getInt("checklist_id");
+
+                        Attivita attivita = new Attivita(attivitaId, checklistIdFromDb, attivitaTitolo, StatoAttivita.NONCOMPLETATA);
+                        if (attivitaStato) {
+                            attivita.setStato(StatoAttivita.COMPLETATA);
+                        } else {
+                            attivita.setStato(StatoAttivita.NONCOMPLETATA);
+                        }
+                        attivitaList.add(attivita);
+                    }
+                    todo.getChecklist().setAttivita(attivitaList);
+                }
+                result.add(todo);
+            }
+        }
+        return result;
+    }
 }

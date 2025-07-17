@@ -36,24 +36,41 @@ public class Controller {
      */
     public List<Bacheca> getBachecaList(String titolo, String username) {
         try {
-            // Recupera l'utente
             Utente utente = getUtenteByUsername(username);
             if (utente == null) {
                 throw new IllegalArgumentException("Utente non trovato: " + username);
             }
-
-            // Recupera tutte le bacheche dal database
+            // Bacheche proprie
             List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(username);
 
-            // Aggiorna la lista delle bacheche dell'utente in memoria
+            // ToDo condivisi con l'utente
+            List<ToDo> condivisi = toDoDAO.getToDoCondivisiConUtente(username);
+            for (ToDo t : condivisi) {
+                Bacheca bachecaOrig = bachecaDAO.getBachecaById(t.getBacheca().getId());
+                // Se NON è già tra le bacheche dell'utente, aggiungila (in memoria!)
+                boolean presente = false;
+                for (Bacheca b : bachecheDalDB) {
+                    if (b.getId() == bachecaOrig.getId()) {
+                        presente = true;
+                        break;
+                    }
+                }
+                if (!presente) {
+                    bachecheDalDB.add(bachecaOrig);
+                }
+            }
+
+            // Popola i ToDo corretti
+            for (Bacheca b : bachecheDalDB) {
+                b.setTodo(toDoDAO.getToDoByBachecaAndUtente(b.getId(), username));
+            }
+
             utente.setBacheca(bachecheDalDB);
 
-            // Se non è specificato un titolo, restituisce tutte le bacheche
+            // Filtra per titolo se necessario (come già fai)
             if (titolo == null || titolo.isEmpty()) {
                 return bachecheDalDB;
             }
-
-            // Filtra per titolo se specificato
             List<Bacheca> bachecheFiltered = new ArrayList<>();
             TitoloBacheca titoloBacheca = stringToTitoloBacheca(titolo);
             if (titoloBacheca != null) {
@@ -64,7 +81,6 @@ public class Controller {
                 }
             }
             return bachecheFiltered;
-
         } catch (SQLException e) {
             throw new RuntimeException("Errore nel recupero delle bacheche: " + e.getMessage(), e);
         }
@@ -121,8 +137,9 @@ public class Controller {
         }
     }
 
-
-
+    public List<ToDo> getToDoByBachecaAndUtente(int bachecaId, String username) throws SQLException {
+        return toDoDAO.getToDoByBachecaAndUtente(bachecaId, username);
+    }
 
     /**
      * Metodo che ci setta l'utente loggato
