@@ -245,7 +245,7 @@ public class ModificaToDo {
                 this.toDo.setStato(stato);
                 this.toDo.setUtentiPossessori(nuoviPossessori);
 
-                controller.updateToDoAndSharesInDB(this.bacheca, this.toDo, this.utente);
+                controller.aggiornaToDoNelDB(this.bacheca, this.toDo, this.utente);
                 aggiornaBacheche(vecchiPossessori, nuoviPossessori);
 
                 JOptionPane.showMessageDialog(frameModificaToDo,

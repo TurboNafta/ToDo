@@ -12,7 +12,6 @@ public class TestConnessione {
 
             while(rs.next()){
                 String username = rs.getString("username");
-                System.out.println("Utente trovato: " + username);
             }
         } catch (Exception e){
             e.printStackTrace();

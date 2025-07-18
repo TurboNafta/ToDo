@@ -43,7 +43,7 @@ public class Controller {
             // Bacheche proprie
             List<Bacheca> bachecheDalDB = bachecaDAO.getBachecheByUtente(username);
 
-            // ToDo condivisi con l'utente
+            // To Do condivisi con l'utente
             List<ToDo> condivisi = toDoDAO.getToDoCondivisiConUtente(username);
             for (ToDo t : condivisi) {
                 Bacheca bachecaOrig = bachecaDAO.getBachecaById(t.getBacheca().getId());
@@ -60,7 +60,7 @@ public class Controller {
                 }
             }
 
-            // Popola i ToDo corretti
+            // Popola i To Do corretti
             for (Bacheca b : bachecheDalDB) {
                 b.setTodo(toDoDAO.getToDoByBachecaAndUtente(b.getId(), username));
             }
@@ -120,9 +120,6 @@ public class Controller {
 
             // Salva nel database e ottiene l'id generato
             int idBacheca = bachecaDAO.inserisci(nuova);
-
-            // Debug
-            System.out.println("Nuova bacheca creata - ID: " + idBacheca);
 
             // Aggiorna la struttura in memoria
             nuova.setId(idBacheca);
@@ -377,13 +374,6 @@ public class Controller {
         }
     }
 
-    /**
-     * Metodo che ci restituisce tutti gli utenti
-     * @return
-     */
-    public Utente[] getTuttiUtenti() {
-        return listaUtenti.toArray(new Utente[0]);
-    }
 
     /**
      * Metodo che prende la bacheca con titolo e descrizione inseriti dall'utente, e se manca, la crea
@@ -422,10 +412,6 @@ public class Controller {
      * Metodo che ci serve a spostare quel to do in un'altra bacheca scelta dall'utente
      */
     public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {
-        System.out.println("DEBUG: Sposto ToDo id=" + todo.getTodoId()
-                + " da bacheca " + bachecaOrigine.getId()
-                + " a bacheca " + bachecaDestinazione.getId());
-
         try {
             // Aggiorna DB
             String nuovaPosizione = String.valueOf(bachecaDestinazione.getTodo().size() + 1);
@@ -616,7 +602,7 @@ public class Controller {
                 throw new SQLException("La creazione del ToDo nel database è fallita, nessuna riga interessata.");
             }
 
-            // Recupera l'ID generato per il nuovo ToDo
+            // Recupera l'ID generato per il nuovo To Do
             int todoId = -1;
             rs = pstmtToDo.getGeneratedKeys();
             if (rs.next()) {
@@ -681,26 +667,26 @@ public class Controller {
         }
     }
 
-    public void updateToDoAndSharesInDB(Bacheca bacheca, ToDo toDoModificato, String utenteCreatoreUsername) throws SQLException {
+    public void aggiornaToDoNelDB(Bacheca bacheca, ToDo toDoModificato, String utenteCreatoreUsername) throws SQLException {
         String updateToDoSQL = "UPDATE todo SET titolo = ?, descrizione = ?, url = ?, datascadenza = ?, image = ?, posizione = ?, coloresfondo = ?, stato = ?, autore_username = ?, bacheca_id = ? WHERE id = ?";
-        String deleteSharesSQL = "DELETE FROM condivisione WHERE todo_id = ?";
-        String insertShareSQL = "INSERT INTO condivisione (todo_id, utente_username) VALUES (?, ?)";
+        String deleteCondivisioniSQL = "DELETE FROM condivisione WHERE todo_id = ?";
+        String insertCondivisioniSQL = "INSERT INTO condivisione (todo_id, utente_username) VALUES (?, ?)";
 
         Connection conn = null;
         PreparedStatement pstmtUpdateToDo = null;
-        PreparedStatement pstmtDeleteShares = null;
-        PreparedStatement pstmtInsertShare = null;
+        PreparedStatement pstmtDeleteCondivisioni = null;
+        PreparedStatement pstmtInsertCondivisioni = null;
 
         try {
             conn = ConnessioneDatabase.getConnection();
             conn.setAutoCommit(false);
 
-            // Validazione dell'ID del ToDo
+            // Validazione dell'ID del To Do
             if (toDoModificato.getTodoId() == 0) {
                 throw new SQLException("Impossibile aggiornare un ToDo con ID 0. Assicurarsi che il ToDo esista nel DB.");
             }
 
-            // 1. Aggiorna i dati del ToDo nella tabella 'todo'
+            // Aggiorna i dati del To Do nella tabella 'to do'
             pstmtUpdateToDo = conn.prepareStatement(updateToDoSQL);
             pstmtUpdateToDo.setString(1, toDoModificato.getTitolo());
             pstmtUpdateToDo.setString(2, toDoModificato.getDescrizione());
@@ -724,20 +710,20 @@ public class Controller {
                 throw new SQLException("Aggiornamento del ToDo nel database fallito, nessuna riga interessata. ID ToDo: " + toDoModificato.getTodoId());
             }
 
-            // 2. Elimina tutte le condivisioni esistenti per questo ToDo
-            pstmtDeleteShares = conn.prepareStatement(deleteSharesSQL);
-            pstmtDeleteShares.setInt(1, toDoModificato.getTodoId());
-            pstmtDeleteShares.executeUpdate();
+            // Elimina tutte le condivisioni esistenti per questo To Do
+            pstmtDeleteCondivisioni = conn.prepareStatement(deleteCondivisioniSQL);
+            pstmtDeleteCondivisioni.setInt(1, toDoModificato.getTodoId());
+            pstmtDeleteCondivisioni.executeUpdate();
 
-            pstmtInsertShare = conn.prepareStatement(insertShareSQL);
+            pstmtInsertCondivisioni = conn.prepareStatement(insertCondivisioniSQL);
             List<Utente> nuoviUtentiCondivisi = toDoModificato.getUtentiPossessori();
 
             for (Utente u : nuoviUtentiCondivisi) {
-                pstmtInsertShare.setInt(1, toDoModificato.getTodoId());
-                pstmtInsertShare.setString(2, u.getUsername());
-                pstmtInsertShare.addBatch();
+                pstmtInsertCondivisioni.setInt(1, toDoModificato.getTodoId());
+                pstmtInsertCondivisioni.setString(2, u.getUsername());
+                pstmtInsertCondivisioni.addBatch();
             }
-            pstmtInsertShare.executeBatch();
+            pstmtInsertCondivisioni.executeBatch();
 
             conn.commit();
         } catch (SQLException e) {
@@ -755,14 +741,14 @@ public class Controller {
                     pstmtUpdateToDo.close();
                 } catch (SQLException e) { System.err.println("Errore chiusura pstmtUpdateToDo: " + e.getMessage()); }
             }
-            if (pstmtDeleteShares != null) {
+            if (pstmtDeleteCondivisioni != null) {
                 try {
-                    pstmtDeleteShares.close();
+                    pstmtDeleteCondivisioni.close();
                 } catch (SQLException e) { System.err.println("Errore chiusura pstmtDeleteShares: " + e.getMessage()); }
             }
-            if (pstmtInsertShare != null) {
+            if (pstmtInsertCondivisioni != null) {
                 try {
-                    pstmtInsertShare.close();
+                    pstmtInsertCondivisioni.close();
                 } catch (SQLException e) { System.err.println("Errore chiusura pstmtInsertShare: " + e.getMessage()); }
             }
             if (conn != null) {

@@ -400,10 +400,6 @@ public class VistaBacheca {
         utente.setBacheca(controller.getBachecaList("", utenteLoggato));
 
         List<Bacheca> bacheche = utente.getBacheca();
-        System.out.println("DEBUG: Bacheche disponibili per l'utente:");
-        for (Bacheca b : bacheche) {
-            System.out.println(" - Titolo: '" + b.getTitolo() + "' (id=" + b.getId() + ")");
-        }
         String[] titoliBacheca = getTitoliBacheche(bacheche);
         if (titoliBacheca.length == 0) {
             mostraMessaggioNessunaBacheca();
@@ -411,8 +407,6 @@ public class VistaBacheca {
         }
 
         String titolo = richiediTitoloBacheca(titoliBacheca);
-        // DEBUG: stampa il titolo selezionato
-        System.out.println("DEBUG: Titolo bacheca selezionato: '" + titolo + "'");
 
         if (titolo != null) {
             gestisciSelezioneBacheca(t, bacheche, titolo);
