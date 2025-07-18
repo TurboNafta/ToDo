@@ -313,28 +313,11 @@ public class ModificaToDo {
         return nuoviPossessoriList;
     }
 
-    /**
-     * Metodo che passa i dati alla funzione modificaToDo
-     */
-    private void modificaToDo(String titolo, String descrizione, String dataScadenza, String img,
-                              String posizione, String url, String colore, StatoToDo stato,
-                              ArrayList<Utente> nuoviPossessori) {
-        this.titolo = titolo;
-        this.descrizione = descrizione;
-        this.dataScadenza = dataScadenza;
-        this.img = img;
-        this.posizione = posizione;
-        this.url = url;
-        this.colore = colore;
-        this.stato = stato;
-        toDo.setUtentiPossessori(nuoviPossessori);
-        toDo.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
-    }
 
     /**
      * Metodo che aggiorna le bacheche degli utenti che posseggono quel to do dopo la modifica
      */
-    private void aggiornaBacheche(ArrayList<Utente> vecchiPossessori, ArrayList<Utente> nuoviPossessori) {
+    private void aggiornaBacheche(ArrayList<Utente> vecchiPossessori, ArrayList<Utente> nuoviPossessori) throws SQLException {
         for (Utente u : nuoviPossessori) {
             Bacheca bachecaUtente = controller.getOrCreateBacheca(
                     bacheca.getTitolo(),

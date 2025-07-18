@@ -21,6 +21,8 @@ public class Controller {
     private final UtenteDAO utenteDAO = new UtenteDAO();
     private final BachecaDAO bachecaDAO = new BachecaDAO();
     private final ToDoDAO toDoDAO = new ToDoDAO();
+    private final CheckListDAO checkListDAO = new CheckListDAO();
+    private final AttivitaDAO attivitaDAO = new AttivitaDAO();
 
     /**
      * Costruttore del Controller
@@ -170,24 +172,24 @@ public class Controller {
     /**
      * Metodo che ci aggiunge un to do alla bacheca di quell'utente
      */
-    public void addToDo(Bacheca bacheca, ToDo todo, String username) {
-        try {
-            // Prima salva il To Do nel database e ottieni l'ID generato
-            int todoId = toDoDAO.inserisci(todo, username, bacheca.getId());
-            todo.setTodoId(todoId); // Importante: imposta l'ID del to do
+    public void addToDo(Bacheca bacheca, ToDo toDo, String username) throws SQLException {
+        try (Connection conn = ConnessioneDatabase.getConnection()) {
+            conn.setAutoCommit(false); // Inizia la transazione
+            toDoDAO.inserisci(toDo, username, bacheca.getId()); // Inserisce il ToDo principale
 
-            // Imposta la bacheca nel to do
-            todo.setBacheca(bacheca);
-
-            // Aggiorna la struttura in memoria
-            bacheca.aggiungiToDo(todo);
-
-            // Gestisci i possessori
-            if (todo.getUtentiPossessori() == null) {
-                todo.setUtentiPossessori(new ArrayList<>());
+            if (toDo.getChecklist() != null && !toDo.getChecklist().getAttivita().isEmpty()) {
+                int checklistId = checkListDAO.inserisci(toDo.getTodoId());
+                if (checklistId == -1) {
+                    throw new SQLException("Failed to retrieve generated checklist ID for addToDo.");
+                }
+                for (Attivita attivita : toDo.getChecklist().getAttivita()) {
+                    attivitaDAO.inserisci(checklistId, attivita.getTitolo(), attivita.getStato());
+                }
             }
+            conn.commit();
         } catch (SQLException e) {
-            throw new RuntimeException("Errore inserimento ToDo: " + e.getMessage(), e);
+            System.err.println("Errore durante l'aggiunta del ToDo in addToDo: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -566,103 +568,72 @@ public class Controller {
         return utenti;
     }
 
-    public void inserisciToDoECondividiNelDB(Bacheca bacheca, ToDo nuovoToDo, String utenteCreatore)throws SQLException{
-        String queryToDo = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, stato, autore_username, bacheca_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String queryCond = "INSERT INTO condivisione (todo_id, utente_username) VALUES (?, ?)";
-
+    public void inserisciToDoNelDB(Bacheca bacheca, ToDo nuovoToDo, String utenteCreatoreUsername) throws SQLException {
         Connection conn = null;
-        PreparedStatement pstmtToDo = null;
-        PreparedStatement pstmtCondivisione = null;
-        ResultSet rs = null;
-
+        PreparedStatement pstmtUpdateToDo = null;
+        PreparedStatement pstmtDeleteCondivisioni = null;
+        PreparedStatement pstmtInsertCondivisioni = null;
         try {
             conn = ConnessioneDatabase.getConnection();
-            conn.setAutoCommit(false);
+            conn.setAutoCommit(false); // Inizia la transazione
 
-            // 1. Inserisci il ToDo nella tabella 'todo'
-            pstmtToDo = conn.prepareStatement(queryToDo, Statement.RETURN_GENERATED_KEYS);
-            pstmtToDo.setString(1, nuovoToDo.getTitolo());
-            pstmtToDo.setString(2, nuovoToDo.getDescrizione());
-            pstmtToDo.setString(3, nuovoToDo.getUrl());
+            // 1. Inserisci il ToD o principale e ottieni l'ID generato
 
-            java.util.GregorianCalendar gc = nuovoToDo.getDatascadenza();
-            java.util.Date utilDate = gc.getTime();
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-            pstmtToDo.setDate(4, sqlDate);
+            toDoDAO.inserisci(nuovoToDo, utenteCreatoreUsername, bacheca.getId());
 
-            pstmtToDo.setString(5, nuovoToDo.getImage());
-            pstmtToDo.setString(6, nuovoToDo.getPosizione());
-            pstmtToDo.setString(7, nuovoToDo.getColoresfondo());
-            pstmtToDo.setString(8, nuovoToDo.getStato().toString());
-            pstmtToDo.setString(9, utenteCreatore);
-            pstmtToDo.setInt(10, bacheca.getId());
+            int todoId = nuovoToDo.getTodoId();
 
-            int affectedRows = pstmtToDo.executeUpdate();
-            if (affectedRows == 0) {
-                throw new SQLException("La creazione del ToDo nel database è fallita, nessuna riga interessata.");
+            // 2. Gestisci la Checklist e le Attività
+            if (nuovoToDo.getChecklist() != null && !nuovoToDo.getChecklist().getAttivita().isEmpty()) {
+                // Inserisci la Checklist e ottieni il suo ID
+                int checklistId = checkListDAO.inserisci(todoId);
+                if (checklistId == -1) {
+                    throw new SQLException("Errore durante l'inserimento della Checklist nel database a causa dell'Id. ");
+                }
+
+                // Inserisci ogni Attivita associata alla Checklist
+                for (Attivita attivita : nuovoToDo.getChecklist().getAttivita()) {
+                    attivitaDAO.inserisci(checklistId, attivita.getTitolo(), attivita.getStato());
+                }
             }
 
-            // Recupera l'ID generato per il nuovo To Do
-            int todoId = -1;
-            rs = pstmtToDo.getGeneratedKeys();
-            if (rs.next()) {
-                todoId = rs.getInt(1);
-            } else {
-                throw new SQLException("La creazione del ToDo nel database è fallita, nessun ID ottenuto.");
+
+            if (nuovoToDo.getUtentiPossessori() != null && !nuovoToDo.getUtentiPossessori().isEmpty()) {
+                toDoDAO.inserisciPossessori(todoId, nuovoToDo.getUtentiPossessori(), conn); // Passa la connessione per la transazione
             }
 
-            nuovoToDo.setTodoId(todoId);
-
-
-            pstmtCondivisione = conn.prepareStatement(queryCond);
-            List<Utente> utentiCondivisione = nuovoToDo.getUtentiPossessori(); // Ottieni la lista degli utenti possessori
-
-            for (Utente u : utentiCondivisione) {
-                pstmtCondivisione.setInt(1, todoId);
-                pstmtCondivisione.setString(2, u.getUsername());
-                pstmtCondivisione.addBatch();
-            }
-            pstmtCondivisione.executeBatch();
-
-            conn.commit();
+            conn.commit(); // Conferma la transazione
         } catch (SQLException e) {
             if (conn != null) {
                 try {
-                    conn.rollback();
+                    conn.rollback(); // Rollback della transazione in caso di errore
                 } catch (SQLException ex) {
                     System.err.println("Errore durante il rollback: " + ex.getMessage());
                 }
             }
             throw e;
         } finally {
-            if (rs != null) {
+
+            if (pstmtUpdateToDo != null) {
                 try {
-                    rs.close();
-                } catch (SQLException e) {
-                    System.err.println("Errore " + e.getMessage());
-                }
+                    pstmtUpdateToDo.close();
+                } catch (SQLException e) { System.err.println("Errore chiusura pstmtUpdateToDo: " + e.getMessage()); }
             }
-            if (pstmtToDo != null) {
+            if (pstmtDeleteCondivisioni != null) {
                 try {
-                    pstmtToDo.close();
-                } catch (SQLException e) {
-                    System.err.println("Errore " + e.getMessage());
-                }
+                    pstmtDeleteCondivisioni.close();
+                } catch (SQLException e) { System.err.println("Errore chiusura pstmtDeleteShares: " + e.getMessage()); }
             }
-            if (pstmtCondivisione != null) {
+            if (pstmtInsertCondivisioni != null) {
                 try {
-                    pstmtCondivisione.close();
-                } catch (SQLException e) {
-                    System.err.println("Errore " + e.getMessage());
-                }
+                    pstmtInsertCondivisioni.close();
+                } catch (SQLException e) { System.err.println("Errore chiusura pstmtInsertShare: " + e.getMessage()); }
             }
             if (conn != null) {
                 try {
                     conn.setAutoCommit(true);
                     conn.close();
-                } catch (SQLException e) {
-                    System.err.println("Errore " + e.getMessage());
-                }
+                } catch (SQLException e) { System.err.println("Errore chiusura connessione: " + e.getMessage()); }
             }
         }
     }
@@ -762,5 +733,8 @@ public class Controller {
 
     public ToDoDAO getToDoDAO() {
         return toDoDAO;
+    }
+    public ToDo getToDoById(int todoId) throws SQLException {
+        return toDoDAO.getById(todoId);
     }
 }

@@ -185,7 +185,7 @@ public class CreaToDo {
                     nuovoToDo.setChecklist(checklistTemp);
                 }
 
-                controller.inserisciToDoECondividiNelDB(bacheca, nuovoToDo, utenteCreatore.getUsername());
+                controller.inserisciToDoNelDB(bacheca, nuovoToDo, utenteCreatore.getUsername());
 
                 // Chiude la finestra e torna alla vista bacheca
                 frameCreaToDo.dispose();
