@@ -3,6 +3,6 @@ package InterfacceDAO;
 import java.sql.SQLException;
 
 public interface InterfacciaCheckListDAO {
-    int inserisci(int todoId) throws SQLException;
-    void elimina(int todoId) throws SQLException;
+    public void crea(int todoId) throws SQLException;
+    public void elimina(int todoId) throws SQLException;
 }
