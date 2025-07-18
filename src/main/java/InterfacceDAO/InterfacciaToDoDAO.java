@@ -42,4 +42,5 @@ public interface InterfacciaToDoDAO {
     List<ToDo> getToDoByBacheca(int bachecaId) throws SQLException;
 
     void inserisciPossessori(int todoId, List<Utente> possessori, Connection conn) throws SQLException;
+    List<ToDo> getToDoByBachecaAndUtente(int bachecaId, String username) throws SQLException;
 }

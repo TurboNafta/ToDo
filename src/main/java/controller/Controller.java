@@ -725,6 +725,9 @@ public class Controller {
             }
             pstmtInsertCondivisioni.executeBatch();
 
+            ToDoDAO toDoDAO = new ToDoDAO();
+            toDoDAO.aggiornaChecklistEAttivita(toDoModificato, conn);
+
             conn.commit();
         } catch (SQLException e) {
             if (conn != null) {

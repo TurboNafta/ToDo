@@ -1,5 +1,6 @@
 package gui;
 
+import dao.AttivitaDAO;
 import model.Attivita;
 import model.StatoAttivita;
 import model.ToDo;
@@ -119,6 +120,15 @@ public class FinestraChecklist extends JDialog {
             JButton removeButton = new JButton("X");
             removeButton.setPreferredSize(new Dimension(20, 20));
             removeButton.addActionListener(e -> {
+                // Se l'attività esiste già nel DB (cioè ha id > 0), elimino dal DB
+                if (item.getId() > 0) {
+                    try {
+                        new AttivitaDAO().eliminaAttivitaById(item.getId());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Errore durante l'eliminazione dal database: " + ex.getMessage());
+                    }
+                }
                 attivita.remove(item);
                 aggiornaChecklist();
             });

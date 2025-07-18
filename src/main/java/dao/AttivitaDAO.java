@@ -29,4 +29,13 @@ public class AttivitaDAO implements InterfacciaAttivitaDAO {
             stmt.executeUpdate();
         }
     }
+    @Override
+    public void eliminaAttivitaById(int attivitaId) throws SQLException {
+        String sql = "DELETE FROM attivita WHERE id = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, attivitaId);
+            stmt.executeUpdate();
+        }
+    }
 }

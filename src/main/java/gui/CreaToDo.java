@@ -185,18 +185,13 @@ public class CreaToDo {
                     nuovoToDo.setChecklist(checklistTemp);
                 }
 
-                controller.inserisciToDoECondividiNelDB(bacheca, nuovoToDo, utenteCreatore.getUsername());
+                controller.addToDo(bacheca, nuovoToDo, utenteCreatore.getUsername());
 
                 // Chiude la finestra e torna alla vista bacheca
                 frameCreaToDo.dispose();
                 VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
                 vistaBacheca.frameVista.setVisible(true);
 
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(frameCreaToDo,
-                        "Errore del database durante la creazione del ToDo: " + ex.getMessage(),
-                        "Errore Database",
-                        JOptionPane.ERROR_MESSAGE);
             }
             catch (Exception ex) {
                 JOptionPane.showMessageDialog(frameCreaToDo,
