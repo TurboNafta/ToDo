@@ -1,9 +1,12 @@
 package gui;
 
 import controller.Controller;
+import dao.ToDoDAO;
+import database.ConnessioneDatabase;
 import model.*;
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -260,6 +263,47 @@ public class VistaBacheca {
 
         // Aggiungi dettagli To do
         addToDoDetailsToCard(card, t);
+
+        if (t.getChecklist() != null && t.getChecklist().getAttivita() != null && !t.getChecklist().getAttivita().isEmpty()) {
+            JButton checklistButton = new JButton("Checklist");
+            checklistButton.setBackground(new Color(80, 200, 120));
+            checklistButton.setForeground(Color.BLACK);
+            checklistButton.setFocusPainted(false);
+            checklistButton.addActionListener(_ -> {
+                FinestraChecklist checklistFrame = new FinestraChecklist(
+                        t.getChecklist().getAttivita(),
+                        t,
+                        frameVista
+                );
+                checklistFrame.setVisible(true);
+
+                List<Attivita> nuoveAttivita = checklistFrame.getAttivita();
+                if (nuoveAttivita != null) {
+                    t.getChecklist().setAttivita(nuoveAttivita);
+
+                    // 1. Aggiorna lo stato del ToDo in base alla checklist
+                    if (t.getChecklist().tutteCompletate() && !nuoveAttivita.isEmpty()) {
+                        t.setStato(StatoToDo.COMPLETATO);
+                    } else {
+                        t.setStato(StatoToDo.NONCOMPLETATO);
+                    }
+
+                    // 2. Salva checklist e stato ToDo su DB
+                    try (Connection conn = ConnessioneDatabase.getConnection()) {
+                        new ToDoDAO().aggiornaChecklistEAttivita(t, conn); // salva checklist
+                        new ToDoDAO().modifica(t); // salva stato ToDo (e altri dati eventuali)
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(frameVista,
+                                "Errore durante il salvataggio della checklist: " + ex.getMessage(),
+                                "Errore Database",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                    aggiornaListaToDo();
+                }
+            });
+            card.add(Box.createVerticalStrut(5));
+            card.add(checklistButton);
+        }
 
         // Aggiungi pulsanti azione se l'utente è l'autore
         if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {

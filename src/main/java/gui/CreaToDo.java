@@ -32,13 +32,13 @@ public class CreaToDo {
     public JFrame getFrameCreaToDo() {
         return frameCreaToDo;
     }
-    private Controller controller;
-    private Bacheca bacheca;
-    private String utente;
+    private final Controller controller;
+    private final Bacheca bacheca;
+    private final String utente;
     private JList<String> utentiList;
     private JButton checklistButton;
     private JButton buttonAnnulla;
-    private CheckList checklistTemp = new CheckList(null);  // ci servirà per accumulare dati
+    private final CheckList checklistTemp = new CheckList(null);  // ci servirà per accumulare dati
 
     private static final String ERRORE_TITLE = "Errore";
     /**
@@ -126,7 +126,7 @@ public class CreaToDo {
        ToDo nuovoToDo = new ToDo(titolo, descrizione, url, dataScadenza, img, posizione, colore, utenti, utenteCreatore);
        nuovoToDo.setStato(StatoToDo.NONCOMPLETATO);
 
-       if(checklistTemp != null && !checklistTemp.getAttivita().isEmpty()){
+       if (!checklistTemp.getAttivita().isEmpty()) {
            nuovoToDo.setChecklist(checklistTemp);
        }
        controller.addToDo(bacheca, nuovoToDo, utenteCreatore.getUsername());
