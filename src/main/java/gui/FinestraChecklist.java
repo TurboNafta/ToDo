@@ -47,18 +47,18 @@ public class FinestraChecklist extends JDialog {
      * Metodo per inizializzare la GUI
      */
     private void initializeUI() {
-        mainPanel.setLayout(new BorderLayout());
+        mainPanel = new JPanel();
         checklistPanel = new JPanel();
-        checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
+        attivitaField = new JTextField(20);
+        aggiungiButton = new JButton("Aggiungi attività");
+        okButton = new JButton("OK");
 
+        mainPanel.setLayout(new BorderLayout());
+        checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
         checklistPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
 
         JScrollPane scrollPane = new JScrollPane(checklistPanel);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        attivitaField.setColumns(20);
-        aggiungiButton.setText("Aggiungi attività");
-        okButton.setText("OK");
 
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(attivitaField);

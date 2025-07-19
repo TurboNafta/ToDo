@@ -55,7 +55,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
 
     @Override
     public void elimina(int id) throws SQLException {
-        // Prima elimina tutti i ToDo associati
+        // Prima elimina tutti i To do associati
         String deleteToDosQuery = "DELETE FROM todo WHERE bacheca_id = ?";
         String deleteBachecaQuery = "DELETE FROM bacheca WHERE id = ?";
 
@@ -64,7 +64,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
             conn = ConnessioneDatabase.getConnection();
             conn.setAutoCommit(false);  // Inizia la transazione
 
-            // Elimina i ToDo
+            // Elimina i To do
             try (PreparedStatement stmt = conn.prepareStatement(deleteToDosQuery)) {
                 stmt.setInt(1, id);
                 stmt.executeUpdate();
@@ -140,7 +140,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
     }
 
     public Bacheca getBachecaById(int id) throws SQLException {
-        String sql = "SELECT * FROM bacheca WHERE id = ?";
+        String sql = "SELECT id, titolo, descrizione, utente FROM bacheca WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -150,8 +150,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
                 String descrizione = rs.getString("descrizione");
                 String username = rs.getString("utente_username");
                 Utente utente = new Utente(username, "");
-                Bacheca b = new Bacheca(id, titolo, descrizione, utente);
-                return b;
+                return new Bacheca(id, titolo, descrizione, utente);
             }
         }
         return null;

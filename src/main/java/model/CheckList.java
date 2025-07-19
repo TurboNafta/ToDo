@@ -21,6 +21,7 @@ public class CheckList implements InterfacciaCheckList {
     public CheckList(ToDo t, int id){
         this.todo = t;
         this.attivita=new ArrayList<>();
+        this.id = id;
     }
 
     /**

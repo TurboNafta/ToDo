@@ -11,6 +11,7 @@ public class Condivisione {
 
     private int todoId;
     private List<Integer> utentiId;
+    private int id;
 
     /**
      * Costruttore per DB
@@ -20,6 +21,7 @@ public class Condivisione {
         this.utente = utente;
         this.todoId = todoId;
         this.utentiId = utentiId;
+        this.id = id;
     }
 
     /**
@@ -60,5 +62,13 @@ public class Condivisione {
 
     public void setUtentiId(List<Integer> utentiId) {
         this.utentiId = utentiId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
