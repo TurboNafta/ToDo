@@ -8,7 +8,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="3f369" binding="ImgLabel" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="3f369" binding="imgLabel" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -16,7 +16,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="5b890" class="javax.swing.JLabel" binding="TitoloLabel">
+          <component id="5b890" class="javax.swing.JLabel" binding="titoloLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -24,7 +24,7 @@
               <text value="TItolo"/>
             </properties>
           </component>
-          <component id="5b79b" class="javax.swing.JLabel" binding="DescrizioneLabel">
+          <component id="5b79b" class="javax.swing.JLabel" binding="descrizioneLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -32,7 +32,7 @@
               <text value="Descrizione"/>
             </properties>
           </component>
-          <component id="77e53" class="javax.swing.JLabel" binding="ScadenzaLabel">
+          <component id="77e53" class="javax.swing.JLabel" binding="scadenzaLabel">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -48,7 +48,7 @@
               <text value="Img"/>
             </properties>
           </component>
-          <component id="8ebb1" class="javax.swing.JLabel" binding="PosizioneLabel">
+          <component id="8ebb1" class="javax.swing.JLabel" binding="posizioneLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -56,7 +56,7 @@
               <text value="Posizione "/>
             </properties>
           </component>
-          <component id="5debb" class="javax.swing.JLabel" binding="URLLabel">
+          <component id="5debb" class="javax.swing.JLabel" binding="urlLabel">
             <constraints>
               <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
@@ -64,7 +64,7 @@
               <text value="URL"/>
             </properties>
           </component>
-          <component id="602bc" class="javax.swing.JLabel" binding="ColoreLabel">
+          <component id="602bc" class="javax.swing.JLabel" binding="coloreLabel">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

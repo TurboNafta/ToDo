@@ -4,7 +4,8 @@ import controller.Controller;
 import model.TitoloBacheca;
 import model.Utente;
 import javax.swing.*;
-import static model.TitoloBacheca.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe GUI per la creazione di una nuova bacheca
@@ -27,13 +28,9 @@ public class CreaBacheca {
     public JFrame getFrameCreaBacheca() {
         return frameCreaBacheca;
     }
-    public JFrame getFrameChiamante() {
-        return frameChiamante;
-    }
 
-    private static final String ERRORE_BACHECA_NON_AGGIUNTA = "Bacheca non aggiunta";
     private static final String TITOLO_ERRORE_BACHECA = "Errore nella creazione della bacheca";
-
+    private static final Logger LOGGER = Logger.getLogger(CreaBacheca.class.getName());
     /**
      * Costruttore che ci permette di creare la gui CreaBacheca
      */
@@ -56,12 +53,9 @@ public class CreaBacheca {
         tipoBacheca.add(lavoroRadioButton);
         tipoBacheca.add(tempoLiberoRadioButton);
 
-        /**
-         * Pulsante che ci permette di creare la bacheca per l'utente loggato
-         */
-        buttonCreazione.addActionListener(e-> {
+        buttonCreazione.addActionListener(_ -> {
             try {
-                TitoloBacheca tipo = null;
+                final TitoloBacheca tipo;
                 if (universitaRadioButton.isSelected()) {
                     tipo = TitoloBacheca.UNIVERSITÀ;
                 } else if (lavoroRadioButton.isSelected()) {
@@ -71,7 +65,7 @@ public class CreaBacheca {
                 } else {
                     JOptionPane.showMessageDialog(frameCreaBacheca,
                             "Scegli il titolo della bacheca",
-                            "Errore nella creazione della bacheca",
+                            TITOLO_ERRORE_BACHECA,
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -83,16 +77,13 @@ public class CreaBacheca {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frameCreaBacheca,
                         "Errore: " + ex.getMessage(),
-                        "Errore nella creazione della bacheca",
+                        TITOLO_ERRORE_BACHECA,
                         JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "Eccezione catturata", ex);
             }
         });
 
-        /**
-         * Pulsante per annullare l'operazione di creazione
-         */
-        buttonAnnulla.addActionListener(e-> {
+        buttonAnnulla.addActionListener(_ -> {
                 SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameCreaBacheca, utentelog);
                 secondGui.getFrameBacheca().setVisible(true);
                 getFrameCreaBacheca().setVisible(false);

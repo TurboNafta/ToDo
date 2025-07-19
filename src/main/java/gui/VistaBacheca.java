@@ -55,6 +55,7 @@ public class VistaBacheca {
 
         aggiornaListaToDo();
     }
+
      private void setupRicercaPanel() {
          String[] criteri = {CriteriRicerca.TITOLO, CriteriRicerca.SCADENZA_OGGI, CriteriRicerca.IN_SCADENZA_ENTRO};
          ricercaComboBox.removeAllItems();
@@ -204,7 +205,6 @@ public class VistaBacheca {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     /**
      * Metodo che ci converte la posizione in un numero
