@@ -3,8 +3,6 @@ package gui;
 import controller.Controller;
 import model.*;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,13 +68,10 @@ public class ModificaToDo {
         inizializzaChecklistListener();
         inizializzaModificaListener();
 
-        buttonAnnulla.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frameModificaToDo.dispose();
-                VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
-                vistaBacheca.frameVista.setVisible(true);
-            }
+        buttonAnnulla.addActionListener(e -> {
+            frameModificaToDo.dispose();
+            VistaBacheca vistaBacheca = new VistaBacheca(bacheca, controller, frameChiamante, utente);
+            vistaBacheca.frameVista.setVisible(true);
         });
     }
 
@@ -205,53 +200,19 @@ public class ModificaToDo {
 
                 int nuovaPosizioneInt = Integer.parseInt(posizioneStr);
 
-                for (ToDo t : bacheca.getTodo()) {
-                    if (!t.equals(toDo)) {
-                        if (t.getPosizione() != null && controller.isValidPosition(t.getPosizione())) {
-                            int existingPosizioneInt = Integer.parseInt(t.getPosizione());
-                            if (existingPosizioneInt == nuovaPosizioneInt) {
-                                JOptionPane.showMessageDialog(frameModificaToDo,
-                                        "Esiste già un altro ToDo con questa posizione nella bacheca.",
-                                        "Errore posizione duplicata",
-                                        JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-                        }
-                    }
+                if(esisteToDoConStessaPosizione(nuovaPosizioneInt)){
+                    showError("Esiste già un altro ToDo con questa posizione nella bacheca.", "Errore posizione duplicata");
+                    return;
                 }
 
                 ArrayList<Utente> vecchiPossessori = new ArrayList<>(toDo.getUtentiPossessori());
 
-                String titolo = textFieldTitolo.getText();
-                String descrizione = textFieldDescrizione.getText();
-                String img = textFieldImg.getText();
-                String url = textFieldUrl.getText();
-                String[] dataSplit = dataStr.split("/");
-                int anno = Integer.parseInt(dataSplit[2]);
-                int mese = Integer.parseInt(dataSplit[1])-1;
-                int gg = Integer.parseInt(dataSplit[0]);
-                GregorianCalendar data = new GregorianCalendar(anno, mese, gg);
-
-                StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
-                ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
-
-                this.toDo.setTitolo(titolo);
-                this.toDo.setDescrizione(descrizione);
-                this.toDo.setDatascadenza(data);
-                this.toDo.setImage(img);
-                this.toDo.setPosizione(posizioneStr);
-                this.toDo.setUrl(url);
-                this.toDo.setColoresfondo(coloreStr);
-                this.toDo.setStato(stato);
-                this.toDo.setUtentiPossessori(nuoviPossessori);
+                aggiornaToDoData();
 
                 controller.aggiornaToDoNelDB(this.bacheca, this.toDo, this.utente);
-                aggiornaBacheche(vecchiPossessori, nuoviPossessori);
+                aggiornaBacheche(vecchiPossessori, getNuoviPossessori());
 
-                JOptionPane.showMessageDialog(frameModificaToDo,
-                        "ToDo aggiornato con successo!",
-                        "Modifica Completata",
-                        JOptionPane.INFORMATION_MESSAGE);
+                showInfo("ToDo aggiornato con successo!", "Modifica Completa");
 
                 chiudiEApriVista();
 
@@ -271,6 +232,67 @@ public class ModificaToDo {
     }
 
     /**
+     * Controlla se esiste già un altro To do con la stessa posizione nella bacheca
+     */
+    private boolean esisteToDoConStessaPosizione(int nuovaPosizioneInt) {
+        for (ToDo t : bacheca.getTodo()) {
+            if (!t.equals(toDo) && t.getPosizione() != null && controller.isValidPosition(t.getPosizione())) {
+                int existingPosizioneInt = Integer.parseInt(t.getPosizione());
+                if (existingPosizioneInt == nuovaPosizioneInt) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(frameModificaToDo, message);
+    }
+
+    private void showError(String message, String title) {
+        JOptionPane.showMessageDialog(frameModificaToDo,
+                message,
+                title,
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showInfo(String message, String title) {
+        JOptionPane.showMessageDialog(frameModificaToDo,
+                message,
+                title,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void aggiornaToDoData() {
+        String titolo = textFieldTitolo.getText();
+        String descrizione = textFieldDescrizione.getText();
+        String img = textFieldImg.getText();
+        String url = textFieldUrl.getText();
+        String dataStr = textFieldData.getText().trim();
+        String posizioneStr = textFieldPosizione.getText().trim();
+        String coloreStr = textFieldColore.getText().trim();
+
+        String[] dataSplit = dataStr.split("/");
+        int anno = Integer.parseInt(dataSplit[2]);
+        int mese = Integer.parseInt(dataSplit[1]) - 1;
+        int gg = Integer.parseInt(dataSplit[0]);
+        GregorianCalendar data = new GregorianCalendar(anno, mese, gg);
+
+        StatoToDo stato = completatoRadioButton.isSelected() ? StatoToDo.COMPLETATO : StatoToDo.NONCOMPLETATO;
+        ArrayList<Utente> nuoviPossessori = getNuoviPossessori();
+
+        this.toDo.setTitolo(titolo);
+        this.toDo.setDescrizione(descrizione);
+        this.toDo.setDatascadenza(data);
+        this.toDo.setImage(img);
+        this.toDo.setPosizione(posizioneStr);
+        this.toDo.setUrl(url);
+        this.toDo.setColoresfondo(coloreStr);
+        this.toDo.setStato(stato);
+        this.toDo.setUtentiPossessori(nuoviPossessori);
+    }
+    /**
      * Funzione che controlla se la data è inserita nel formato corretto
      */
     private boolean isValidDate(String dateStr) {
@@ -283,7 +305,7 @@ public class ModificaToDo {
             sdf.setLenient(false);
             sdf.parse(dateStr);
             return true;
-        } catch (Exception e) {
+        } catch (Exception _) {
             return false;
         }
 

@@ -255,57 +255,73 @@ public class VistaBacheca {
         // Imposta colore sfondo della card
         setCardBackgroundColor(card, t.getColoresfondo());
 
-        // Aggiungi label titolo
+        addTitleLabel(card, t);
+        // Aggiungi dettagli To do
+        addToDoDetailsToCard(card, t);
+
+        addChecklistButton(card, t);
+        addActionButtons(card, t);
+
+        card.add(Box.createVerticalStrut(5));
+        card.add(createCondivisiConButton(t));
+        return card;
+    }
+
+    private void addTitleLabel(JPanel card, ToDo t) {
         JLabel labelTitolo = new JLabel(t.getTitolo());
         Calendar oggi = Calendar.getInstance();
         labelTitolo.setForeground(t.getDatascadenza().before(oggi) ? Color.RED : Color.BLACK);
         card.add(labelTitolo);
+    }
 
-        // Aggiungi dettagli To do
-        addToDoDetailsToCard(card, t);
-
+    private void addChecklistButton(JPanel card, ToDo t) {
         if (t.getChecklist() != null && t.getChecklist().getAttivita() != null && !t.getChecklist().getAttivita().isEmpty()) {
             JButton checklistButton = new JButton("Checklist");
             checklistButton.setBackground(new Color(80, 200, 120));
             checklistButton.setForeground(Color.BLACK);
             checklistButton.setFocusPainted(false);
-            checklistButton.addActionListener(_ -> {
-                FinestraChecklist checklistFrame = new FinestraChecklist(
-                        t.getChecklist().getAttivita(),
-                        t,
-                        frameVista
-                );
-                checklistFrame.setVisible(true);
-
-                List<Attivita> nuoveAttivita = checklistFrame.getAttivita();
-                if (nuoveAttivita != null) {
-                    t.getChecklist().setAttivita(nuoveAttivita);
-
-                    // 1. Aggiorna lo stato del ToDo in base alla checklist
-                    if (t.getChecklist().tutteCompletate() && !nuoveAttivita.isEmpty()) {
-                        t.setStato(StatoToDo.COMPLETATO);
-                    } else {
-                        t.setStato(StatoToDo.NONCOMPLETATO);
-                    }
-
-                    // 2. Salva checklist e stato ToDo su DB
-                    try (Connection conn = ConnessioneDatabase.getConnection()) {
-                        new ToDoDAO().aggiornaChecklistEAttivita(t, conn); // salva checklist
-                        new ToDoDAO().modifica(t); // salva stato ToDo (e altri dati eventuali)
-                    } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(frameVista,
-                                "Errore durante il salvataggio della checklist: " + ex.getMessage(),
-                                "Errore Database",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                    aggiornaListaToDo();
-                }
-            });
+            checklistButton.addActionListener(_ -> handleChecklistAction(t));
             card.add(Box.createVerticalStrut(5));
             card.add(checklistButton);
         }
+    }
 
-        // Aggiungi pulsanti azione se l'utente è l'autore
+    private void handleChecklistAction(ToDo t) {
+        FinestraChecklist checklistFrame = new FinestraChecklist(
+                t.getChecklist().getAttivita(),
+                t,
+                frameVista
+        );
+        checklistFrame.setVisible(true);
+
+        List<Attivita> nuoveAttivita = checklistFrame.getAttivita();
+        if (nuoveAttivita != null) {
+            t.getChecklist().setAttivita(nuoveAttivita);
+
+            aggiornaStatoToDoInBaseAllaChecklist(t, nuoveAttivita);
+
+            try (Connection conn = ConnessioneDatabase.getConnection()) {
+                new ToDoDAO().aggiornaChecklistEAttivita(t, conn);
+                new ToDoDAO().modifica(t);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(frameVista,
+                        "Errore durante il salvataggio della checklist: " + ex.getMessage(),
+                        "Errore Database",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            aggiornaListaToDo();
+        }
+    }
+
+    private void aggiornaStatoToDoInBaseAllaChecklist(ToDo t, List<Attivita> nuoveAttivita) {
+        if (t.getChecklist().tutteCompletate() && !nuoveAttivita.isEmpty()) {
+            t.setStato(StatoToDo.COMPLETATO);
+        } else {
+            t.setStato(StatoToDo.NONCOMPLETATO);
+        }
+    }
+
+    private void addActionButtons(JPanel card, ToDo t) {
         if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
             card.add(createModificaButton(t));
             card.add(Box.createVerticalStrut(5));
@@ -313,12 +329,6 @@ public class VistaBacheca {
             card.add(Box.createVerticalStrut(5));
             card.add(createSpostaButton(t));
         }
-
-        // Aggiungi pulsante per vedere condivisioni
-        card.add(Box.createVerticalStrut(5));
-        card.add(createCondivisiConButton(t));
-
-        return card;
     }
 
     /**

@@ -8,6 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe per la GUI di finestrachecklist, ci permette di aggiungere delle attività alla checklist, e di spuntarle per indicare che
@@ -23,11 +25,11 @@ public class FinestraChecklist extends JDialog {
     private JButton okButton;
     private JButton xButton;
 
-    private final ArrayList<Attivita> attivita;
+    private final transient ArrayList<Attivita> attivita;
     private final ArrayList<JCheckBox> checkboxes;
     private boolean okPressed = false;
-    private final ToDo todoAssociato;
-
+    private final transient ToDo todoAssociato;
+    private static final Logger LOGGER = Logger.getLogger(FinestraChecklist.class.getName());
     /**
      * Costruttore la gui FinestraCheckList
      */
@@ -36,7 +38,6 @@ public class FinestraChecklist extends JDialog {
         this.attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
         this.checkboxes = new ArrayList<>();
         this.todoAssociato = todo;
-
         initializeUI();
         setupListeners();
         aggiornaChecklist();
@@ -46,7 +47,7 @@ public class FinestraChecklist extends JDialog {
      * Metodo per inizializzare la GUI
      */
     private void initializeUI() {
-        mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setLayout(new BorderLayout());
         checklistPanel = new JPanel();
         checklistPanel.setLayout(new BoxLayout(checklistPanel, BoxLayout.Y_AXIS));
 
@@ -55,9 +56,9 @@ public class FinestraChecklist extends JDialog {
         JScrollPane scrollPane = new JScrollPane(checklistPanel);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        attivitaField = new JTextField(20);
-        aggiungiButton = new JButton("Aggiungi attività");
-        okButton = new JButton("OK");
+        attivitaField.setColumns(20);
+        aggiungiButton.setText("Aggiungi attività");
+        okButton.setText("OK");
 
         JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         inputPanel.add(attivitaField);
@@ -78,13 +79,13 @@ public class FinestraChecklist extends JDialog {
      */
     private void setupListeners() {
         // Listener per il campo di testo
-        attivitaField.addActionListener(e -> aggiungiAttivita());
+        attivitaField.addActionListener(_ -> aggiungiAttivita());
 
         // Listener per il pulsante Aggiungi
-        aggiungiButton.addActionListener(e -> aggiungiAttivita());
+        aggiungiButton.addActionListener(_ -> aggiungiAttivita());
 
         // Listener per il pulsante OK
-        okButton.addActionListener(e -> {
+        okButton.addActionListener(_ -> {
             aggiornaDallaCheckBox();
             okPressed = true;
             dispose();
@@ -116,22 +117,7 @@ public class FinestraChecklist extends JDialog {
             JPanel itemPanel = new JPanel(new BorderLayout());
             JCheckBox cb = new JCheckBox(item.getTitolo(), item.getStato() == StatoAttivita.COMPLETATA);
 
-            //  pulsante per rimuovere l'attività
-            JButton removeButton = new JButton("X");
-            removeButton.setPreferredSize(new Dimension(20, 20));
-            removeButton.addActionListener(e -> {
-                // Se l'attività esiste già nel DB (cioè ha id > 0), elimino dal DB
-                if (item.getId() > 0) {
-                    try {
-                        new AttivitaDAO().eliminaAttivitaById(item.getId());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(this, "Errore durante l'eliminazione dal database: " + ex.getMessage());
-                    }
-                }
-                attivita.remove(item);
-                aggiornaChecklist();
-            });
+            JButton removeButton = creaRemoveButton(item);
 
             itemPanel.add(cb, BorderLayout.CENTER);
             itemPanel.add(removeButton, BorderLayout.EAST);
@@ -142,6 +128,25 @@ public class FinestraChecklist extends JDialog {
 
         checklistPanel.revalidate();
         checklistPanel.repaint();
+    }
+
+    private JButton creaRemoveButton(Attivita item){
+        JButton removeButton = new JButton("X");
+        removeButton.setPreferredSize(new Dimension(20, 20));
+        removeButton.addActionListener(_ -> {
+            // Se l'attività esiste già nel DB (cioè ha id > 0), elimino dal DB
+            if (item.getId() > 0) {
+                try {
+                    new AttivitaDAO().eliminaAttivitaById(item.getId());
+                } catch (Exception ex) {
+                    LOGGER.log(Level.SEVERE, "Eccezione catturata", ex);
+                    JOptionPane.showMessageDialog(this, "Errore durante l'eliminazione dal database: " + ex.getMessage());
+                }
+            }
+            attivita.remove(item);
+            aggiornaChecklist();
+        });
+        return removeButton;
     }
 
     private void aggiornaDallaCheckBox() {
