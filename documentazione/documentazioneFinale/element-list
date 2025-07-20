@@ -2,6 +2,6 @@ controller
 dao
 database
 gui
-InterfacceDAO
+interfacceDAO
 interfaces
 model

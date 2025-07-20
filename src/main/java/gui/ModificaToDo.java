@@ -209,7 +209,7 @@ public class ModificaToDo {
 
                 aggiornaToDoData();
 
-                controller.aggiornaToDoNelDB(this.bacheca, this.toDo, this.utente);
+                controller.aggiornaToDoCompleto(this.toDo);
                 aggiornaBacheche(vecchiPossessori, getNuoviPossessori());
 
                 showInfo("ToDo aggiornato con successo!", "Modifica Completa");
@@ -375,12 +375,14 @@ public class ModificaToDo {
 
         for (Utente u : vecchiPossessori) {
             if (!nuoviPossessori.contains(u)) {
-                Bacheca bachecaUtente = controller.getOrCreateBacheca(
-                        bacheca.getTitolo(),
-                        bacheca.getDescrizione(),
-                        u.getUsername()
-                );
-                controller.eliminaToDo(bachecaUtente, toDo);
+                if (!u.getUsername().equals(utente)) {
+                    Bacheca bachecaUtente = controller.getOrCreateBacheca(
+                            bacheca.getTitolo(),
+                            bacheca.getDescrizione(),
+                            u.getUsername()
+                    );
+                    controller.eliminaToDo(bachecaUtente, toDo);
+                }
             }
         }
     }

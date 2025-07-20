@@ -1,19 +1,23 @@
 package dao;
 
-import InterfacceDAO.InterfacciaAttivitaDAO;
 import database.ConnessioneDatabase;
+import interfacceDAO.interfacciaAttivitaDAO;
+import model.Attivita;
 import model.StatoAttivita;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AttivitaDAO implements InterfacciaAttivitaDAO {
+public class AttivitaDAO implements interfacciaAttivitaDAO {
     @Override
-    public void inserisci(int todoId, String titolo, StatoAttivita stato) throws SQLException {
-        String sql = "INSERT INTO attivita (todo_id, titolo, stato) VALUES (?, ?, ?)";
+    public void inserisci(int checklist_id, String titolo, StatoAttivita stato) throws SQLException {
+        String sql = "INSERT INTO attivita (checklist_id, titolo, stato) VALUES (?, ?, ?)";
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, todoId);
+            stmt.setInt(1, checklist_id);
             stmt.setString(2, titolo);
             stmt.setString(3, stato.name());
             stmt.executeUpdate();
@@ -37,5 +41,34 @@ public class AttivitaDAO implements InterfacciaAttivitaDAO {
             stmt.setInt(1, attivitaId);
             stmt.executeUpdate();
         }
+    }
+
+    @Override
+    public void eliminaByChecklist(int checklistId) throws SQLException {
+        String sql = "DELETE FROM attivita WHERE checklist_id = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, checklistId);
+            stmt.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<Attivita> getAttivitaByChecklistId(int checklistId) throws SQLException {
+        List<Attivita> attivitaList = new ArrayList<>();
+        String sql = "SELECT id, titolo, stato FROM attivita WHERE checklist_id = ?";
+        try (Connection conn = ConnessioneDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, checklistId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String titolo = rs.getString("titolo");
+                    StatoAttivita stato = StatoAttivita.valueOf(rs.getString("stato"));
+                    attivitaList.add(new Attivita(id, checklistId, titolo, stato));
+                }
+            }
+        }
+        return attivitaList;
     }
 }

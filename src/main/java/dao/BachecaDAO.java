@@ -1,6 +1,6 @@
 package dao;
 
-import InterfacceDAO.InterfacciaBachecaDAO;
+import interfacceDAO.interfacciaBachecaDAO;
 import model.Bacheca;
 import model.TitoloBacheca;
 import model.Utente;
@@ -10,7 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BachecaDAO implements InterfacciaBachecaDAO {
+public class BachecaDAO implements interfacciaBachecaDAO {
     private final UtenteDAO utenteDAO;
 
     public BachecaDAO() {
@@ -79,21 +79,12 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
                 }
             }
 
-            conn.commit();  // Completa la transazione
+            conn.commit();
         } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();  // Annulla la transazione in caso di errore
-                } catch (SQLException ex) {
-                    throw new SQLException("Errore durante il rollback: " + ex.getMessage(), ex);
-                }
-            }
+            conn.rollback();
             throw e;
         } finally {
-            if (conn != null) {
-                conn.setAutoCommit(true);  // Ripristina l'autocommit
-                conn.close();
-            }
+            conn.setAutoCommit(true);
         }
     }
 
@@ -139,6 +130,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
         return false;
     }
 
+    @Override
     public Bacheca getBachecaById(int id) throws SQLException {
         String sql = "SELECT * FROM bacheca WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();

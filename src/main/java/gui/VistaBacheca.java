@@ -310,8 +310,8 @@ public class VistaBacheca {
             aggiornaStatoToDoInBaseAllaChecklist(t, nuoveAttivita);
 
             try (Connection conn = ConnessioneDatabase.getConnection()) {
-                new ToDoDAO().aggiornaChecklistEAttivita(t, conn);
-                new ToDoDAO().modifica(t);
+                controller.getCheckListDAO().aggiornaChecklistEAttivita(t);
+                controller.getToDoDAO().modifica(t);
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frameVista,
                         "Errore durante il salvataggio della checklist: " + ex.getMessage(),
@@ -575,7 +575,7 @@ public class VistaBacheca {
             List<Utente> utentiCondivisi;
 
             try {
-                utentiCondivisi = controller.getToDoDAO().getUtentiCondivisiByToDoId(t.getTodoId());
+                utentiCondivisi = controller.getUtentiCondivisiByToDoId(t.getTodoId());
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(frameVista,
                         "Errore durante il recupero delle condivisioni dal database: " + ex.getMessage(),
