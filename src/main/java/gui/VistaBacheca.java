@@ -35,6 +35,15 @@ public class VistaBacheca {
     private final Bacheca bacheca;
 
     private static final String ERRORE_TITLE = "Errore";
+    public static final String NESSUN_ORDINAMENTO = "Nessun Ordinamento";
+    public static final String TITOLO_AZ = "Titolo A-Z";
+    public static final String DATA_SCADENZA = "Data di Scadenza";
+    public static final String POSIZIONE = "Posizione";
+    public static final String STATO_COMPLETAMENTO = "Stato Completamento";
+
+    public static final String TITOLO = "Titolo";
+    public static final String SCADENZA_OGGI = "Scadenza oggi";
+    public static final String IN_SCADENZA_ENTRO = "In scadenza entro";
 
     //Costruttore della GUI VistaBacheca
     public VistaBacheca(Bacheca bacheca, Controller controller, JFrame frame, String utenteLoggato) {
@@ -60,7 +69,7 @@ public class VistaBacheca {
     }
 
      private void setupRicercaPanel() {
-         String[] criteri = {CriteriRicerca.TITOLO, CriteriRicerca.SCADENZA_OGGI, CriteriRicerca.IN_SCADENZA_ENTRO};
+         String[] criteri = {TITOLO, SCADENZA_OGGI, IN_SCADENZA_ENTRO};
          ricercaComboBox.removeAllItems();
          for (String c : criteri) ricercaComboBox.addItem(c);
 
@@ -86,11 +95,11 @@ public class VistaBacheca {
      private void setupComboBoxOrdina() {
          //combobox filtro ordina
          comboBoxOrdina.removeAllItems();
-         comboBoxOrdina.addItem(CriteriOrdinamento.NESSUN_ORDINAMENTO);
-         comboBoxOrdina.addItem(CriteriOrdinamento.TITOLO_AZ);
-         comboBoxOrdina.addItem(CriteriOrdinamento.DATA_SCADENZA);
-         comboBoxOrdina.addItem(CriteriOrdinamento.POSIZIONE);
-         comboBoxOrdina.addItem(CriteriOrdinamento.STATO_COMPLETAMENTO);
+         comboBoxOrdina.addItem(NESSUN_ORDINAMENTO);
+         comboBoxOrdina.addItem(TITOLO_AZ);
+         comboBoxOrdina.addItem(DATA_SCADENZA);
+         comboBoxOrdina.addItem(POSIZIONE);
+         comboBoxOrdina.addItem(STATO_COMPLETAMENTO);
      }
 
      private void setupActionListeners(){
@@ -102,7 +111,7 @@ public class VistaBacheca {
 
      private void aggiornaTextFieldEnable() {
         String criterioRicerca = (String) ricercaComboBox.getSelectedItem();
-        if (CriteriRicerca.TITOLO.equals(criterioRicerca) || CriteriRicerca.IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
+        if (TITOLO.equals(criterioRicerca) || IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
             textField1.setEnabled(true);
         } else {
             textField1.setText("");
@@ -124,11 +133,11 @@ public class VistaBacheca {
 
         //RICERCA PER TITOLO
         try {
-            if (CriteriRicerca.TITOLO.equals(criterioRicerca)) {
+            if (TITOLO.equals(criterioRicerca)) {
                 risultati = controller.getToDoPerBachecaUtente(bacheca, testo);
-            } else if (CriteriRicerca.SCADENZA_OGGI.equals(criterioRicerca)) {
+            } else if (SCADENZA_OGGI.equals(criterioRicerca)) {
                 risultati = controller.getToDoInScadenzaOggi(bacheca);
-            } else if (CriteriRicerca.IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
+            } else if (IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
                 risultati = controller.getToDoInScadenzaEntro(bacheca, testo);
             }
         } catch (IllegalArgumentException ex) {
@@ -142,16 +151,16 @@ public class VistaBacheca {
     private void ordinaRisultati(String criterioOrdine, List<ToDo> risultati) {
         if (criterioOrdine == null) return;
         switch (criterioOrdine) {
-            case CriteriOrdinamento.TITOLO_AZ:
+            case TITOLO_AZ:
                 risultati.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
                 break;
-            case CriteriOrdinamento.DATA_SCADENZA:
+            case DATA_SCADENZA:
                 risultati.sort(Comparator.comparing(ToDo::getDatascadenza));
                 break;
-            case CriteriOrdinamento.POSIZIONE:
+            case POSIZIONE:
                 risultati.sort(Comparator.comparing(t -> convertiInNum(t.getPosizione())));
                 break;
-            case CriteriOrdinamento.STATO_COMPLETAMENTO:
+            case STATO_COMPLETAMENTO:
                 risultati.sort(Comparator.comparing(ToDo::getStato));//fare qualcosa x mettere prima i nn completati
                 break;
             default:
@@ -181,19 +190,19 @@ public class VistaBacheca {
             String criterio = (String) comboBoxOrdina.getSelectedItem();
             if (criterio != null) {
                 switch (criterio) {
-                    case CriteriOrdinamento.TITOLO_AZ:
+                    case TITOLO_AZ:
                         lista.sort(Comparator.comparing(ToDo::getTitolo, String.CASE_INSENSITIVE_ORDER));
                         break;
-                    case CriteriOrdinamento.DATA_SCADENZA:
+                    case DATA_SCADENZA:
                         lista.sort(Comparator.comparing(ToDo::getDatascadenza));
                         break;
-                    case CriteriOrdinamento.POSIZIONE:
+                    case POSIZIONE:
                         lista.sort(Comparator.comparing(t -> convertiInNum(t.getPosizione())));
                         break;
-                    case CriteriOrdinamento.STATO_COMPLETAMENTO:
+                    case STATO_COMPLETAMENTO:
                         lista.sort(Comparator.comparing(ToDo::getStato));
                         break;
-                    case CriteriOrdinamento.NESSUN_ORDINAMENTO:
+                    case NESSUN_ORDINAMENTO:
                     default:
                         break;
                 }
@@ -598,20 +607,5 @@ public class VistaBacheca {
     }
 }
 
- final class CriteriRicerca {
-    private CriteriRicerca() {}
-    public static final String TITOLO = "Titolo";
-    public static final String SCADENZA_OGGI = "Scadenza oggi";
-    public static final String IN_SCADENZA_ENTRO = "In scadenza entro";
-}
-
-final class CriteriOrdinamento {
-    private CriteriOrdinamento() {}
-    public static final String NESSUN_ORDINAMENTO = "Nessun Ordinamento";
-    public static final String TITOLO_AZ = "Titolo A-Z";
-    public static final String DATA_SCADENZA = "Data di Scadenza";
-    public static final String POSIZIONE = "Posizione";
-    public static final String STATO_COMPLETAMENTO = "Stato Completamento";
-}
 
 
