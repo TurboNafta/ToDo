@@ -140,7 +140,7 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
     }
 
     public Bacheca getBachecaById(int id) throws SQLException {
-        String sql = "SELECT id, titolo, descrizione, utente FROM bacheca WHERE id = ?";
+        String sql = "SELECT * FROM bacheca WHERE id = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -150,7 +150,8 @@ public class BachecaDAO implements InterfacciaBachecaDAO {
                 String descrizione = rs.getString("descrizione");
                 String username = rs.getString("utente_username");
                 Utente utente = new Utente(username, "");
-                return new Bacheca(id, titolo, descrizione, utente);
+                Bacheca b = new Bacheca(id, titolo, descrizione, utente);
+                return b;
             }
         }
         return null;

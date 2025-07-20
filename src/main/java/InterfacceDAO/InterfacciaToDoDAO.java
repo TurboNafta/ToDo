@@ -11,7 +11,7 @@ import java.util.List;
 public interface InterfacciaToDoDAO {
     /**
      * Inserisce un nuovo To Do nel database
-     * @param todo Il To Do da inserire
+     * @param todo Il to do da inserire
      * @param username Username dell'utente proprietario
      * @param bachecaId ID della bacheca a cui appartiene il To Do
      * @return ID del To Do inserito
@@ -21,7 +21,7 @@ public interface InterfacciaToDoDAO {
 
     /**
      * Modifica un To Do esistente
-     * @param todo Il To Do da modificare
+     * @param todo Il to do da modificare
      * @throws SQLException in caso di errori di accesso al database
      */
     void modifica(ToDo todo) throws SQLException;
