@@ -44,7 +44,13 @@ public class VistaBacheca {
     public static final String SCADENZA_OGGI = "Scadenza oggi";
     public static final String IN_SCADENZA_ENTRO = "In scadenza entro";
 
-    //Costruttore della GUI VistaBacheca
+    /**
+     * Costruttore della GUI VistaBacheca.
+     * @param bacheca Bacheca selezionata
+     * @param controller Controller principale
+     * @param frame Frame chiamante
+     * @param utenteLoggato Username dell'utente loggato
+     */
     public VistaBacheca(Bacheca bacheca, Controller controller, JFrame frame, String utenteLoggato) {
         this.frameChiamante = frame;
         this.controller = controller;
@@ -67,6 +73,7 @@ public class VistaBacheca {
         aggiornaListaToDo();
     }
 
+    /** Imposta il pannello di ricerca e i relativi componenti. */
      private void setupRicercaPanel() {
          String[] criteri = {TITOLO, SCADENZA_OGGI, IN_SCADENZA_ENTRO};
          ricercaComboBox.removeAllItems();
@@ -91,6 +98,7 @@ public class VistaBacheca {
          textField1.setEnabled(true);
      }
 
+    /** Imposta le voci del combo box per l'ordinamento dei ToDo. */
      private void setupComboBoxOrdina() {
          //combobox filtro ordina
          comboBoxOrdina.removeAllItems();
@@ -101,6 +109,7 @@ public class VistaBacheca {
          comboBoxOrdina.addItem(STATO_COMPLETAMENTO);
      }
 
+    /** Imposta i listener dei pulsanti e delle combo box. */
      private void setupActionListeners(){
         comboBoxOrdina.addActionListener(_ -> aggiornaListaToDo());
         creaToDoButton.addActionListener(_ -> apriCreaTodo());
@@ -108,6 +117,7 @@ public class VistaBacheca {
         tornaAllaHomeButton.addActionListener(_ -> tornaAllaHome());
      }
 
+    /** Abilita o disabilita il campo testo di ricerca in base al criterio scelto. */
      private void aggiornaTextFieldEnable() {
         String criterioRicerca = (String) ricercaComboBox.getSelectedItem();
         if (TITOLO.equals(criterioRicerca) || IN_SCADENZA_ENTRO.equals(criterioRicerca)) {
@@ -118,12 +128,14 @@ public class VistaBacheca {
         }
     }
 
+    /** Apre la finestra di creazione di un nuovo ToDo. */
     private void apriCreaTodo() {
         CreaToDo quartaGui = new CreaToDo(controller, frameVista, bacheca, utenteLoggato);
         quartaGui.getFrameCreaToDo().setVisible(true);
         frameVista.setVisible(false);
     }
 
+    /** Esegue la ricerca dei To Do in base ai criteri selezionati. */
     private void cercaToDo() {
         String criterioOrdine = (String) comboBoxOrdina.getSelectedItem();
         String criterioRicerca = (String) ricercaComboBox.getSelectedItem();
@@ -147,6 +159,7 @@ public class VistaBacheca {
         mostraListaToDo(risultati);
     }
 
+    /** Applica un ordinamento ai risultati della ricerca in base al criterio selezionato. */
     private void ordinaRisultati(String criterioOrdine, List<ToDo> risultati) {
         if (criterioOrdine == null) return;
         switch (criterioOrdine) {
@@ -176,6 +189,7 @@ public class VistaBacheca {
         frameVista.dispose();
     }
 
+    /** Aggiorna la lista dei To Do visualizzati, applicando eventuali ordinamenti selezionati. */
     private void aggiornaListaToDo() {
         try {
             // Prima ricarica i To do dal database
@@ -218,7 +232,9 @@ public class VistaBacheca {
     }
 
     /**
-     * Metodo che ci converte la posizione in un numero
+     * Converte la posizione, se numerica, in intero per l'ordinamento.
+     * @param s stringa posizione
+     * @return valore numerico o 0 se non valido
      */
     private int convertiInNum(String s) {
         try {
@@ -229,7 +245,8 @@ public class VistaBacheca {
     }
 
     /**
-     * Metodo che ci permette di vedere la lista dei to do
+     * Visualizza la lista dei To Do come card grafiche.
+     * @param lista lista To Do da mostrare
      */
     private void mostraListaToDo(List<ToDo> lista) { // Usare List per buona pratica
         todoPanelRis.removeAll();
@@ -251,6 +268,11 @@ public class VistaBacheca {
         todoPanelRis.repaint();
     }
 
+    /**
+     * Crea la card grafica per un singolo To Do, completa di tutte le azioni disponibili.
+     * @param t To Do di riferimento
+     * @return JPanel card
+     */
     private JPanel createToDoCard(ToDo t) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -275,6 +297,9 @@ public class VistaBacheca {
         return card;
     }
 
+    /**
+     * Aggiunge il titolo del To Do alla card e lo colora di rosso se la scadenza è passata.
+     */
     private void addTitleLabel(JPanel card, ToDo t) {
         JLabel labelTitolo = new JLabel(t.getTitolo());
         Calendar oggi = Calendar.getInstance();
@@ -282,19 +307,23 @@ public class VistaBacheca {
         card.add(labelTitolo);
     }
 
+    /** Aggiunge il pulsante checklist se presente una checklist nel To Do. */
     private void addChecklistButton(JPanel card, ToDo t) {
         if (t.getChecklist() != null && t.getChecklist().getAttivita() != null && !t.getChecklist().getAttivita().isEmpty()) {
             JButton checklistButton = new JButton("Checklist");
             checklistButton.setBackground(new Color(80, 200, 120));
             checklistButton.setForeground(Color.BLACK);
             checklistButton.setFocusPainted(false);
-            checklistButton.addActionListener(_ -> handleChecklistAction(t));
+            checklistButton.addActionListener(_ -> gestisciChecklist(t));
             card.add(Box.createVerticalStrut(5));
             card.add(checklistButton);
         }
     }
 
-    private void handleChecklistAction(ToDo t) {
+    /**
+     * Gestisce l'apertura della finestra checklist e l'aggiornamento della checklist del ToDo.
+     */
+    private void gestisciChecklist(ToDo t) {
         FinestraChecklist checklistFrame = new FinestraChecklist(
                 t.getChecklist().getAttivita(),
                 t,
@@ -321,6 +350,9 @@ public class VistaBacheca {
         }
     }
 
+    /**
+     * Aggiorna lo stato del To Do in base al completamento delle attività della checklist.
+     */
     private void aggiornaStatoToDoInBaseAllaChecklist(ToDo t, List<Attivita> nuoveAttivita) {
         if (t.getChecklist().tutteCompletate() && !nuoveAttivita.isEmpty()) {
             t.setStato(StatoToDo.COMPLETATO);
@@ -329,6 +361,9 @@ public class VistaBacheca {
         }
     }
 
+    /**
+     * Aggiunge i pulsanti di azione (Modifica, Elimina, Sposta) per l'autore del ToDo.
+     */
     private void addActionButtons(JPanel card, ToDo t) {
         if (t.getAutore() != null && t.getAutore().getUsername().equals(utenteLoggato)) {
             card.add(createModificaButton(t));
@@ -340,7 +375,7 @@ public class VistaBacheca {
     }
 
     /**
-     * Metodo per impostare il colore dello sfondo delle bacheche
+     * Imposta il colore di sfondo della card in base al colore del To Do.
      */
     private void setCardBackgroundColor(JPanel card, String colore) {
         if (colore != null) {
@@ -365,7 +400,7 @@ public class VistaBacheca {
     }
 
     /**
-     * Metodo che aggiunge le informazioni della bacheca al Panel
+     * Aggiunge le informazioni dettagliate del To Do alla card.
      */
     private void addToDoDetailsToCard(JPanel card, ToDo t) {
         card.add(new JLabel("Titolo: " + t.getTitolo()));
@@ -379,9 +414,7 @@ public class VistaBacheca {
         card.add(new JLabel("Stato: " + t.getStatoString()));
     }
 
-    /**
-     * Metodo per creare il pulsante per modificare il to do
-     */
+    /** Crea il pulsante di modifica To Do. */
     private JButton createModificaButton(ToDo t) {
         JButton modificaButton = new JButton("Modifica");
         modificaButton.setBackground(new Color(255, 200, 80));
@@ -396,9 +429,7 @@ public class VistaBacheca {
         return modificaButton;
     }
 
-    /**
-     * Metodo per creare il pulsante per eliminare il to do
-     */
+    /** Crea il pulsante di eliminazione To Do. */
     private JButton createEliminaButton(ToDo t) {
         JButton eliminaButton = new JButton("Elimina");
         eliminaButton.setBackground(new Color(255, 80, 80));
@@ -511,6 +542,9 @@ public class VistaBacheca {
         aggiornaListaToDo();
     }
 
+    /**
+     * Trova tutte le bacheche dell'utente con un dato titolo.
+     */
     private List<Bacheca> trovaBachecheCorrispondenti(List<Bacheca> bacheche, String titoloDestinazione) {
         List<Bacheca> result = new ArrayList<>();
         for (Bacheca b : bacheche) {
@@ -522,6 +556,9 @@ public class VistaBacheca {
         return result;
     }
 
+    /**
+     * Seleziona la bacheca di destinazione se ce n'è più di una con lo stesso titolo.
+     */
     private Bacheca selezioneBachecaDestinazione(List<Bacheca> bachecheCorrispondenti) {
         if(bachecheCorrispondenti.isEmpty()) {
             return null;
@@ -605,6 +642,3 @@ public class VistaBacheca {
         return condivisiButton;
     }
 }
-
-
-

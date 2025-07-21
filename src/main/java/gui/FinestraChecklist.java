@@ -30,8 +30,12 @@ public class FinestraChecklist extends JDialog {
     private boolean okPressed = false;
     private final transient ToDo todoAssociato;
     private static final Logger LOGGER = Logger.getLogger(FinestraChecklist.class.getName());
+
     /**
-     * Costruttore la gui FinestraCheckList
+     * Costruttore della GUI FinestraChecklist.
+     * @param attivitaIniziale lista iniziale delle attività (può essere null)
+     * @param todo To Do associato (può essere null)
+     * @param owner Frame padre
      */
     public FinestraChecklist(List<Attivita> attivitaIniziale, ToDo todo, Frame owner) {
         super(owner, "Checklist", true);
@@ -93,7 +97,7 @@ public class FinestraChecklist extends JDialog {
     }
 
     /**
-     * Metodo che ci aggiunge l'attività alla checklist
+     * Aggiunge una nuova attività alla checklist.
      */
     private void aggiungiAttivita() {
         String text = attivitaField.getText().trim();
@@ -107,7 +111,7 @@ public class FinestraChecklist extends JDialog {
     }
 
     /**
-     * Metodo che aggiorna la checklist a seconda delle attività e del relativo stato
+     * Aggiorna la visualizzazione della checklist in base allo stato delle attività.
      */
     private void aggiornaChecklist() {
         checklistPanel.removeAll();
@@ -130,6 +134,10 @@ public class FinestraChecklist extends JDialog {
         checklistPanel.repaint();
     }
 
+    /**
+     * Crea il pulsante "X" per rimuovere un'attività dalla checklist.
+     * Se l'attività esiste nel DB, la elimina anche dal DB.
+     */
     private JButton creaRemoveButton(Attivita item){
         JButton removeButton = new JButton("X");
         removeButton.setPreferredSize(new Dimension(20, 20));
@@ -149,6 +157,9 @@ public class FinestraChecklist extends JDialog {
         return removeButton;
     }
 
+    /**
+     * Aggiorna lo stato delle attività in base alle checkbox selezionate.
+     */
     private void aggiornaDallaCheckBox() {
         for (int i = 0; i < attivita.size(); i++) {
             if (i < checkboxes.size()) {
@@ -159,6 +170,10 @@ public class FinestraChecklist extends JDialog {
         }
     }
 
+    /**
+     * Restituisce la lista aggiornata delle attività della checklist.
+     * @return lista delle attività (copia)
+     */
     public List<Attivita> getAttivita() {
         return new ArrayList<>(attivita); // Ritorna una copia della lista
     }

@@ -486,7 +486,7 @@ public class Controller {
      * @param dateStr data da verificare
      * @return true se valida, false altrimenti
      */
-    public boolean isValidDate(String dateStr) {
+    public boolean isValidData(String dateStr) {
         if (!dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
             return false;
         }
@@ -506,7 +506,7 @@ public class Controller {
      * @param posizioneStr stringa posizione
      * @return true se > 0, false altrimenti
      */
-    public boolean isValidPosition(String posizioneStr) {
+    public boolean isValidPosizione(String posizioneStr) {
         try {
             int posizione = Integer.parseInt(posizioneStr);
             return posizione > 0;
@@ -520,7 +520,7 @@ public class Controller {
      * @param colore stringa colore
      * @return true se ammesso, false altrimenti
      */
-    public boolean isValidColor(String colore) {
+    public boolean isValidColore(String colore) {
         if (colore == null || colore.trim().isEmpty()) {
             return false;
         }

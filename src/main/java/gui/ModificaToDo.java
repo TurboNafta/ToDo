@@ -52,7 +52,12 @@ public class ModificaToDo {
     private JButton buttonAnnulla;
 
     /**
-     * Costruttore per creare la gui ModificaToDo
+     * Costruttore per creare la GUI di modifica ToDo.
+     * @param controller Controller dell'applicazione
+     * @param frame Finestra chiamante
+     * @param bacheca Bacheca di riferimento
+     * @param utente Utente loggato
+     * @param t To Do da modificare
      */
     public ModificaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente, ToDo t) {
         this.controller = controller;
@@ -76,7 +81,7 @@ public class ModificaToDo {
     }
 
     /**
-     * Metodo per la visualizzazione del Frame
+     * Inizializza e visualizza la finestra di modifica To Do.
      */
     private void inizializzaGUI() {
             frameModificaToDo.setContentPane(panel1);
@@ -87,7 +92,7 @@ public class ModificaToDo {
         }
 
     /**
-     * Metodo che ci permette di popolare i dati per la modifica con i dati attualmente presenti
+     * Popola i campi della GUI con i dati attuali del To Do.
      */
     private void popolaCampiTextField() {
             textFieldTitolo.setText(toDo.getTitolo());
@@ -105,7 +110,8 @@ public class ModificaToDo {
         }
 
     /**
-     * Metodo che ci popola la lista degli utenti che condividono quel to do
+     * Popola la lista degli utenti con cui è possibile condividere il To Do.
+     * Seleziona automaticamente quelli già associati.
      */
     private void popolaListaUtenti() {
         //Serve a popolare la list per le condivisioni dei To do
@@ -136,14 +142,15 @@ public class ModificaToDo {
     }
 
     /**
-     * Metodo che imposta lo stato del to do a completato se abbiamo selezionato il RadioButton
+     * Imposta il radio button sullo stato completato se il To Do è già completato.
      */
     private void impostaStatoToDoRadio() {
             completatoRadioButton.setSelected(toDo.getStato() == StatoToDo.COMPLETATO);
         }
 
     /**
-     * Metodo che ci permette di creare una checklist all'interno del to do
+     * Inizializza il listener per la gestione della checklist.
+     * Permette di aggiungere/modificare attività e aggiorna lo stato del To Do al termine.
      */
     private void inizializzaChecklistListener() {
         /**
@@ -168,7 +175,8 @@ public class ModificaToDo {
         }
 
     /**
-     * Metodo che ci permette di modificare effettivamente i dati del to do
+     * Inizializza il listener per la modifica effettiva del To Do.
+     * Esegue validazione, aggiorna il database, aggiorna le condivisioni e chiude la finestra.
      */
     private void inizializzaModificaListener() {
         buttonModifica.addActionListener(e -> {
@@ -210,6 +218,7 @@ public class ModificaToDo {
                 aggiornaToDoData();
 
                 controller.aggiornaToDoCompleto(this.toDo);
+                bacheca.setTodo(controller.getToDoByBachecaAndUtente(bacheca.getId(), utente));
                 aggiornaBacheche(vecchiPossessori, getNuoviPossessori());
 
                 MostraInfo("ToDo aggiornato con successo!", "Modifica Completa");
@@ -232,7 +241,9 @@ public class ModificaToDo {
     }
 
     /**
-     * Controlla se esiste già un altro To do con la stessa posizione nella bacheca
+     * Controlla se esiste già nella bacheca un altro To Do con la stessa posizione.
+     * @param nuovaPosizioneInt nuova posizione da verificare
+     * @return true se esiste già, false altrimenti
      */
     private boolean esisteToDoConStessaPosizione(int nuovaPosizioneInt) {
         for (ToDo t : bacheca.getTodo()) {
@@ -246,6 +257,11 @@ public class ModificaToDo {
         return false;
     }
 
+    /**
+     * Mostra un errore nella finestra di modifica To Do.
+     * @param message
+     * @param title
+     */
     private void mostraErrore(String message, String title) {
         JOptionPane.showMessageDialog(frameModificaToDo,
                 message,
@@ -253,6 +269,11 @@ public class ModificaToDo {
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Mostra un messaggio informativo nella finestra di modifica To Do.
+     * @param message
+     * @param title
+     */
     private void MostraInfo(String message, String title) {
         JOptionPane.showMessageDialog(frameModificaToDo,
                 message,
@@ -260,6 +281,9 @@ public class ModificaToDo {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * Aggiorna i dati del To Do con i valori inseriti nei campi della GUI.
+     */
     private void aggiornaToDoData() {
         String titolo = textFieldTitolo.getText();
         String descrizione = textFieldDescrizione.getText();
@@ -288,8 +312,11 @@ public class ModificaToDo {
         this.toDo.setStato(stato);
         this.toDo.setUtentiPossessori(nuoviPossessori);
     }
+
     /**
-     * Funzione che controlla se la data è inserita nel formato corretto
+     * Controlla che la data sia nel formato corretto gg/MM/yyyy.
+     * @param dateStr la stringa data
+     * @return true se valida, false altrimenti
      */
     private boolean isValidData(String dateStr) {
         if( !dateStr.matches("\\d{2}/\\d{2}/\\d{4}")){
@@ -308,7 +335,8 @@ public class ModificaToDo {
     }
 
     /**
-     * Metodo che prende i possessori del to do dopo le modifiche
+     * Restituisce la lista aggiornata degli utenti possessori (compresi i selezionati nella lista).
+     * @return lista utenti possessori
      */
     private ArrayList<Utente> getNuoviPossessori() {
         Set<String> selectedUsernames = new HashSet<>();
@@ -333,7 +361,9 @@ public class ModificaToDo {
 
 
     /**
-     * Metodo che aggiorna le bacheche degli utenti che posseggono quel to do dopo la modifica
+     * Aggiorna le bacheche degli utenti possessori dopo una modifica del To Do.
+     * @param vecchiPossessori lista utenti precedenti
+     * @param nuoviPossessori lista utenti attuali
      */
     private void aggiornaBacheche(ArrayList<Utente> vecchiPossessori, ArrayList<Utente> nuoviPossessori) {
         for (Utente u : nuoviPossessori) {
@@ -367,7 +397,7 @@ public class ModificaToDo {
     }
 
     /**
-     * Metodo per tornare all'interno della bacheca
+     * Chiude la finestra di modifica e apre la vista della bacheca aggiornata.
      */
     private void chiudiEApriVista() {
         frameModificaToDo.dispose();
@@ -379,9 +409,19 @@ public class ModificaToDo {
             new VistaBacheca(bacheca, controller, frameChiamante, utente);
         }
     }
+
+    /**
+     * Restituisce la finestra di modifica To Do.
+     * @return finestra di modifica To Do
+     */
     public JFrame getFrameModificaToDo() {
         return frameModificaToDo;
     }
+
+    /**
+     * Restituisce la finestra chiamante.
+     * @return finestra chiamante
+     */
     public JFrame getFrameChiamante() {
         return frameChiamante;
     }

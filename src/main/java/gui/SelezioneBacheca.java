@@ -28,10 +28,18 @@ public class SelezioneBacheca {
     private final JFrame frameChiamante;
     private final Controller controller;
 
+    /**
+     * Restituisce il frame bacheca
+     * @return frame bacheca
+     */
     public JFrame getFrameBacheca() {
         return frameBacheca;
     }
 
+    /**
+     * Restituisce il frame chiamante
+     * @return frame chiamante
+     */
     public JFrame getFrameChiamante() {
         return frameChiamante;
     }
@@ -39,7 +47,10 @@ public class SelezioneBacheca {
     private final String utentelog;
 
     /**
-     * Costruttore per creare la gui SelezioneBacheca
+     * Costruttore della schermata di selezione bacheca.
+     * @param controller Controller principale
+     * @param frame Frame chiamante (può essere null)
+     * @param utentelog Username dell'utente loggato
      */
     public SelezioneBacheca(Controller controller, JFrame frame, String utentelog) {
         this.controller = controller;
@@ -93,7 +104,7 @@ public class SelezioneBacheca {
     }
 
     /**
-     * Metodo che aggiorna le bacheche dopo aver effettuato delle modifiche
+     * Aggiorna il pannello delle bacheche mostrando tutte le bacheche trovate.
      */
     private void aggiornaBachecaPanel() {
         String tipo = (String) comboBox1.getSelectedItem();
@@ -117,9 +128,10 @@ public class SelezioneBacheca {
 
 
     /**
-     * Metodo che ci permette di creare in modo dinamico dei panel per ogni Bacheca dell'utente,
-     * ogni nuovo card, ovvero il panel per ogni bacheca, conterrà: le informazioni che riguardano la bacheca
-     * e dei pulsanti che ci permettono di interagire con le stesse
+     * Crea dinamicamente i pannelli/card per ogni bacheca dell'utente.
+     * Ogni card contiene le info della bacheca e i relativi pulsanti di azione.
+     * @param bacheche Elenco delle bacheche da visualizzare
+     * @return JPanel contenente tutte le card
      */
     private JPanel creaCardsPanel(List<Bacheca> bacheche) {
         // Creiamo un panel principale con GridBagLayout
@@ -158,8 +170,11 @@ public class SelezioneBacheca {
         return panel;
     }
 
-
-
+    /**
+     * Crea una card grafica per una singola bacheca, con pulsanti Apri, Modifica ed Elimina.
+     * @param b Bacheca di riferimento
+     * @return JPanel card
+     */
     private JPanel creaCard (Bacheca b){
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
@@ -258,7 +273,12 @@ public class SelezioneBacheca {
         return card;
     }
 
-
+    /**
+     * Imposta lo stile grafico di un JButton.
+     * @param button bottone da stilizzare
+     * @param bg colore di sfondo
+     * @param fg colore del testo
+     */
     private void styleButton(JButton button, Color bg, Color fg) {
         button.setBackground(bg);
         button.setForeground(fg);

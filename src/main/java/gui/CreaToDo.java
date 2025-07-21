@@ -41,8 +41,14 @@ public class CreaToDo {
     private final CheckList checklistTemp = new CheckList(null);  // ci servirà per accumulare dati
 
     private static final String ERRORE_TITLE = "Errore";
+
     /**
-     * Costruttore della classe GUI CreaToDo
+     * Costruttore della GUI di creazione To Do.
+     * Inizializza componenti, listener e popola la lista utenti per la condivisione.
+     * @param controller Controller dell'applicazione
+     * @param frame Finestra chiamante
+     * @param bacheca Bacheca di riferimento
+     * @param utente Username dell'utente creatore
      */
     public CreaToDo(Controller controller, JFrame frame, Bacheca bacheca, String utente) {
         this.controller = controller;
@@ -76,7 +82,7 @@ public class CreaToDo {
 
         addToDoButton.addActionListener(_ -> {
             try {
-                handleAddToDoButton();
+                gestisciAddButton();
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(frameCreaToDo, "Errore durante la creazione del ToDo: " + ex.getMessage(), ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
             }
@@ -89,7 +95,11 @@ public class CreaToDo {
         });
     }
 
-    private void handleAddToDoButton(){
+    /**
+     * Gestisce la logica di creazione del To Do.
+     * Esegue la validazione dei campi e, se tutto è corretto, aggiunge il ToDo alla bacheca e passa alla vista bacheca.
+     */
+    private void gestisciAddButton(){
         String dataStr = textFieldData.getText().trim();
         String posizioneStr = textFieldPosizione.getText().trim();
         String coloreStr = textFieldColore.getText().trim();
@@ -136,6 +146,9 @@ public class CreaToDo {
        vistaBacheca.frameVista.setVisible(true);
     }
 
+    /**
+     * Valida che i campi principali non siano vuoti.
+     */
     private boolean validaCampi(String titolo, String descrizione, String dataScadenza, String posizione){
         if(titolo.isEmpty() || descrizione.isEmpty() || dataScadenza.isEmpty() || posizione.isEmpty()){
             JOptionPane.showMessageDialog(frameCreaToDo, "II campi Titolo, Descrizione, Data Scadenza e Posizione sono obbligatori.", "Campi mancanti", JOptionPane.ERROR_MESSAGE);
@@ -144,6 +157,9 @@ public class CreaToDo {
         return true;
     }
 
+    /**
+     * Valida che la data sia nel formato corretto.
+     */
     private boolean validaData(String dataStr){
         if(!controller.isValidData(dataStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/mm/aaaa", "Errore formato data", JOptionPane.ERROR_MESSAGE);
@@ -152,6 +168,9 @@ public class CreaToDo {
         return true;
     }
 
+    /**
+     * Valida che la posizione sia un numero positivo.
+     */
     private boolean validaPosizione(String posizioneStr){
         if(!controller.isValidPosizione(posizioneStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "La posizione deve essere un numero intero positivo", "Errore formato posizione", JOptionPane.ERROR_MESSAGE);
@@ -160,6 +179,9 @@ public class CreaToDo {
         return true;
     }
 
+    /**
+     * Valida che il colore inserito sia tra quelli consentiti.
+     */
     private boolean validaColore(String coloreStr){
         if(!controller.isValidColore(coloreStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone", "Errore formato colore", JOptionPane.ERROR_MESSAGE);
@@ -168,6 +190,9 @@ public class CreaToDo {
         return true;
     }
 
+    /**
+     * Controlla che la posizione inserita non sia già occupata da un altro ToDo nella bacheca.
+     */
     private boolean isPosizioneOccupata(String posizione){
         int nuovaPosizioneInt = Integer.parseInt(posizione);
         for(ToDo t : bacheca.getTodo()){
@@ -181,6 +206,9 @@ public class CreaToDo {
         return false;
     }
 
+    /**
+     * Converte una stringa data in un oggetto GregorianCalendar.
+     */
     private GregorianCalendar getGregorianCalendar(String dataStr){
         try {
             String[] data = dataStr.split("/");
@@ -194,6 +222,9 @@ public class CreaToDo {
         }
     }
 
+    /**
+     * Costruisce la lista degli utenti con cui condividere il To Do, incluso l'autore.
+     */
     private ArrayList<Utente> buildUtentiList(){
         ArrayList<Utente> utenti = new ArrayList<>();
         Utente utenteCreatore = controller.getUtenteByUsername(utente);

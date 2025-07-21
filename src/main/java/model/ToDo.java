@@ -417,4 +417,17 @@ public class ToDo implements InterfacciaToDo {
     public void setTodoId(int todoId) {
         this.todoId = todoId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ToDo that = (ToDo) o;
+        return this.todoId == that.todoId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(todoId);
+    }
 }
