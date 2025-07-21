@@ -105,7 +105,7 @@ public class BachecaDAO implements interfacciaBachecaDAO {
                 String titoloStr = rs.getString("titolo");
                 TitoloBacheca titolo = TitoloBacheca.valueOf(titoloStr);
 
-                Utente utente = utenteDAO.getUtenteByUsername(username);
+                Utente utente = utenteDAO.getUtenteByUsernameDAO(username);
                 Bacheca bacheca = new Bacheca(id, titolo, descrizione, utente);
                 bacheche.add(bacheca);
             }

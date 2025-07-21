@@ -61,7 +61,7 @@ public class ModificaToDo {
         this.toDo = t;
         this.frameChiamante = frame;
         this.frameModificaToDo = new JFrame("Pagina Modifica");
-        initUI();
+        inizializzaGUI();
         popolaCampiTextField();
         popolaListaUtenti();
         impostaStatoToDoRadio();
@@ -78,7 +78,7 @@ public class ModificaToDo {
     /**
      * Metodo per la visualizzazione del Frame
      */
-    private void initUI() {
+    private void inizializzaGUI() {
             frameModificaToDo.setContentPane(panel1);
             frameModificaToDo.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             frameModificaToDo.pack();
@@ -110,7 +110,7 @@ public class ModificaToDo {
     private void popolaListaUtenti() {
         //Serve a popolare la list per le condivisioni dei To do
         DefaultListModel<String> utentiModel = new DefaultListModel<>();
-        for (Utente u : controller.getTuttiUtentiFromDB()) {
+        for (Utente u : controller.getTuttiUtentiDalDB()) {
             if (!u.getUsername().equals(utente))
                 utentiModel.addElement(u.getUsername());
         }
@@ -177,7 +177,7 @@ public class ModificaToDo {
                 String coloreStr = textFieldColore.getText().trim();
                 String dataStr = textFieldData.getText().trim();
 
-                if (!isValidDate(dataStr)) {
+                if (!isValidData(dataStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo, "Inserisci la data nel formato gg/mm/aaaa");
                     return;
                 }
@@ -201,7 +201,7 @@ public class ModificaToDo {
                 int nuovaPosizioneInt = Integer.parseInt(posizioneStr);
 
                 if(esisteToDoConStessaPosizione(nuovaPosizioneInt)){
-                    showError("Esiste già un altro ToDo con questa posizione nella bacheca.", "Errore posizione duplicata");
+                    mostraErrore("Esiste già un altro ToDo con questa posizione nella bacheca.", "Errore posizione duplicata");
                     return;
                 }
 
@@ -212,7 +212,7 @@ public class ModificaToDo {
                 controller.aggiornaToDoCompleto(this.toDo);
                 aggiornaBacheche(vecchiPossessori, getNuoviPossessori());
 
-                showInfo("ToDo aggiornato con successo!", "Modifica Completa");
+                MostraInfo("ToDo aggiornato con successo!", "Modifica Completa");
 
                 chiudiEApriVista();
 
@@ -246,18 +246,14 @@ public class ModificaToDo {
         return false;
     }
 
-    private void showError(String message) {
-        JOptionPane.showMessageDialog(frameModificaToDo, message);
-    }
-
-    private void showError(String message, String title) {
+    private void mostraErrore(String message, String title) {
         JOptionPane.showMessageDialog(frameModificaToDo,
                 message,
                 title,
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    private void showInfo(String message, String title) {
+    private void MostraInfo(String message, String title) {
         JOptionPane.showMessageDialog(frameModificaToDo,
                 message,
                 title,
@@ -295,7 +291,7 @@ public class ModificaToDo {
     /**
      * Funzione che controlla se la data è inserita nel formato corretto
      */
-    private boolean isValidDate(String dateStr) {
+    private boolean isValidData(String dateStr) {
         if( !dateStr.matches("\\d{2}/\\d{2}/\\d{4}")){
             return false;
         }
@@ -335,23 +331,6 @@ public class ModificaToDo {
         return nuoviPossessoriList;
     }
 
-    /**
-     * Metodo che passa i dati alla funzione modificaToDo
-     */
-    private void modificaToDo(String titolo, String descrizione, String dataScadenza, String img,
-                              String posizione, String url, String colore, StatoToDo stato,
-                              ArrayList<Utente> nuoviPossessori) {
-        this.titolo = titolo;
-        this.descrizione = descrizione;
-        this.dataScadenza = dataScadenza;
-        this.img = img;
-        this.posizione = posizione;
-        this.url = url;
-        this.colore = colore;
-        this.stato = stato;
-        toDo.setUtentiPossessori(nuoviPossessori);
-        toDo.modificaToDo(toDo, titolo, descrizione, dataScadenza, img, posizione, url, colore, stato);
-    }
 
     /**
      * Metodo che aggiorna le bacheche degli utenti che posseggono quel to do dopo la modifica

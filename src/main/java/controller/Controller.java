@@ -251,7 +251,7 @@ public class Controller {
      */
     public Utente getUtenteByUsername(String username) {
         try {
-            return utenteDAO.getUtenteByUsername(username);
+            return utenteDAO.getUtenteByUsernameDAO(username);
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
@@ -281,12 +281,7 @@ public class Controller {
         }
     }
 
-    /**
-     * Metodo che ci restituisce la lista degli utenti registrati
-     */
-    public List<Utente> getListaUtenti() {
-        return listaUtenti;
-    }
+
 
     /**
      * Metodo che ci genera l'utente admin
@@ -294,7 +289,7 @@ public class Controller {
     public void buildAdmin() {
         try {
             // Controlla se admin esiste già nel database
-            Utente adminEsistente = utenteDAO.getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
+            Utente adminEsistente = utenteDAO.getUtenteByUsernameDAO(NOME_UTENTE_AMMINISTRATORE);
             if (adminEsistente != null) {
                 // Admin già esiste, aggiungi alla lista in memoria se non presente
                 if (!listaUtenti.contains(adminEsistente)) {
@@ -527,7 +522,7 @@ public class Controller {
         }
     }
 
-    public List<Utente> getTuttiUtentiFromDB(){
+    public List<Utente> getTuttiUtentiDalDB(){
         List<Utente> utenti = new ArrayList<>();
         String query = "SELECT username, password FROM utente";
 

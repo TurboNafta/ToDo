@@ -26,7 +26,7 @@ public class  Accesso {
 
     public static void main(String[] args) {
         setLookAndFeel();
-        initializeApp();
+        inizializzaAdmin();
     }
 
     private static void setLookAndFeel() {
@@ -42,7 +42,7 @@ public class  Accesso {
         }
     }
 
-    private static void initializeApp() {
+    private static void inizializzaAdmin() {
         Controller controller = new Controller();
         controller.buildAdmin();
         controller.buildBacheche();
@@ -67,15 +67,15 @@ public class  Accesso {
 
     //pulsante login
     private void setupLoginButton() {
-        loginButton.addActionListener(_ -> handleLogin());
+        loginButton.addActionListener(_ -> gestisciLogin());
     }
 
     //pulsante registrazione
     private void setupRegistraButton() {
-        registratiButton.addActionListener(_ -> handleRegistrazione());
+        registratiButton.addActionListener(_ -> gestisciRegistrazione());
     }
 
-    private void handleLogin() {
+    private void gestisciLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 
@@ -99,7 +99,7 @@ public class  Accesso {
             }
         }
 
-    private void handleRegistrazione() {
+    private void gestisciRegistrazione() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 

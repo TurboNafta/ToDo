@@ -38,7 +38,7 @@ public class FinestraChecklist extends JDialog {
         this.attivita = new ArrayList<>(attivitaIniziale != null ? attivitaIniziale : new ArrayList<>());
         this.checkboxes = new ArrayList<>();
         this.todoAssociato = todo;
-        initializeUI();
+        inizializzaGUI();
         setupListeners();
         aggiornaChecklist();
     }
@@ -46,7 +46,7 @@ public class FinestraChecklist extends JDialog {
     /**
      * Metodo per inizializzare la GUI
      */
-    private void initializeUI() {
+    private void inizializzaGUI() {
         mainPanel = new JPanel();
         checklistPanel = new JPanel();
         attivitaField = new JTextField(20);

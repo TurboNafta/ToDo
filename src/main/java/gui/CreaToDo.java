@@ -67,7 +67,7 @@ public class CreaToDo {
 
         //Serve a popolare la list per le condivisioni dei To do
         DefaultListModel<String> utentiModel = new DefaultListModel<>();
-        for (Utente u : controller.getTuttiUtentiFromDB()) {
+        for (Utente u : controller.getTuttiUtentiDalDB()) {
             if (!u.getUsername().equals(utente))
                 utentiModel.addElement(u.getUsername());
         }
@@ -94,7 +94,7 @@ public class CreaToDo {
         String posizioneStr = textFieldPosizione.getText().trim();
         String coloreStr = textFieldColore.getText().trim();
 
-        if(!validateData(dataStr) || !validatePosition(posizioneStr) || !validateColor(coloreStr)){
+        if(!validaData(dataStr) || !validaPosizione(posizioneStr) || !validaColore(coloreStr)){
             return;
         }
 
@@ -106,11 +106,11 @@ public class CreaToDo {
         String url = textFieldUrl.getText().trim();
         String colore = coloreStr;
 
-       if(!validateFields(titolo, descrizione, dataScadenza, posizione)){
+       if(!validaCampi(titolo, descrizione, dataScadenza, posizione)){
            return;
        }
 
-       if(isPositionOccupied(posizione)){
+       if(isPosizioneOccupata(posizione)){
            JOptionPane.showMessageDialog(frameCreaToDo, "Esiste già un ToDo in quella posizione nella bacheca.", "Errore posizione duplicata", JOptionPane.ERROR_MESSAGE);
            return;
        }
@@ -136,7 +136,7 @@ public class CreaToDo {
        vistaBacheca.frameVista.setVisible(true);
     }
 
-    private boolean validateFields(String titolo, String descrizione, String dataScadenza, String posizione){
+    private boolean validaCampi(String titolo, String descrizione, String dataScadenza, String posizione){
         if(titolo.isEmpty() || descrizione.isEmpty() || dataScadenza.isEmpty() || posizione.isEmpty()){
             JOptionPane.showMessageDialog(frameCreaToDo, "II campi Titolo, Descrizione, Data Scadenza e Posizione sono obbligatori.", "Campi mancanti", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -144,7 +144,7 @@ public class CreaToDo {
         return true;
     }
 
-    private boolean validateData(String dataStr){
+    private boolean validaData(String dataStr){
         if(!controller.isValidDate(dataStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/mm/aaaa", "Errore formato data", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -152,7 +152,7 @@ public class CreaToDo {
         return true;
     }
 
-    private boolean validatePosition(String posizioneStr){
+    private boolean validaPosizione(String posizioneStr){
         if(!controller.isValidPosition(posizioneStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "La posizione deve essere un numero intero positivo", "Errore formato posizione", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -160,7 +160,7 @@ public class CreaToDo {
         return true;
     }
 
-    private boolean validateColor(String coloreStr){
+    private boolean validaColore(String coloreStr){
         if(!controller.isValidColor(coloreStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone", "Errore formato colore", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -168,7 +168,7 @@ public class CreaToDo {
         return true;
     }
 
-    private boolean isPositionOccupied(String posizione){
+    private boolean isPosizioneOccupata(String posizione){
         int nuovaPosizioneInt = Integer.parseInt(posizione);
         for(ToDo t : bacheca.getTodo()){
             if(t.getPosizione() != null && controller.isValidPosition(t.getPosizione())){

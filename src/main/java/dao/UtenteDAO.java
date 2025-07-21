@@ -39,17 +39,6 @@ public class UtenteDAO implements InterfacciaUtenteDAO {
     }
 
     @Override
-    public void aggiornaPassword(String username, String nuovaPassword) throws SQLException {
-        String sql = "UPDATE utente SET password = ? WHERE username = ?";
-        try (Connection conn = ConnessioneDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nuovaPassword);
-            stmt.setString(2, username);
-            stmt.executeUpdate();
-        }
-    }
-
-    @Override
     public void elimina(String username) throws SQLException {
         String sql = "DELETE FROM utente WHERE username = ?";
         try (Connection conn = ConnessioneDatabase.getConnection();
@@ -78,7 +67,7 @@ public class UtenteDAO implements InterfacciaUtenteDAO {
     }
 
     @Override
-    public Utente getUtenteByUsername(String username) throws SQLException {
+    public Utente getUtenteByUsernameDAO(String username) throws SQLException {
         String sql = SQL_SELECT_UTENTE;
         try (Connection conn = ConnessioneDatabase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
