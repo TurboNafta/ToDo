@@ -25,18 +25,10 @@ public class Controller {
     private final CheckListDAO checkListDAO = new CheckListDAO();
 
     /**
-     * Costruttore del Controller. Inizializza la lista degli utenti.
+     * Costruttore del Controller
      */
     public Controller() {
         this.listaUtenti = new ArrayList<>();
-    }
-
-    /**
-     * Restituisce il DAO delle condivisioni.
-     * @return oggetto CondivisioneDAO
-     */
-    public CondivisioneDAO getCondivisioneDAO() {
-        return condivisioneDAO;
     }
 
     /**
@@ -55,17 +47,6 @@ public class Controller {
      */
     public List<Utente> getUtentiCondivisiByToDoId(int todoId) throws SQLException {
         return condivisioneDAO.getUtentiCondivisiByToDoId(todoId);
-    }
-
-    /**
-     * Restituisce la checklist di un To Do.
-     * @param todoId id del To Do
-     * @param todo To Do da cui prendere la checklist
-     * @return lista di utenti
-     * @throws SQLException se avvengono errori SQL
-     */
-    public CheckList getChecklistByToDoId(int todoId, ToDo todo) throws SQLException {
-        return checkListDAO.getChecklistByToDoId(todoId, todo);
     }
 
     /**
@@ -331,6 +312,8 @@ public class Controller {
         }
     }
 
+
+
     /**
      * Crea l'utente admin nel database se non esiste già.
      */
@@ -431,6 +414,7 @@ public class Controller {
             throw new RuntimeException("Errore durante l'eliminazione del ToDo del database: " + ex.getMessage(), ex);
         }
     }
+
 
     /**
      * Cerca una bacheca per titolo e descrizione, e la crea se non esiste.
