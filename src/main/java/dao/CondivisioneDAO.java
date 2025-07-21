@@ -1,6 +1,6 @@
 package dao;
 
-import interfacceDAO.InterfacciaCondivisioneDAO;
+import interfacceDAO.interfacciaCondivisioneDAO;
 import database.ConnessioneDatabase;
 import model.Utente;
 
@@ -11,7 +11,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CondivisioneDAO implements InterfacciaCondivisioneDAO {
+/**
+ * Classe DAO per la gestione della tabella di condivisione dei ToDo tra utenti.
+ */
+public class CondivisioneDAO implements interfacciaCondivisioneDAO {
+
+    /**
+     * Crea una nuova condivisione tra un To Do e un utente.
+     * @param todoId id del To Do
+     * @param utenteUsername username dell'utente
+     */
     @Override
     public void creaCondivisione(int todoId, String utenteUsername){
         String sql = "INSERT INTO condivisione (todo_id, utente_username) VALUES (?, ?)";
@@ -25,6 +34,11 @@ public class CondivisioneDAO implements InterfacciaCondivisioneDAO {
         }
     }
 
+    /**
+     * Elimina la condivisione di un To Do con un utente.
+     * @param todoId id del To Do
+     * @param utenteUsername username dell'utente
+     */
     @Override
     public void eliminaCondivisione(int todoId, String utenteUsername){
         String sql = "DELETE FROM condivisione WHERE todo_id = ? AND utente_username = ?";
@@ -38,6 +52,12 @@ public class CondivisioneDAO implements InterfacciaCondivisioneDAO {
         }
     }
 
+    /**
+     * Inserisce i possessori di un To Do nella tabella di condivisione.
+     * @param todoId id del To Do
+     * @param possessori lista di utenti possessori
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void inserisciPossessori(int todoId, List<Utente> possessori) throws SQLException {
         String query = "INSERT INTO condivisione (todo_id, utente_username) VALUES (?, ?)";
@@ -52,6 +72,12 @@ public class CondivisioneDAO implements InterfacciaCondivisioneDAO {
         }
     }
 
+    /**
+     * Restituisce la lista di utenti con cui un To Do è condiviso.
+     * @param todoId id del To Do
+     * @return lista di utenti
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<Utente> getUtentiCondivisiByToDoId(int todoId) throws SQLException {
         List<Utente> utentiCondivisi = new ArrayList<>();

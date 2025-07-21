@@ -31,8 +31,12 @@ public class CreaBacheca {
 
     private static final String TITOLO_ERRORE_BACHECA = "Errore nella creazione della bacheca";
     private static final Logger LOGGER = Logger.getLogger(CreaBacheca.class.getName());
+
     /**
-     * Costruttore che ci permette di creare la gui CreaBacheca
+     * Costruttore che crea la schermata di creazione bacheca.
+     * @param controller Controller
+     * @param callframe Frame chiamante (per tornare indietro)
+     * @param utentelog Username dell'utente loggato
      */
     public CreaBacheca(Controller controller, JFrame callframe, String utentelog) {
         this.controller = controller;
@@ -53,6 +57,9 @@ public class CreaBacheca {
         tipoBacheca.add(lavoroRadioButton);
         tipoBacheca.add(tempoLiberoRadioButton);
 
+        /**
+         * Gestisce la creazione della bacheca in base ai dati inseriti.
+         */
         buttonCreazione.addActionListener(_ -> {
             try {
                 final TitoloBacheca tipo;
@@ -83,6 +90,9 @@ public class CreaBacheca {
             }
         });
 
+        /**
+         * Annulla la creazione e torna alla selezione bacheca.
+         */
         buttonAnnulla.addActionListener(_ -> {
                 SelezioneBacheca secondGui = new SelezioneBacheca(controller, frameCreaBacheca, utentelog);
                 secondGui.getFrameBacheca().setVisible(true);

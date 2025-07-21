@@ -1,6 +1,6 @@
 package dao;
 
-import interfacceDAO.InterfacciaToDoDAO;
+import interfacceDAO.interfacciaToDoDAO;
 import model.*;
 import database.ConnessioneDatabase;
 
@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class ToDoDAO implements InterfacciaToDoDAO {
+/**
+ * Classe DAO per la gestione della persistenza dei To Do nel database.
+ */
+public class ToDoDAO implements interfacciaToDoDAO {
     private static final String COL_TITOLO = "titolo";
     private static final String COL_DESCRIZIONE = "descrizione";
     private static final String COL_URL = "url";
@@ -33,6 +36,14 @@ public class ToDoDAO implements InterfacciaToDoDAO {
     private final CondivisioneDAO condivisioneDAO = new CondivisioneDAO();
     private final CheckListDAO checkListDAO = new CheckListDAO();
 
+    /**
+     * Inserisce un nuovo To Do nel database.
+     * @param todo l'oggetto ToDo da inserire
+     * @param username username dell'autore
+     * @param bachecaId identificativo della bacheca di appartenenza
+     * @return id generato per il To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public int inserisci(ToDo todo, String username, int bachecaId) throws SQLException {
         String sql = "INSERT INTO todo (titolo, descrizione, url, datascadenza, image, posizione, coloresfondo, stato, autore_username, bacheca_id) " +
@@ -75,7 +86,11 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         throw new SQLException("Creazione ToDo fallita, nessun ID ottenuto.");
     }
 
-
+    /**
+     * Modifica le informazioni di un To Do già esistente nel database.
+     * @param todo To Do da modificare
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void modifica(ToDo todo) throws SQLException {
         String sql = "UPDATE todo SET titolo = ?, descrizione = ?, url = ?, datascadenza = ?, " +
@@ -99,6 +114,11 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         }
     }
 
+    /**
+     * Elimina un To Do dal database, eliminando anche checklist e condivisioni collegate.
+     * @param id identificativo del To Do da eliminare
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void elimina(int id) throws SQLException {
         int checklistId = -1;
@@ -144,6 +164,12 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         }
     }
 
+    /**
+     * Restituisce la lista dei To Do associati ad una bacheca.
+     * @param bachecaId id della bacheca
+     * @return lista di To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<ToDo> getToDoByBacheca(int bachecaId) throws SQLException {
         String sql = "SELECT t.*, u.username " +
@@ -196,6 +222,13 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         return todos;
     }
 
+    /**
+     * Aggiorna la bacheca e la posizione di un To Do.
+     * @param todoId id del To Do
+     * @param nuovaBachecaId nuovo id bacheca
+     * @param nuovaPosizione nuova posizione
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void aggiornaBachecaToDo(int todoId, int nuovaBachecaId, String nuovaPosizione) throws SQLException {
         String sql = "UPDATE todo SET bacheca_id = ?, posizione = ? WHERE id = ?";
@@ -208,6 +241,12 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         }
     }
 
+    /**
+     * Restituisce tutti i To Do condivisi con un determinato utente (esclusi quelli di cui è autore).
+     * @param username username utente
+     * @return lista di To Do condivisi
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<ToDo> getToDoCondivisiConUtente(String username) throws SQLException {
         String sql = "SELECT t.* FROM todo t " +
@@ -254,6 +293,13 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         return condivisi;
     }
 
+    /**
+     * Restituisce i To Do di una bacheca sia propri che condivisi.
+     * @param bachecaId id della bacheca
+     * @param username username dell'utente
+     * @return lista di To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<ToDo> getToDoByBachecaAndUtente(int bachecaId, String username) throws SQLException {
         List<ToDo> result = new ArrayList<>();
@@ -294,6 +340,13 @@ public class ToDoDAO implements InterfacciaToDoDAO {
         return result;
     }
 
+    /**
+     * Costruisce un oggetto To Do a partire da un ResultSet.
+     * @param rs ResultSet con i dati del To Do
+     * @param bachecaId id della bacheca
+     * @return oggetto To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public ToDo costruisciToDoBase(ResultSet rs, int bachecaId) throws SQLException {
         GregorianCalendar data = new GregorianCalendar();

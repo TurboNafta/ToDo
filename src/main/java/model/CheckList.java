@@ -16,7 +16,9 @@ public class CheckList implements InterfacciaCheckList {
     private int id;
 
     /**
-     * Costruttore con id per DB
+     * Costruttore con id per oggetti provenienti dal DB.
+     * @param t To Do di riferimento
+     * @param id identificativo checklist
      */
     public CheckList(ToDo t, int id){
         this.todo = t;
@@ -25,7 +27,8 @@ public class CheckList implements InterfacciaCheckList {
     }
 
     /**
-     * Costruttore per creare una nuova CheckList
+     * Costruttore per creare una nuova CheckList.
+     * @param t To Do di riferimento
      */
     public CheckList( ToDo t){
         this.todo = t;
@@ -34,28 +37,42 @@ public class CheckList implements InterfacciaCheckList {
 
 
     /**
-     * Funzioni generali per la gestione degli attributi
+     * Restituisce la lista delle attività nella checklist.
+     * @return lista attività
      */
     @Override
     public List<Attivita> getAttivita() {
         return attivita;
     }
 
+    /**
+     * Imposta la lista delle attività.
+     * @param attivita nuova lista attività
+     */
     @Override
     public void setAttivita(List<Attivita> attivita) {
         this.attivita = attivita;
     }
 
+    /**
+     * Restituisce il To Do associato.
+     * @return To Do
+     */
     public ToDo getTodo() {
         return todo;
     }
 
+    /**
+     * Imposta il ToDo associato.
+     * @param todo nuovo ToDo
+     */
     public void setTodo(ToDo todo) {
         this.todo = todo;
     }
 
     /**
-     * Funzione che scorre le attività della List e vede se tutte sono completate
+     * Verifica se tutte le attività della checklist sono completate.
+     * @return true se tutte completate, false altrimenti
      */
     public boolean tutteCompletate(){
         if(attivita.isEmpty()){
@@ -68,9 +85,19 @@ public class CheckList implements InterfacciaCheckList {
         }
         return true;
     }
+
+    /**
+     * Restituisce l'id della checklist.
+     * @return id checklist
+     */
     public int getId() {
         return id;
     }
+
+    /**
+     * Imposta l'id della checklist.
+     * @param id nuovo id
+     */
     public void setId(int id) {
         this.id = id;
     }

@@ -10,13 +10,25 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe DAO per la gestione delle bacheche nel database.
+ */
 public class BachecaDAO implements interfacciaBachecaDAO {
     private final UtenteDAO utenteDAO;
 
+    /**
+     * Costruttore che inizializza l'oggetto UtenteDAO.
+     */
     public BachecaDAO() {
         this.utenteDAO = new UtenteDAO();
     }
 
+    /**
+     * Inserisce una nuova bacheca nel database e restituisce il suo id.
+     * @param bacheca bacheca da inserire
+     * @return id generato per la bacheca
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public int inserisci(Bacheca bacheca) throws SQLException {
         String query = "INSERT INTO bacheca (descrizione, titolo, utente_username) VALUES (?, ?, ?) RETURNING id";
@@ -38,7 +50,11 @@ public class BachecaDAO implements interfacciaBachecaDAO {
         }
     }
 
-
+    /**
+     * Modifica la descrizione di una bacheca esistente.
+     * @param bacheca bacheca da modificare
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void modifica(Bacheca bacheca) throws SQLException {
         String query = "UPDATE bacheca SET descrizione = ? WHERE id = ?";
@@ -53,6 +69,11 @@ public class BachecaDAO implements interfacciaBachecaDAO {
         }
     }
 
+    /**
+     * Elimina una bacheca e tutti i To Do associati.
+     * @param id id della bacheca da eliminare
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void elimina(int id) throws SQLException {
         // Prima elimina tutti i To do associati
@@ -88,6 +109,12 @@ public class BachecaDAO implements interfacciaBachecaDAO {
         }
     }
 
+    /**
+     * Restituisce tutte le bacheche associate a un utente.
+     * @param username nome utente
+     * @return lista di bacheche
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<Bacheca> getBachecheByUtente(String username) throws SQLException {
         List<Bacheca> bacheche = new ArrayList<>();
@@ -113,7 +140,14 @@ public class BachecaDAO implements interfacciaBachecaDAO {
         return bacheche;
     }
 
-
+    /**
+     * Verifica se esiste già una bacheca con stesso utente, titolo e descrizione.
+     * @param username nome utente
+     * @param titolo titolo bacheca
+     * @param descrizione descrizione bacheca
+     * @return true se la bacheca esiste, false altrimenti
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public boolean esisteBacheca(String username, String titolo, String descrizione) throws SQLException {
         String query = "SELECT COUNT(*) FROM bacheca WHERE utente_username = ? AND titolo = ? AND descrizione = ?";
@@ -130,6 +164,12 @@ public class BachecaDAO implements interfacciaBachecaDAO {
         return false;
     }
 
+    /**
+     * Restituisce la bacheca dato il suo id.
+     * @param id id della bacheca
+     * @return oggetto Bacheca oppure null se non trovata
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public Bacheca getBachecaById(int id) throws SQLException {
         String sql = "SELECT * FROM bacheca WHERE id = ?";

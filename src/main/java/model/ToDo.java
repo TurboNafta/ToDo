@@ -39,7 +39,18 @@ public class ToDo implements InterfacciaToDo {
     private int todoId;
 
     /**
-     * Costruttore per DB
+     * Costruttore per oggetti To Do caricati dal database.
+     * @param titolo Titolo del To Do
+     * @param descrizione Descrizione del To Do
+     * @param url URL collegato al To Do
+     * @param date Data di scadenza in formato "gg/mm/aaaa"
+     * @param img Percorso dell'immagine associata
+     * @param posizione Posizione del To Do
+     * @param coloresfondo Colore di sfondo
+     * @param utenti Lista di utenti con cui è condiviso
+     * @param autore Autore del To Do
+     * @param todoId Identificativo del To Do
+     * @param bachecaId Identificativo della bacheca di appartenenza
      */
     public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, List<Utente> utenti, Utente autore, int todoId, int bachecaId){
         this.titolo = titolo;
@@ -69,7 +80,16 @@ public class ToDo implements InterfacciaToDo {
     }
 
     /**
-     * Costruttore per creare un nuovo to do
+     * Costruttore per creare un nuovo To Do.
+     * @param titolo Titolo del To Do
+     * @param descrizione Descrizione del To Do
+     * @param url URL collegato al To Do
+     * @param date Data di scadenza in formato "gg/mm/aaaa"
+     * @param img Percorso dell'immagine associata
+     * @param posizione Posizione del To Do
+     * @param coloresfondo Colore di sfondo
+     * @param utenti Lista di utenti con cui è condiviso
+     * @param autore Autore del To Do
      */
     public ToDo(String titolo, String descrizione, String url, String date, String img, String posizione, String coloresfondo, List<Utente> utenti, Utente autore){
         this.titolo = titolo;
@@ -98,66 +118,129 @@ public class ToDo implements InterfacciaToDo {
     }
 
     /**
-     * Funzioni generali per la gestione degli attributi
+     * Restituisce il titolo del To Do.
+     * @return titolo
      */
     public String getTitolo() {
         return titolo;
     }
 
+    /**
+     * Imposta il titolo del To Do.
+     * @param titolo nuovo titolo
+     */
     public void setTitolo(String titolo) {
         this.titolo = titolo;
     }
 
+    /**
+     * Restituisce la descrizione del To Do.
+     * @return descrizione
+     */
     public String getDescrizione() {
         return descrizione;
     }
 
+    /**
+     * imposta la descrizione del To Do.
+     * @param descrizione del To Do
+     */
     public void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
 
+    /**
+     * Restituisce l'URL associato al To Do.
+     * @return url
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * imposta l'url del To Do.
+     * @param url nuovo url del To Do
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * Restituisce la posizione del To Do.
+     * @return posizione
+     */
     public String getPosizione() {
         return posizione;
     }
 
+    /**
+     * Imposta la posizione del To Do.
+     * @param posizione posizione del To Do
+     */
     public void setPosizione(String posizione) {
         this.posizione = posizione;
     }
 
+    /**
+     * Restituisce il colore di sfondo del To Do.
+     * @return colore di sfondo
+     */
     public String getColoresfondo() {
         return coloresfondo;
     }
 
+    /**
+     * Imposta il colore del To Do.
+     * @param coloresfondo nuovo colore di sfondo del To Do
+     */
     public void setColoresfondo(String coloresfondo) {
         this.coloresfondo = coloresfondo;
     }
 
+    /**
+     * Restituisce la checklist associata al To Do.
+     * @return checklist
+     */
     public CheckList getChecklist() {
         return checklist;
     }
+
+    /**
+     * Imposta la checklist del To Do.
+     * @param checklist nuova checklist
+     */
     public void setChecklist(CheckList checklist) {
         this.checklist = checklist;
     }
 
+    /**
+     * Restituisce la bacheca di appartenenza.
+     * @return bacheca
+     */
     public Bacheca getBacheca() {
         return bacheca;
     }
 
+    /**
+     * Imposta la bacheca del To Do.
+     * @param bacheca bacheca associata al To Do
+     */
     public void setBacheca(Bacheca bacheca) {
         this.bacheca = bacheca;
     }
 
+    /**
+     * Restituisce lo stato del To Do.
+     * @return stato
+     */
     public StatoToDo getStato() {
         return stato;
     }
+
+    /**
+     * Restituisce lo stato del To Do come stringa.
+     * @return stato come stringa
+     */
     public String getStatoString(){
         String statoString = "";
         if(stato == StatoToDo.NONCOMPLETATO){
@@ -168,32 +251,60 @@ public class ToDo implements InterfacciaToDo {
         return statoString;
     }
 
+    /**
+     * Imposta lo stato del To Do.
+     * @param stato nuovo stato
+     */
     public void setStato(StatoToDo stato) {
         this.stato = stato;
     }
 
+    /**
+     * Restituisce il percorso dell'immagine associata.
+     * @return immagine
+     */
     public String getImage() {
         return image;
     }
 
+    /**
+     * imposta l'immagine del To Do.
+     * @param image nuova immagine
+     */
     public void setImage(String image) {
         this.image = image;
     }
 
+    /**
+     * Restituisce la data di scadenza.
+     * @return data scadenza
+     */
     public GregorianCalendar getDatascadenza() {
         return datascadenza;
     }
 
+    /**
+     * imposta la data di scadenza del To Do.
+     * @param datascadenza nuova data di scadenza
+     */
     public void setDatascadenza(GregorianCalendar datascadenza) {
         this.datascadenza = datascadenza;
     }
 
+    /**
+     * Restituisce la lista degli utenti possessori (con cui è condiviso il To Do).
+     * @return lista utenti
+     */
     public List<Utente> getUtentiPossessori() {
         return utentiPossessori.stream()
                 .map(Condivisione::getUtente)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Imposta la lista degli utenti possessori.
+     * @param utentiPossessori lista utenti
+     */
     public void setUtentiPossessori(List<Utente> utentiPossessori){
         this.utentiPossessori.clear();
         for(Utente u: utentiPossessori){
@@ -201,25 +312,49 @@ public class ToDo implements InterfacciaToDo {
         }
     }
 
+    /**
+     * Aggiunge una condivisione con un utente.
+     * @param utente Utente con cui condividere
+     */
     public void aggiungiCondivisione(Utente utente) {
         this.utentiPossessori.add(new Condivisione(this, utente));
     }
 
+    /**
+     * Rimuove una condivisione con un utente.
+     * @param utente Utente da rimuovere
+     */
     public void rimuoviCondivisione(Utente utente) {
         this.utentiPossessori.removeIf(c -> c.getUtente().equals(utente));
     }
 
+    /**
+     * Restituisce la lista delle condivisioni.
+     * @return lista di oggetti Condivisione
+     */
     public List<Condivisione> getCondivisioni() {
         return utentiPossessori;
     }
 
+    /**
+     * Restituisce l'autore del ToDo.
+     * @return autore
+     */
     public Utente getAutore() {
         return autore;
     }
 
     /**
-     * Funzione che prende in ingresso to do, titolo, descrizione, data scadenza, img, posizione, url, colore e stato,
-     * e modifica i dati relativi a quel to do, con i nuovi dati
+     * Modifica i dati di un To Do esistente.
+     * @param todo To Do da modificare
+     * @param titolo nuovo titolo
+     * @param descrizione nuova descrizione
+     * @param dataScadenza nuova data di scadenza
+     * @param img nuova immagine
+     * @param posizione nuova posizione
+     * @param url nuovo url
+     * @param colore nuovo colore di sfondo
+     * @param stato nuovo stato
      */
     @Override
     public void modificaToDo(ToDo todo, String titolo, String descrizione, String dataScadenza,
@@ -256,14 +391,29 @@ public class ToDo implements InterfacciaToDo {
             throw new RuntimeException("Errore durante il salvataggio delle modifiche nel database", e);
         }
     }
+
+    /**
+     * Salva le modifiche di un To Do nel database.
+     * @param todo To Do da salvare
+     * @throws SQLException eccezione SQL in caso di errore
+     */
     private void salvaModificheNelDatabase(ToDo todo) throws SQLException {
         ToDoDAO todoDAO = new ToDoDAO();
         todoDAO.modifica(todo);
     }
 
+    /**
+     * Restituisce l'id del To Do.
+     * @return id
+     */
     public int getTodoId() {
         return todoId;
     }
+
+    /**
+     * imposta l'id del To Do.
+     * @param todoId del To Do
+     */
     public void setTodoId(int todoId) {
         this.todoId = todoId;
     }

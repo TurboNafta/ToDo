@@ -11,7 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe DAO per la gestione delle attività nella checklist nel database.
+ */
 public class AttivitaDAO implements interfacciaAttivitaDAO {
+
+    /**
+     * Inserisce una nuova attività associata a una checklist.
+     * @param checklist_id id della checklist
+     * @param titolo titolo dell'attività
+     * @param stato stato dell'attività
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void inserisci(int checklist_id, String titolo, StatoAttivita stato) throws SQLException {
         String sql = "INSERT INTO attivita (checklist_id, titolo, stato) VALUES (?, ?, ?)";
@@ -24,6 +35,11 @@ public class AttivitaDAO implements interfacciaAttivitaDAO {
         }
     }
 
+    /**
+     * Elimina tutte le attività associate a un determinato To Do.
+     * @param todoId id del To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void elimina(int todoId) throws SQLException {
         String sql = "DELETE FROM attivita WHERE todo_id = ?";
@@ -33,6 +49,12 @@ public class AttivitaDAO implements interfacciaAttivitaDAO {
             stmt.executeUpdate();
         }
     }
+
+    /**
+     * Elimina una singola attività dato il suo id.
+     * @param attivitaId id dell'attività
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void eliminaAttivitaById(int attivitaId) throws SQLException {
         String sql = "DELETE FROM attivita WHERE id = ?";
@@ -43,6 +65,11 @@ public class AttivitaDAO implements interfacciaAttivitaDAO {
         }
     }
 
+    /**
+     * Elimina tutte le attività di una checklist.
+     * @param checklistId id della checklist
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public void eliminaByChecklist(int checklistId) throws SQLException {
         String sql = "DELETE FROM attivita WHERE checklist_id = ?";
@@ -53,6 +80,12 @@ public class AttivitaDAO implements interfacciaAttivitaDAO {
         }
     }
 
+    /**
+     * Restituisce la lista di attività associate a una checklist.
+     * @param checklistId id della checklist
+     * @return lista di attività
+     * @throws SQLException se avvengono errori SQL
+     */
     @Override
     public List<Attivita> getAttivitaByChecklistId(int checklistId) throws SQLException {
         List<Attivita> attivitaList = new ArrayList<>();

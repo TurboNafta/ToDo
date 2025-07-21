@@ -25,31 +25,55 @@ public class Controller {
     private final CheckListDAO checkListDAO = new CheckListDAO();
 
     /**
-     * Costruttore del Controller
+     * Costruttore del Controller. Inizializza la lista degli utenti.
      */
     public Controller() {
         this.listaUtenti = new ArrayList<>();
     }
 
+    /**
+     * Restituisce il DAO delle condivisioni.
+     * @return oggetto CondivisioneDAO
+     */
     public CondivisioneDAO getCondivisioneDAO() {
         return condivisioneDAO;
     }
+
+    /**
+     * Restituisce il DAO delle checklist.
+     * @return oggetto CheckListDAO
+     */
     public CheckListDAO getCheckListDAO() {
         return checkListDAO;
     }
 
+    /**
+     * Restituisce la lista degli utenti con cui un To Do è condiviso.
+     * @param todoId id del To Do
+     * @return lista di utenti
+     * @throws SQLException se avvengono errori SQL
+     */
     public List<Utente> getUtentiCondivisiByToDoId(int todoId) throws SQLException {
         return condivisioneDAO.getUtentiCondivisiByToDoId(todoId);
     }
 
+    /**
+     * Restituisce la checklist di un To Do.
+     * @param todoId id del To Do
+     * @param todo To Do da cui prendere la checklist
+     * @return lista di utenti
+     * @throws SQLException se avvengono errori SQL
+     */
     public CheckList getChecklistByToDoId(int todoId, ToDo todo) throws SQLException {
         return checkListDAO.getChecklistByToDoId(todoId, todo);
     }
 
-    // GESTIONE BACHECHE
-
     /**
-     * Metodo che ci restituisce le bacheche a seconda del titolo e dell'utente loggato
+     * Restituisce la lista delle bacheche per titolo e utente.
+     * Se titolo è null o vuoto restituisce tutte le bacheche dell'utente.
+     * @param titolo titolo bacheca (stringa)
+     * @param username utente proprietario
+     * @return lista di bacheche filtrata
      */
     public List<Bacheca> getBachecaList(String titolo, String username) {
         try {
@@ -101,7 +125,9 @@ public class Controller {
 
 
     /**
-     * Metodo che ci permette di convertire il titolo da string all'enumeration
+     * Converte il titolo da stringa a enum TitoloBacheca.
+     * @param titoloStr titolo in stringa
+     * @return TitoloBacheca corrispondente o null se non valido
      */
     private TitoloBacheca stringToTitoloBacheca(String titoloStr) {
         if (titoloStr == null) return null;
@@ -114,7 +140,10 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci aggiunge la bacheca alla lista delle bacheche dell'utente
+     * Aggiunge una nuova bacheca all'utente.
+     * @param titolo titolo bacheca
+     * @param descrizione descrizione bacheca
+     * @param username utente proprietario
      */
     public void addBacheca(TitoloBacheca titolo, String descrizione, String username) {
         try {
@@ -147,22 +176,30 @@ public class Controller {
         }
     }
 
+    /**
+     * Restituisce i To Do relativi a una bacheca e ad un utente.
+     * @param bachecaId id della bacheca
+     * @param username username utente
+     * @return lista di To Do
+     * @throws SQLException se avvengono errori SQL
+     */
     public List<ToDo> getToDoByBachecaAndUtente(int bachecaId, String username) throws SQLException {
         return toDoDAO.getToDoByBachecaAndUtente(bachecaId, username);
     }
 
     /**
-     * Metodo che ci setta l'utente loggato
+     * Imposta l'utente attualmente loggato.
+     * @param utente utente autenticato
      */
     public void setUtenteLoggato(Utente utente) {
         this.utenteLoggato = utente;
     }
 
-
-    // --- GESTIONE TO dO ---
-
     /**
-     * Metodo che ci recupera i to do contenuti in quella bacheca dell'utente
+     * Recupera i To Do per una bacheca e filtra per titolo se indicato.
+     * @param bacheca bacheca di riferimento
+     * @param nomeToDo titolo da filtrare (case insensitive); se vuoto/null restituisce tutti i ToDo della bacheca
+     * @return lista filtrata di To Do
      */
     public List<ToDo> getToDoPerBachecaUtente( Bacheca bacheca, String nomeToDo) {
         List<ToDo> filtrati = new ArrayList<>();
@@ -181,7 +218,10 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci aggiunge un to do alla bacheca di quell'utente
+     * Aggiunge un nuovo To Do a una bacheca per uno specifico utente.
+     * @param bacheca bacheca di riferimento
+     * @param todo To Do da aggiungere
+     * @param username utente proprietario
      */
     public void addToDo(Bacheca bacheca, ToDo todo, String username) {
         try {
@@ -206,7 +246,9 @@ public class Controller {
 
 
     /**
-     * Metodo che ci da i to do in scadenza oggi
+     * Restituisce i To Do in scadenza oggi per una bacheca.
+     * @param bacheca bacheca di riferimento
+     * @return lista di To Do in scadenza oggi
      */
     public List<ToDo> getToDoInScadenzaOggi(Bacheca bacheca) {
         List<ToDo> result = new ArrayList<>();
@@ -225,7 +267,10 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci da i to do in scadenza entro la data presa in input dall'utente
+     * Restituisce i To Do in scadenza entro una certa data.
+     * @param bacheca bacheca di riferimento
+     * @param dataLimiteStr data limite (formato dd/MM/yyyy)
+     * @return lista di To Do in scadenza entro la data
      */
     public List<ToDo> getToDoInScadenzaEntro( Bacheca bacheca, String dataLimiteStr) {
         List<ToDo> result = new ArrayList<>();
@@ -245,9 +290,10 @@ public class Controller {
         return result;
     }
 
-    // ----- GESTIONE UTENTI -----
     /**
-     * Metodo che ci prende l'utente in base all'username
+     * Recupera l'utente tramite username.
+     * @param username username dell'utente
+     * @return oggetto Utente o null se non trovato
      */
     public Utente getUtenteByUsername(String username) {
         try {
@@ -259,7 +305,8 @@ public class Controller {
     }
 
     /**
-     * Metodo che aggiunge l'utente alla lista di utenti registrati
+     * Aggiunge un nuovo utente al database.
+     * @param utente utente da aggiungere
      */
     public void addUtente(Utente utente){
         try {
@@ -270,7 +317,10 @@ public class Controller {
     }
 
     /**
-     * Metodo che verifica l'esistenza di un utente
+     * Verifica l'esistenza di un utente con username e password.
+     * @param username username dell'utente
+     * @param password password dell'utente
+     * @return true se esiste, false altrimenti
      */
     public boolean esisteUtente(String username, String password) {
         try {
@@ -281,10 +331,8 @@ public class Controller {
         }
     }
 
-
-
     /**
-     * Metodo che ci genera l'utente admin
+     * Crea l'utente admin nel database se non esiste già.
      */
     public void buildAdmin() {
         try {
@@ -308,7 +356,7 @@ public class Controller {
 
 
     /**
-     * Metodo che genera delle bacheche di prova solo per admin
+     * Crea delle bacheche di prova per l'admin se non ne ha già.
      */
     public void buildBacheche() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
@@ -328,7 +376,7 @@ public class Controller {
     }
 
     /**
-     * Metodo che genera per l'admin dei to do per le bacheche precedentemente create
+     * Crea dei To Do di esempio nelle bacheche dell'admin se non già presenti.
      */
     public void buildToDoPerBachecaUtente() {
         Utente admin = getUtenteByUsername(NOME_UTENTE_AMMINISTRATORE);
@@ -371,7 +419,9 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci elimina il to do dalla bacheca dell'utente
+     * Elimina un To Do da una bacheca e dal database.
+     * @param bacheca bacheca di riferimento
+     * @param t To Do da eliminare
      */
     public void eliminaToDo(Bacheca bacheca, ToDo t) {
         try {
@@ -382,9 +432,12 @@ public class Controller {
         }
     }
 
-
     /**
-     * Metodo che prende la bacheca con titolo e descrizione inseriti dall'utente, e se manca, la crea
+     * Cerca una bacheca per titolo e descrizione, e la crea se non esiste.
+     * @param titolo titolo bacheca
+     * @param descrizione descrizione bacheca
+     * @param username utente proprietario
+     * @return bacheca trovata o creata
      */
     public Bacheca creaBachecaSeManca(TitoloBacheca titolo, String descrizione, String username) {
         Utente utente = getUtenteByUsername(username);
@@ -403,7 +456,11 @@ public class Controller {
     }
 
     /**
-     * Metodo che in coppia con creaBachecaSeManca
+     * Restituisce una bacheca per titolo e descrizione, creandola se necessario.
+     * @param titolo titolo bacheca
+     * @param descrizione descrizione
+     * @param username utente proprietario
+     * @return bacheca trovata o creata
      */
     public Bacheca getOrCreateBacheca(TitoloBacheca titolo, String descrizione, String username) {
         List<Bacheca> bList = getBachecaList(titolo.toString(), username);
@@ -417,7 +474,10 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci serve a spostare quel to do in un'altra bacheca scelta dall'utente
+     * Sposta un To Do da una bacheca a un'altra.
+     * @param todo To Do da spostare
+     * @param bachecaOrigine bacheca di partenza
+     * @param bachecaDestinazione bacheca di destinazione
      */
     public void spostaToDoInAltraBacheca(ToDo todo, Bacheca bachecaOrigine, Bacheca bachecaDestinazione) {
         try {
@@ -438,7 +498,9 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci verifica se la data inserita è nel formato corretto
+     * Verifica se una data in stringa è valida (formato dd/MM/yyyy).
+     * @param dateStr data da verificare
+     * @return true se valida, false altrimenti
      */
     public boolean isValidDate(String dateStr) {
         if (!dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
@@ -456,7 +518,9 @@ public class Controller {
     }
 
     /**
-     * Metodo che ci verifica se la posizione inserita è un numero positivo
+     * Verifica se una posizione è un numero positivo.
+     * @param posizioneStr stringa posizione
+     * @return true se > 0, false altrimenti
      */
     public boolean isValidPosition(String posizioneStr) {
         try {
@@ -468,7 +532,9 @@ public class Controller {
     }
 
     /**
-     * Verifica se il colore specificato è valido
+     * Verifica se il colore inserito è valido.
+     * @param colore stringa colore
+     * @return true se ammesso, false altrimenti
      */
     public boolean isValidColor(String colore) {
         if (colore == null || colore.trim().isEmpty()) {
@@ -482,8 +548,11 @@ public class Controller {
 
         return Arrays.asList(coloriValidi).contains(colore.toLowerCase().trim());
     }
+
     /**
-     * Metodo per modificare la descrizione di una bacheca
+     * Modifica la descrizione di una bacheca e aggiorna il database.
+     * @param bacheca bacheca da modificare
+     * @param nuovaDescrizione nuova descrizione
      */
     public void modificaBacheca(Bacheca bacheca, String nuovaDescrizione) {
         try {
@@ -503,7 +572,8 @@ public class Controller {
 
 
     /**
-     * Metodo per eliminare una bacheca
+     * Elimina una bacheca dal database e dalla memoria.
+     * @param bacheca bacheca da eliminare
      */
     public void eliminaBacheca(Bacheca bacheca) {
         try {
@@ -522,6 +592,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Restituisce la lista di tutti gli utenti dal database.
+     * @return lista di utenti
+     */
     public List<Utente> getTuttiUtentiDalDB(){
         List<Utente> utenti = new ArrayList<>();
         String query = "SELECT username, password FROM utente";
@@ -542,6 +616,11 @@ public class Controller {
         return utenti;
     }
 
+    /**
+     * Aggiorna completamente un To Do: modifica i dati, aggiorna le condivisioni e la checklist.
+     * @param toDoModificato To Do da aggiornare
+     * @throws SQLException se avvengono errori SQL
+     */
     public void aggiornaToDoCompleto(ToDo toDoModificato) throws SQLException {
         toDoDAO.modifica(toDoModificato);
 
@@ -554,6 +633,10 @@ public class Controller {
         checkListDAO.aggiornaChecklistEAttivita(toDoModificato);
     }
 
+    /**
+     * Restituisce il DAO dei To Do.
+     * @return oggetto ToDoDAO
+     */
     public ToDoDAO getToDoDAO() {
         return toDoDAO;
     }

@@ -1,11 +1,26 @@
 package interfaces;
 import model.*;
 import java.util.*;
+
+/**
+ * Interfaccia per la gestione delle checklist di attività.
+ */
 public interface InterfacciaCheckList {
-    // Metodi per l'aggregazione delle Attivita
+    /**
+     * Imposta la lista delle attività della checklist.
+     * @param attivitaList nuova lista di attività
+     */
     void setAttivita(List<Attivita> attivitaList);
+
+    /**
+     * Restituisce la lista delle attività della checklist.
+     * @return lista di attività
+     */
     List<Attivita> getAttivita();
 
-    // Metodi per lo stato della Checklist
-    boolean tutteCompletate(); // Metodo fondamentale per la logica di completamento
+    /**
+     * Verifica se tutte le attività della checklist sono completate.
+     * @return true se tutte completate, false altrimenti
+     */
+    boolean tutteCompletate();
 }

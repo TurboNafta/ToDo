@@ -6,7 +6,10 @@ import javax.swing.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-//Classe GUI per l'accesso dell'utente
+/**
+ * Classe GUI per l'accesso e la registrazione dell'utente.
+ * Gestisce la visualizzazione della schermata di login e registrazione.
+ */
 public class  Accesso {
     private JPanel mainPanel;
     private JTextField usernameField;
@@ -17,6 +20,9 @@ public class  Accesso {
     //Frame e controller
     private final JFrame frameAccesso;
 
+    /**
+     * Restituisce il frame della schermata di accesso.
+     */
     public JFrame getFrameAccesso() {
         return frameAccesso;
     }
@@ -50,7 +56,10 @@ public class  Accesso {
         new Accesso(controller);
     }
 
-    //Costruttore per creare la GUI Accesso
+    /**
+     * Costruttore che crea la schermata di accesso.
+     * @param controller Controller dell'applicazione
+     */
     public Accesso(Controller controller) {
         this.controller = controller;
 
@@ -65,16 +74,23 @@ public class  Accesso {
         setupRegistraButton();
     }
 
-    //pulsante login
+    /**
+     * Imposta l'azione del pulsante login.
+     */
     private void setupLoginButton() {
         loginButton.addActionListener(_ -> gestisciLogin());
     }
 
-    //pulsante registrazione
+    /**
+     * Imposta l'azione del pulsante registrazione.
+     */
     private void setupRegistraButton() {
         registratiButton.addActionListener(_ -> gestisciRegistrazione());
     }
 
+    /**
+     * Gestisce il login dell'utente.
+     */
     private void gestisciLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
@@ -99,6 +115,9 @@ public class  Accesso {
             }
         }
 
+    /**
+     * Gestisce la registrazione di un nuovo utente.
+     */
     private void gestisciRegistrazione() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
