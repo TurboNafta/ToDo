@@ -75,6 +75,7 @@ public class CheckListDAO implements interfacciaCheckListDAO {
                 }
             }
             for(Attivita attivita: checklist.getAttivita()){
+                attivita.setChecklistId(checklistId);
                 attivitaDAO.inserisci(checklistId, attivita.getTitolo(), attivita.getStato());
             }
         }
