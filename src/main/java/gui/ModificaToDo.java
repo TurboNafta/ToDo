@@ -182,7 +182,7 @@ public class ModificaToDo {
                     return;
                 }
 
-                if (!controller.isValidPosition(posizioneStr)) {
+                if (!controller.isValidPosizione(posizioneStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo,
                             "La posizione deve essere un numero intero positivo",
                             "Errore formato posizione",
@@ -190,7 +190,7 @@ public class ModificaToDo {
                     return;
                 }
 
-                if (!controller.isValidColor(coloreStr)) {
+                if (!controller.isValidColore(coloreStr)) {
                     JOptionPane.showMessageDialog(frameModificaToDo,
                             "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone",
                             "Errore formato colore",
@@ -236,7 +236,7 @@ public class ModificaToDo {
      */
     private boolean esisteToDoConStessaPosizione(int nuovaPosizioneInt) {
         for (ToDo t : bacheca.getTodo()) {
-            if (!t.equals(toDo) && t.getPosizione() != null && controller.isValidPosition(t.getPosizione())) {
+            if (!t.equals(toDo) && t.getPosizione() != null && controller.isValidPosizione(t.getPosizione())) {
                 int existingPosizioneInt = Integer.parseInt(t.getPosizione());
                 if (existingPosizioneInt == nuovaPosizioneInt) {
                     return true;

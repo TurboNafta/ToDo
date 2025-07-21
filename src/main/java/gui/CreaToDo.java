@@ -145,7 +145,7 @@ public class CreaToDo {
     }
 
     private boolean validaData(String dataStr){
-        if(!controller.isValidDate(dataStr)){
+        if(!controller.isValidData(dataStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Inserisci la data nel formato gg/mm/aaaa", "Errore formato data", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -153,7 +153,7 @@ public class CreaToDo {
     }
 
     private boolean validaPosizione(String posizioneStr){
-        if(!controller.isValidPosition(posizioneStr)){
+        if(!controller.isValidPosizione(posizioneStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "La posizione deve essere un numero intero positivo", "Errore formato posizione", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -161,7 +161,7 @@ public class CreaToDo {
     }
 
     private boolean validaColore(String coloreStr){
-        if(!controller.isValidColor(coloreStr)){
+        if(!controller.isValidColore(coloreStr)){
             JOptionPane.showMessageDialog(frameCreaToDo, "Colore non valido. Colori disponibili: rosso, giallo, blu, verde, arancione, rosa, viola, celeste, marrone", "Errore formato colore", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -171,7 +171,7 @@ public class CreaToDo {
     private boolean isPosizioneOccupata(String posizione){
         int nuovaPosizioneInt = Integer.parseInt(posizione);
         for(ToDo t : bacheca.getTodo()){
-            if(t.getPosizione() != null && controller.isValidPosition(t.getPosizione())){
+            if(t.getPosizione() != null && controller.isValidPosizione(t.getPosizione())){
                 int exdistingPosizioneInt = Integer.parseInt(t.getPosizione());
                 if(exdistingPosizioneInt == nuovaPosizioneInt){
                     return true;

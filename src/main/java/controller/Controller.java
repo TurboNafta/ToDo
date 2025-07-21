@@ -31,9 +31,6 @@ public class Controller {
         this.listaUtenti = new ArrayList<>();
     }
 
-    public CondivisioneDAO getCondivisioneDAO() {
-        return condivisioneDAO;
-    }
     public CheckListDAO getCheckListDAO() {
         return checkListDAO;
     }
@@ -42,9 +39,6 @@ public class Controller {
         return condivisioneDAO.getUtentiCondivisiByToDoId(todoId);
     }
 
-    public CheckList getChecklistByToDoId(int todoId, ToDo todo) throws SQLException {
-        return checkListDAO.getChecklistByToDoId(todoId, todo);
-    }
 
     // GESTIONE BACHECHE
 
@@ -440,7 +434,7 @@ public class Controller {
     /**
      * Metodo che ci verifica se la data inserita è nel formato corretto
      */
-    public boolean isValidDate(String dateStr) {
+    public boolean isValidData(String dateStr) {
         if (!dateStr.matches("\\d{2}/\\d{2}/\\d{4}")) {
             return false;
         }
@@ -458,7 +452,7 @@ public class Controller {
     /**
      * Metodo che ci verifica se la posizione inserita è un numero positivo
      */
-    public boolean isValidPosition(String posizioneStr) {
+    public boolean isValidPosizione(String posizioneStr) {
         try {
             int posizione = Integer.parseInt(posizioneStr);
             return posizione > 0;
@@ -470,7 +464,7 @@ public class Controller {
     /**
      * Verifica se il colore specificato è valido
      */
-    public boolean isValidColor(String colore) {
+    public boolean isValidColore(String colore) {
         if (colore == null || colore.trim().isEmpty()) {
             return false;
         }
