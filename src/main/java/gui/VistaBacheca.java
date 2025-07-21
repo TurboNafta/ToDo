@@ -250,20 +250,40 @@ public class VistaBacheca {
      */
     private void mostraListaToDo(List<ToDo> lista) { // Usare List per buona pratica
         todoPanelRis.removeAll();
-        JPanel cardsPanel = new JPanel();
-        cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
-        cardsPanel.setBackground(Color.WHITE);
+        JPanel gridPanel = new JPanel(new GridBagLayout());
+        gridPanel.setBackground(Color.WHITE);
 
         if (lista.isEmpty()) {
-            cardsPanel.add(new JLabel("Nessun ToDo presente."));
+            gridPanel.add(new JLabel("Nessun ToDo presente."));
         } else {
+            int colonne = 3; // Numero colonne desiderato
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.fill = GridBagConstraints.NONE;
+            gbc.anchor = GridBagConstraints.CENTER;
+
+            int riga = 0;
+            int colonna = 0;
             for (ToDo t : lista) {
-                cardsPanel.add(createToDoCard(t)); // Delega la creazione della card a un altro metodo
-                cardsPanel.add(Box.createHorizontalStrut(20));
+                gbc.gridx = colonna;
+                gbc.gridy = riga;
+                gridPanel.add(createToDoCard(t), gbc);
+                colonna++;
+                if (colonna == colonne) {
+                    colonna = 0;
+                    riga++;
+                }
             }
         }
 
-        todoPanelRis.add(cardsPanel);
+        JScrollPane scrollPane = new JScrollPane(gridPanel);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        todoPanelRis.setLayout(new BorderLayout());
+        todoPanelRis.add(scrollPane, BorderLayout.CENTER);
         todoPanelRis.revalidate();
         todoPanelRis.repaint();
     }
