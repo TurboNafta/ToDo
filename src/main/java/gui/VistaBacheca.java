@@ -1,7 +1,6 @@
 package gui;
 
 import controller.Controller;
-import dao.ToDoDAO;
 import database.ConnessioneDatabase;
 import model.*;
 import javax.swing.*;
@@ -34,7 +33,7 @@ public class VistaBacheca {
     private final String utenteLoggato;
     private final Bacheca bacheca;
 
-    private static final String ERRORE_TITLE = "Errore";
+    private static final String ERRORE_TITOLO = "Errore";
     public static final String NESSUN_ORDINAMENTO = "Nessun Ordinamento";
     public static final String TITOLO_AZ = "Titolo A-Z";
     public static final String DATA_SCADENZA = "Data di Scadenza";
@@ -141,7 +140,7 @@ public class VistaBacheca {
                 risultati = controller.getToDoInScadenzaEntro(bacheca, testo);
             }
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(frameVista, ex.getMessage(), ERRORE_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frameVista, ex.getMessage(), ERRORE_TITOLO, JOptionPane.ERROR_MESSAGE);
             return;
         }
         ordinaRisultati(criterioOrdine, risultati);
@@ -213,7 +212,7 @@ public class VistaBacheca {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(frameVista,
                     "Errore durante il caricamento dei ToDo: " + e.getMessage(),
-                    ERRORE_TITLE,
+                    ERRORE_TITOLO,
                     JOptionPane.ERROR_MESSAGE);
         }
     }

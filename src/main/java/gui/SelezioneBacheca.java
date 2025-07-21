@@ -258,15 +258,7 @@ public class SelezioneBacheca {
         return card;
     }
 
-    /**
-     * Metodi per l'estetica della pagina
-     */
-    private JScrollPane creaScrollPane(JPanel cardsPanel) {
-        JScrollPane scrollPane = new JScrollPane(cardsPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBorder(null);
-        scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
-        return scrollPane;
-    }
+
     private void styleButton(JButton button, Color bg, Color fg) {
         button.setBackground(bg);
         button.setForeground(fg);
